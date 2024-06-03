@@ -1,7 +1,7 @@
 {
   "name": "chat-desktop",
   "version": "1.0.0",
-  "description": "SalmonChat",
+  "description": "Salmon 的 Chat APP",
   "main": "./out/main/index.js",
   "author": "Salmon",
   "homepage": "https://chat.salmonedu.ltd",

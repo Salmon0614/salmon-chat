@@ -5,10 +5,10 @@ import icon from '../../resources/icon.png?asset'
 
 const NODE_ENV = process.env.NODE_ENV
 
-const login_width = 300;
-const login_height = 370;
-const register_height = 490;
-const forget_password_height = 430;
+const login_width = 330;
+const login_height = 440;
+const register_height = 570;
+const forget_password_height = 460;
 
 function createWindow() {
   let iconPath;
@@ -22,6 +22,7 @@ function createWindow() {
   }
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    title: "SalmonChat",
     icon: icon,
     width: login_width,
     height: login_height,
@@ -65,7 +66,8 @@ function createWindow() {
   }
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow.show();
+    mainWindow.setTitle("SalmonChat");
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
