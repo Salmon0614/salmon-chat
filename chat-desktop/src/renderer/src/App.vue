@@ -21,5 +21,5 @@ const config = reactive({
 </template>
 
 <style lang="less">
-@import './assets/css/styles.less';
+//@import './assets/css/styles.less';
 </style>

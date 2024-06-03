@@ -48,8 +48,6 @@ body {
     color: #436895;
 }
 
-
-
 .top-panel {
     .el-card__body {
         padding: 15px;
@@ -72,7 +70,7 @@ body {
     }
 
     a:last-child {
-        margin-right: 0px;
+        margin-right: 0;
     }
 
     .not-allow {
@@ -101,7 +99,7 @@ body {
 .no-data {
     color: #bfbfbf;
     text-align: center;
-    padding: 5px 0px;
+    padding: 5px 0;
 }
 
 .drag {
@@ -121,7 +119,7 @@ body {
 
 //重写右键菜单样式
 .mx-context-menu {
-    padding: 0px !important;
+    padding: 0 !important;
     border-radius: 2px !important;
 
     .mx-context-menu-item {
