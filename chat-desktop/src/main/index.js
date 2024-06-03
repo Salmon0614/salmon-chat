@@ -1,4 +1,4 @@
-import {app, shell, BrowserWindow} from 'electron'
+import {app, shell, BrowserWindow, ipcMain} from 'electron'
 import {join} from 'path'
 import {electronApp, optimizer, is} from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -8,6 +8,7 @@ const NODE_ENV = process.env.NODE_ENV
 const login_width = 300;
 const login_height = 370;
 const register_height = 490;
+const forget_password_height = 430;
 
 function createWindow() {
   let iconPath;
@@ -35,9 +36,27 @@ function createWindow() {
     // 设置透明
     transparent: true,
     webPreferences: {
+      nodeIntegration: true, // 为了解决require 识别问题
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      // 上下文隔离（官方不建议关闭）
+      // contextIsolation: false,
+    },
+  })
+
+  // 主进程监听渲染进程发送的消息（渲染进程触发该信号，主进程接收信号，实现渲染进程到主进程的通信）
+  ipcMain.on("loginOrRegisterOrForget", (event, viewType) => {
+    // 临时允许修改窗口大小
+    mainWindow.setResizable(true);
+    if (viewType === 2) {
+      mainWindow.setSize(login_width, forget_password_height);
+    } else if (viewType === 1) {
+      mainWindow.setSize(login_width, register_height);
+    } else {
+      mainWindow.setSize(login_width, login_height);
     }
+    // 不允许修改窗口大小
+    mainWindow.setResizable(false);
   })
 
   //打开控制台

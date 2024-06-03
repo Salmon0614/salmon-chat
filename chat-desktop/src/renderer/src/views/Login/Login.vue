@@ -8,6 +8,19 @@ const formDataRef = ref();
 const rules = {
   title: [{required: true, message: "请输入内容"}],
 }
+// 0-登录页 1-注册页 2-忘记密码
+const viewType = ref(0);
+/**
+ * 改变页面类型、和调整窗口大小
+ * @param type
+ */
+const changeType = (type) => {
+  // 发生渲染进程通信
+  window.changeType.send(type);
+  viewType.value = type;
+}
+
+
 </script>
 
 <template>
@@ -24,8 +37,23 @@ const rules = {
             </template>
           </el-input>
         </el-form-item>
+        <el-form-item prop="nickname" v-if="viewType===1">
+          <el-input size="large" clearable placeholder="请输入昵称" v-model.trim="formData.nickname">
+            <template #prefix>
+              <span class="iconfont icon-user-nick"></span>
+            </template>
+          </el-input>
+        </el-form-item>
         <el-form-item prop="password">
           <el-input size="large" clearable show-password placeholder="请输入密码" v-model.trim="formData.password">
+            <template #prefix>
+              <span class="iconfont icon-password"></span>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="rePassword" v-if="viewType===1||viewType===2">
+          <el-input size="large" clearable show-password placeholder="请再次输入密码"
+                    v-model.trim="formData.rePassword">
             <template #prefix>
               <span class="iconfont icon-password"></span>
             </template>
@@ -39,11 +67,16 @@ const rules = {
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="login-btn" type="primary">登录</el-button>
+          <el-button class="login-btn" type="primary" v-if="viewType===0">登录</el-button>
+          <el-button class="login-btn" type="primary" v-if="viewType===1">注册</el-button>
+          <el-button class="login-btn" type="primary" v-if="viewType===2">修改密码</el-button>
         </el-form-item>
-        <div class="bottom-link">
-          <span class="a-link">没有账号？</span>
-          <span class="a-link">忘记密码</span>
+        <div class="bottom-link" v-if="viewType===0">
+          <span class="a-link" @click="changeType(1)">没有账号？</span>
+          <span class="a-link" @click="changeType(2)">忘记密码</span>
+        </div>
+        <div class="bottom-link" v-else>
+          <span class="a-link" @click="changeType(0)">已有账号？</span>
         </div>
       </el-form>
     </div>
