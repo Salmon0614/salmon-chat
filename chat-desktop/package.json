@@ -1,7 +1,7 @@
 {
   "name": "chat-desktop",
   "version": "1.0.0",
-  "description": "WxChat",
+  "description": "SalmonChat",
   "main": "./out/main/index.js",
   "author": "Salmon",
   "homepage": "https://chat.salmonedu.ltd",
@@ -14,14 +14,15 @@
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
     "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
+    "build:linux": "npm run build && electron-builder --linux --config",
+    "electron:generate-icons": "electron-icon-builder --input=./resources/icon.png --output=build --flatten"
   },
   "build": {
     "extraResource": [
       "./assets/**"
     ],
-    "productName": "WxChat",
-    "app.id": "com.wxchat",
+    "productName": "SalmonChat",
+    "app.id": "com.salmon.chat",
     "directories": {
       "output": "installPackages"
     },
@@ -34,7 +35,7 @@
       "installerHeaderIcon": "./resources/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shotcutName": "WxChat"
+      "shotcutName": "SalmonChat"
     },
     "mac": {
       "icon": "icons/icon.icns"
@@ -53,6 +54,7 @@
     "@imengyu/vue3-context-menu": "^1.4.1",
     "axios": "^1.7.2",
     "dplayer": "^1.27.1",
+    "electron-icon-builder": "^2.0.1",
     "electron-store": "^8.1.0",
     "element-plus": "^2.7.4",
     "express": "^4.19.2",

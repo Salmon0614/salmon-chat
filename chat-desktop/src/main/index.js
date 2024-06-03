@@ -10,8 +10,18 @@ const login_height = 370;
 const register_height = 490;
 
 function createWindow() {
+  let iconPath;
+  // 根据平台设置图标路径
+  if (process.platform === 'darwin') {
+    iconPath = join(__dirname, '../../resources/icon.icns?asset');
+  } else if (process.platform === 'win32') {
+    iconPath = join(__dirname, '../../resources/icon.ico?asset');
+  } else if (process.platform === 'linux') {
+    iconPath = join(__dirname, '../../resources/icon.png?asset');
+  }
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    icon: icon,
     width: login_width,
     height: login_height,
     show: false,
@@ -24,7 +34,6 @@ function createWindow() {
     frame: false,
     // 设置透明
     transparent: true,
-    ...(process.platform === 'linux' ? {icon} : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
