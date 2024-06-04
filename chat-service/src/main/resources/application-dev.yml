@@ -1,4 +1,7 @@
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   config:
     activate:
       on-profile: dev
@@ -10,10 +13,13 @@ spring:
     store-type: redis
     # 1 天过期
     timeout: 86400
+  # 兼容knife4j
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   redis:
     host: ${host}
     port: 6379
-    password: 123456
     # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
     database: 0
     # 连接超时时间（毫秒)
