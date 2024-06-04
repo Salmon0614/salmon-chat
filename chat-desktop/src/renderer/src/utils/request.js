@@ -1,16 +1,20 @@
 import axios from 'axios'
-import { ElLoading } from 'element-plus'
-import Message from '../utils/message'
-import Api from '../utils/api'
+import {ElLoading} from 'element-plus'
+import Message from '@/utils/message'
+import Api from '@/utils/api'
+
 const contentTypeForm = 'application/x-www-form-urlencoded;charset=UTF-8'
 const contentTypeJson = 'application/json'
 const responseTypeJson = 'json'
+// 加载实例
 let loading = null;
+
 const instance = axios.create({
   withCredentials: true,
-  baseURL: (import.meta.env.PROD ? Api.prodDomain : "") + "/api",
+  baseURL: (import.meta.env.PROD ? Api.domain.prod : "") + "/api",
   timeout: 10 * 1000,
 });
+
 //请求前拦截器
 instance.interceptors.request.use(
   (config) => {
@@ -31,14 +35,16 @@ instance.interceptors.request.use(
     return Promise.reject("请求发送失败");
   }
 );
+
 //请求后拦截器
 instance.interceptors.response.use(
   (response) => {
-    const { showLoading, errorCallback, showError = true, responseType } = response.config;
+    const {showLoading, errorCallback, showError = true, responseType} = response.config;
     if (showLoading && loading) {
       loading.close()
     }
     const responseData = response.data;
+    // 如果数据流，直接返回
     if (responseType === "arraybuffer" || responseType === "blob") {
       return responseData;
     }
@@ -51,26 +57,26 @@ instance.interceptors.response.use(
       setTimeout(() => {
         window.ipcRenderer.send('reLogin')
       }, 2000);
-      return Promise.reject({ showError: true, msg: "登录超时" });
+      return Promise.reject({showError: true, msg: "登录超时"});
 
     } else {
       //其他错误
       if (errorCallback) {
         errorCallback(responseData);
       }
-      return Promise.reject({ showError: showError, msg: responseData.info });
+      return Promise.reject({showError: showError, msg: responseData.info});
     }
   },
   (error) => {
     if (error.config.showLoading && loading) {
       loading.close();
     }
-    return Promise.reject({ showError: true, msg: "网络异常" })
+    return Promise.reject({showError: true, msg: "网络异常"})
   }
 );
 
 const request = (config) => {
-  const { url, params, dataType, showLoading = true, responseType = responseTypeJson, showError = true } = config;
+  const {url, params, dataType, showLoading = true, responseType = responseTypeJson, showError = true} = config;
   let contentType = contentTypeForm;
   let formData = new FormData();// 创建form对象
   for (let key in params) {
