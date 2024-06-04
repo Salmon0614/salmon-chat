@@ -1,6 +1,7 @@
 package com.salmon.chatService.controller;
 
 import cn.hutool.core.lang.UUID;
+import com.salmon.chatService.annotation.AccessLimit;
 import com.salmon.chatService.common.BaseController;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ResultUtils;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController extends BaseController {
 
     @Operation(summary = "获取验证码")
+    @AccessLimit
     @PostMapping("/getCheckCode")
     public BaseResponse<CaptchaVo> checkCode() {
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(100, 43);

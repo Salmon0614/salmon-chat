@@ -17,4 +17,9 @@ public interface CommonConstant {
      * 降序
      */
     String SORT_ORDER_DESC = " descend";
+
+    /**
+     * 响应 JSON 格式
+     */
+    String APPLICATION_JSON = "application/json;charset=utf-8";
 }

@@ -43,7 +43,15 @@ public class RedisUtils {
 
     public static Long inc(String key, int time, TimeUnit unit) {
         RedisScript<Long> redisScript = new DefaultRedisScript<>(LUA_INCR_EXPIRE, Long.class);
-        return stringRedisTemplate.execute(redisScript, Collections.singletonList(key), String.valueOf(unit.toSeconds(time)));
+        return stringRedisTemplate.execute(redisScript, Collections.singletonList(key));
+    }
+
+    public static Long incrExpire(String key, long time) {
+        Long count = stringRedisTemplate.opsForValue().increment(key, 1);
+        if (count != null && count == 1) {
+            stringRedisTemplate.expire(key, time, TimeUnit.SECONDS);
+        }
+        return count;
     }
 
     public static Long ZSetGet(String key) {

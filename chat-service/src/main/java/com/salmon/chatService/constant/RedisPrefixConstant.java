@@ -11,4 +11,6 @@ public interface RedisPrefixConstant {
     String CHECK_CODE = "salmon_chat:account:check_code:";
     // 10分钟
     Long CODE_EXPIRE_TIME = 10 * 60L;
+
+    String ACCESS_LIMIT = "salmon_chat:access_limit:";
 }
