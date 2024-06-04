@@ -10,20 +10,21 @@ const login_height = 440;
 const register_height = 570;
 const forget_password_height = 460;
 
+let iconPath;
+// 根据平台设置图标路径
+if (process.platform === 'darwin') {
+  iconPath = join(__dirname, '../../resources/icon.icns?asset');
+} else if (process.platform === 'win32') {
+  iconPath = join(__dirname, '../../resources/icon.ico?asset');
+} else if (process.platform === 'linux') {
+  iconPath = join(__dirname, '../../resources/icon.png?asset');
+}
+
 function createWindow() {
-  let iconPath;
-  // 根据平台设置图标路径
-  if (process.platform === 'darwin') {
-    iconPath = join(__dirname, '../../resources/icon.icns?asset');
-  } else if (process.platform === 'win32') {
-    iconPath = join(__dirname, '../../resources/icon.ico?asset');
-  } else if (process.platform === 'linux') {
-    iconPath = join(__dirname, '../../resources/icon.png?asset');
-  }
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: "SalmonChat",
-    icon: icon,
+    icon: iconPath,
     width: login_width,
     height: login_height,
     show: false,
@@ -34,7 +35,7 @@ function createWindow() {
     resizable: false,
     // 隐藏窗口的边框
     frame: false,
-    // 设置透明
+    // 创建透明窗口
     transparent: true,
     webPreferences: {
       nodeIntegration: true, // 为了解决require 识别问题
@@ -97,6 +98,12 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  if (process.platform === 'darwin') {
+    // app.dock.setIcon(iconPath);
+    app.setName("SalmonChat");
+    // app.dock.setBadge("SalmonChat");
+  }
 
   createWindow()
 
