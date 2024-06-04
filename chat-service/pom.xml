@@ -73,6 +73,11 @@
             <artifactId>easy-captcha</artifactId>
             <version>${captcha.verion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.4</version>
+        </dependency>
 
         <!-- https://doc.xiaominfo.com/docs/quick-start#openapi3 -->
         <dependency>
