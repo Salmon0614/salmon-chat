@@ -9,8 +9,17 @@ ws:
   port: 5051
 
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  application:
+    name: chat-service
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
 
 logging:
   level:

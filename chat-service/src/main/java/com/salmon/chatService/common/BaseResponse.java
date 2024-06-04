@@ -1,5 +1,6 @@
 package com.salmon.chatService.common;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,30 +12,34 @@ import java.io.Serializable;
  * @since 2024-05-19
  */
 @Data
+@Schema(name = "BaseResponse", description = "通用返回类")
 public class BaseResponse<T> implements Serializable {
 
-    /**
-     * 状态码
-     */
+    @Schema(description = "状态码")
     private int code;
 
-    /**
-     * 响应数据
-     */
+    @Schema(description = "响应数据")
     private T data;
 
-    /**
-     * 消息
-     */
+    @Schema(description = "消息")
     private String message;
 
+    @Schema(description = "code是否200")
+    private boolean isSuccess;
+
+    public boolean isSuccess() {
+        return this.code == ErrorCode.SUCCESS.getCode();
+    }
+
     public BaseResponse(int code, T data, String message) {
+        this.isSuccess = code == ErrorCode.SUCCESS.getCode();
         this.code = code;
         this.data = data;
         this.message = message;
     }
 
     public BaseResponse(int code, T data) {
+        this.isSuccess = code == ErrorCode.SUCCESS.getCode();
         this.code = code;
         this.data = data;
     }

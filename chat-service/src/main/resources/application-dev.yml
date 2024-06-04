@@ -1,12 +1,7 @@
 spring:
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
   config:
     activate:
       on-profile: dev
-  application:
-    name: chat-service
   # session 配置
   session:
     # 开启分布式 session

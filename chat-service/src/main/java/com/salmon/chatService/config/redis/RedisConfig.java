@@ -16,12 +16,12 @@ import java.net.UnknownHostException;
  * @since 2022/9/23 20:03
  */
 @Configuration
-public class RedisConfig {
+public class RedisConfig<V> {
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
+    public RedisTemplate<String, V> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         // 创建模板
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<String, V> redisTemplate = new RedisTemplate<>();
         // 设置连接工厂
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         // 设置序列化工具
