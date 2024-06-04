@@ -1,0 +1,76 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: chat-service
+  # session 配置
+  session:
+    # 开启分布式 session
+    store-type: redis
+    # 1 天过期
+    timeout: 86400
+  redis:
+    host: ${host}
+    port: 6379
+    password: 123456
+    # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
+    database: 0
+    # 连接超时时间（毫秒)
+    timeout: 10000ms
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 20
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 5
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 0
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://${host}:3306/wechat?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useUnicode=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      username: root
+      password: 123456
+      # 初始化连接池时创建的连接数量
+      initial-size: 5
+      # 最小空闲连接数量
+      min-idle: 5
+      # 最大活动连接数量
+      max-active: 20
+      # 连接的最大等待时间
+      max-wait: 60000
+      # 检测连接是否有效的SQL查询语句
+      validation-query: SELECT 1
+      # 验证查询的超时时间
+      validation-query-timeout: 10000
+      # 连接池中连接的最小空闲时间
+      min-evictable-idle-time-millis: 300000
+      # 检测连接是否有效的时间间隔
+      time-between-eviction-runs-millis: 60000
+      # 连接在空闲时会被检测是否有效
+      test-while-idle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 数据库连接超时时间,默认30秒，即30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      # 连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作
+      keepAlive: true
+      # 允许物理连接最大存活时间，单位是毫秒
+      phyTimeoutMillis: 25200000
+
+# mybatis-plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+host: 127.0.0.1

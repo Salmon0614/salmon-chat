@@ -1,0 +1,14 @@
+server:
+  port: 5050
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+
+logging:
+  level:
+    com:
+      salmon:
+        chatService: error
