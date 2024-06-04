@@ -3,6 +3,7 @@ package ${package.Entity};
 <#list table.importPackages as pkg>
 import ${pkg};
 </#list>
+import java.io.Serial;
 <#if swagger>
 import io.swagger.v3.oas.annotations.media.Schema;
 </#if>

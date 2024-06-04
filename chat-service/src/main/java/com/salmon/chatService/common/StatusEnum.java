@@ -1,8 +1,6 @@
-<#assign firstChar = entity?substring(0, 1)?lower_case>
-<#assign restChars = entity?substring(1)>
-<#assign entityObj = firstChar + restChars>
-package ${packageEnum}.${entityObj};
+package com.salmon.chatService.common;
 
+import com.salmon.chatService.model.enums.user.UserGenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,15 +10,18 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * ${table.comment!}枚举
+ * 通用状态枚举
  * </p>
  *
- * @author ${author}
- * @since ${date}
+ * @author Salmon
+ * @since 2024-06-04
  */
 @Getter
 @AllArgsConstructor
-public enum ${entity}Enum {
+public enum StatusEnum {
+
+    DISABLED("禁用", 0),
+    ENABLE("启用", 1);
 
     private final String desc;
     private final int value;
@@ -37,11 +38,11 @@ public enum ${entity}Enum {
      *
      * @param value 键
      */
-    public static ${entity}Enum getEnumByValue(int value) {
+    public static StatusEnum getEnumByValue(int value) {
         if (getValues().contains(value)) {
-            for (${entity}Enum ${entityObj}Enum : ${entity}Enum.values()) {
-                if (${entityObj}Enum.value == value) {
-                    return ${entityObj}Enum;
+            for (StatusEnum statusEnum : StatusEnum.values()) {
+                if (statusEnum.value == value) {
+                    return statusEnum;
                 }
             }
         }

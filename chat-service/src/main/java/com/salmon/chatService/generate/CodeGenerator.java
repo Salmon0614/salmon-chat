@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
+import com.salmon.chatService.common.BaseController;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.util.StringUtils;
 
@@ -116,6 +117,7 @@ public class CodeGenerator {
                             .formatFileName("%sController")
                             .enableRestStyle() // 开启RestController注解
                             .enableFileOverride()
+                            .superClass(BaseController.class)
                             .template(CONTROLLER_TEMPLATE_PATH)
                             // mapper策略配置
                             .mapperBuilder()

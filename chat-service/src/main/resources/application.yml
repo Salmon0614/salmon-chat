@@ -1,7 +1,12 @@
+# http
 server:
   port: 5050
   servlet:
     context-path: /api
+
+# socket
+ws:
+  port: 5051
 
 spring:
   profiles:

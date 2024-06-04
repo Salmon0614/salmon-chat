@@ -3,11 +3,10 @@
 <#assign entityObj = firstChar + restChars>
 package ${package.Controller};
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import ${packageName}.common.BaseResponse;
-import ${packageName}.common.ErrorCode;
-import ${packageName}.common.IdRequest;
-import ${packageName}.common.ResultUtils;
+import ${packageName}.common.*;
 import ${packageName}.exception.ThrowUtils;
 import ${packageName}.model.dto.${entityObj}.${entity}AddRequest;
 import ${packageName}.model.dto.${entityObj}.${entity}QueryRequest;
@@ -22,8 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 </#if>
+<#if superControllerClassPackage??>
+import ${superControllerClassPackage};
+</#if>
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -39,7 +40,11 @@ import javax.servlet.http.HttpServletRequest;
 <#if swagger>
 @Tag(name = "${entity}Controller", description = "${table.comment!}前端控制器")
 </#if>
-public class ${entity}Controller {
+<#if superControllerClass??>
+public class ${table.controllerName} extends ${superControllerClass} {
+<#else>
+public class ${table.controllerName} {
+</#if>
 
     @Resource
     private I${entity}Service ${entityObj}Service;
@@ -56,13 +61,21 @@ public class ${entity}Controller {
 
     @Operation(summary = "修改${table.comment!}")
     @PostMapping("/update")
-    public BaseResponse<Object> add${entity}(@RequestBody ${entity}UpdateRequest request) {
+    public BaseResponse<Object> update${entity}(@RequestBody ${entity}UpdateRequest request) {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         ${entity} ${entityObj} = new ${entity}();
         BeanUtils.copyProperties(request, ${entityObj});
         UpdateWrapper<${entity}> updateWrapper = new UpdateWrapper<>(${entityObj});
         ThrowUtils.throwIf(!${entityObj}Service.update(updateWrapper), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(${entityObj}.getId());
+    }
+
+    @Operation(summary = "删除${table.comment!}")
+    @PostMapping("/delete")
+    public BaseResponse<Object> delete${entity}(@RequestBody DeleteRequest request) {
+        ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(!${entityObj}Service.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(); 
     }
 
     @Operation(summary = "根据ID查询${table.comment!}")
