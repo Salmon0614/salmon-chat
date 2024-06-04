@@ -47,7 +47,7 @@ public class ${table.controllerName} {
 </#if>
 
     @Resource
-    private I${entity}Service ${entityObj}Service;
+    private ${entity}Service ${entityObj}Service;
 
     @Operation(summary = "添加${table.comment!}")
     @PostMapping("/add")

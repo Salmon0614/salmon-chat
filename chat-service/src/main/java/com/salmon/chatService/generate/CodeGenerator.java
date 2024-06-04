@@ -96,7 +96,7 @@ public class CodeGenerator {
                             .addTablePrefix("tb_") // 设置过滤表前缀
                             // service策略配置
                             .serviceBuilder()
-                            .formatServiceFileName("I%sService")
+                            .formatServiceFileName("%sService")
                             .formatServiceImplFileName("%sServiceImpl")
                             .enableFileOverride()
                             // 实体类策略配置
