@@ -100,7 +100,7 @@ public class User implements Serializable {
 
     @Schema(description = "加入好友类型 0-直接加入 1-需要验证")
     @TableField("join_type")
-    private Boolean joinType;
+    private Integer joinType;
 
     @Schema(description = "最近登录时间")
     @TableField("last_login_time")

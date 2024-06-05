@@ -67,7 +67,7 @@ public class UserVO implements Serializable {
     private Integer version;
 
     @Schema(description = "加入好友类型 0-直接加入 1-需要验证")
-    private Boolean joinType;
+    private Integer joinType;
 
     @Schema(description = "最近登录时间")
     private LocalDateTime lastLoginTime;
