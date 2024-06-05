@@ -9,6 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2024-06-04
  */
 @Slf4j
-public class BaseController {
+public abstract class BaseController {
 
 }

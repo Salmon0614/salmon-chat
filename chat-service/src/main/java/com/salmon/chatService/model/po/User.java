@@ -93,6 +93,10 @@ public class User implements Serializable {
     @TableField("status")
     private Boolean status;
 
+    @Schema(description = "角色 0-普通用户 1-管理员")
+    @TableField("role")
+    private Integer role;
+
     @Schema(description = "版本号")
     @TableField("version")
     @Version

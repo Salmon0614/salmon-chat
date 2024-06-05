@@ -7,10 +7,16 @@ package com.salmon.chatService.constant;
  * @since 2024-06-05
  */
 public interface RedisPrefixConstant {
+    String APP = "salmon_chat:";
     // 验证码
-    String CHECK_CODE = "salmon_chat:account:check_code:";
+    String CHECK_CODE = APP + "account:check_code:";
     // 10分钟
     Long CODE_EXPIRE_TIME = 10 * 60L;
-
-    String ACCESS_LIMIT = "salmon_chat:access_limit:";
+    // 限流
+    String ACCESS_LIMIT = APP + "access_limit:";
+    // 登录状态
+    String LOGIN_SESSION = APP + "login_session:";
+    String LOGIN_SESSION_TOKEN = APP + "login_session_token:";
+    // 一天
+    Long LOGIN_SESSION_EXPIRE_TIME = 24 * 60 * 60L;
 }

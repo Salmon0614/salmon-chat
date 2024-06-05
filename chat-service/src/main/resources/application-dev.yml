@@ -84,3 +84,9 @@ springdoc:
   packages-to-scan: com.salmon.chatService.controller,com.salmon.chatService.model
 
 host: 127.0.0.1
+
+app:
+  emails:
+    - 1179732961@qq.com
+  accounts:
+    - SU8888888888

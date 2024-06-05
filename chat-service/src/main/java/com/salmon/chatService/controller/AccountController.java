@@ -2,19 +2,26 @@ package com.salmon.chatService.controller;
 
 import cn.hutool.core.lang.UUID;
 import com.salmon.chatService.annotation.AccessLimit;
+import com.salmon.chatService.annotation.CheckCode;
 import com.salmon.chatService.common.BaseController;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.constant.RedisPrefixConstant;
+import com.salmon.chatService.model.dto.account.EmailLogin;
+import com.salmon.chatService.model.dto.account.EmailRegister;
 import com.salmon.chatService.model.vo.account.CaptchaVo;
+import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.model.vo.user.UserVO;
+import com.salmon.chatService.service.UserService;
 import com.salmon.chatService.utils.RedisUtils;
 import com.wf.captcha.ArithmeticCaptcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * 账号API
@@ -28,8 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "AccountController", description = "账号API")
 public class AccountController extends BaseController {
 
+    @Resource
+    private UserService userService;
+
     @Operation(summary = "获取验证码")
-    @AccessLimit
+    @AccessLimit(maxCount = 10)
     @PostMapping("/getCheckCode")
     public BaseResponse<CaptchaVo> checkCode() {
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(100, 43);
@@ -38,5 +48,21 @@ public class AccountController extends BaseController {
         String captchaBase64 = captcha.toBase64();
         RedisUtils.set(RedisPrefixConstant.CHECK_CODE + checkCodeKey, code, RedisPrefixConstant.CODE_EXPIRE_TIME);
         return ResultUtils.success(CaptchaVo.builder().base64(captchaBase64).codeKey(checkCodeKey).build());
+    }
+
+    @Operation(summary = "通过邮箱进行注册")
+    @PostMapping("/registerByEmail")
+    @CheckCode
+    public BaseResponse<?> registerByEmail(@RequestBody @Valid EmailRegister emailRegister) {
+        userService.register(emailRegister);
+        return ResultUtils.success();
+    }
+
+    @Operation(summary = "通过邮箱进行登录")
+    @PostMapping("/loginByEmail")
+    @CheckCode
+    public BaseResponse<UserVO> loginByEmail(@RequestBody @Valid EmailLogin emailLogin) {
+        UserVO userVO = userService.login(emailLogin);
+        return ResultUtils.success(userVO);
     }
 }

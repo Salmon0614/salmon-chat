@@ -5,6 +5,8 @@ import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * 业务工具
  *
@@ -12,6 +14,16 @@ import org.springframework.util.DigestUtils;
  * @since 2024-06-05
  */
 public class Utils {
+
+    /**
+     * 生成 token
+     *
+     * @param account 账号
+     * @return token
+     */
+    public static String generateToken(String account) {
+        return DigestUtils.md5DigestAsHex((account + RandomStringUtils.random(22)).getBytes(StandardCharsets.UTF_8));
+    }
 
     /**
      * 生成用户账号

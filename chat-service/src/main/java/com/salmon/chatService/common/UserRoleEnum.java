@@ -1,4 +1,4 @@
-package com.salmon.chatService.model.enums.user;
+package com.salmon.chatService.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,19 +8,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <p>
- * 用户--性别枚举
- * </p>
+ * 用户角色枚举
  *
  * @author Salmon
- * @since 2024-06-04
+ * @since 2024-06-05
  */
 @Getter
 @AllArgsConstructor
-public enum UserGenderEnum {
+public enum UserRoleEnum {
 
-    WOMAN("女", 0),
-    MAN("男", 1);
+    USER("用户", 0),
+    ADMIN("管理员", 1);
 
     private final String desc;
     private final int value;
@@ -37,23 +35,14 @@ public enum UserGenderEnum {
      *
      * @param value 键
      */
-    public static UserGenderEnum getEnumByValue(int value) {
+    public static UserRoleEnum getEnumByValue(int value) {
         if (getValues().contains(value)) {
-            for (UserGenderEnum userEnum : UserGenderEnum.values()) {
-                if (userEnum.value == value) {
-                    return userEnum;
+            for (UserRoleEnum userRoleEnum : UserRoleEnum.values()) {
+                if (userRoleEnum.value == value) {
+                    return userRoleEnum;
                 }
             }
         }
         return null;
-    }
-
-    /**
-     * 获取相应的布尔值
-     *
-     * @return 布尔
-     */
-    public boolean getBool() {
-        return this.value == 1;
     }
 }

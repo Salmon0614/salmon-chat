@@ -13,7 +13,7 @@ import ${packageName}.model.dto.${entityObj}.${entity}QueryRequest;
 import ${packageName}.model.dto.${entityObj}.${entity}UpdateRequest;
 import ${package.Entity}.${entity};
 import ${packageName}.model.vo.${entityObj}.${entity}VO;
-import ${packageName}.service.I${entity}Service;
+import ${packageName}.service.${entity}Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;

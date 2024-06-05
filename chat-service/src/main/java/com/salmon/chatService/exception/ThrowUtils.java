@@ -43,4 +43,14 @@ public class ThrowUtils {
         throwIf(condition, new BusinessException(errorCode, message));
     }
 
+    /**
+     * 条件成立则抛业务异常
+     *
+     * @param condition 条件
+     * @param message   异常信息
+     */
+    public static void throwIf(boolean condition, String message) {
+        throwIf(condition, new BusinessException(ErrorCode.OPERATION_ERROR, message));
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.salmon.chatService.model.enums.user;
+package com.salmon.chatService.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,19 +8,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <p>
- * 用户--性别枚举
- * </p>
+ * 验证码类型枚举
  *
  * @author Salmon
- * @since 2024-06-04
+ * @since 2024-06-05
  */
 @Getter
 @AllArgsConstructor
-public enum UserGenderEnum {
+public enum CheckCodeTypeEnum {
 
-    WOMAN("女", 0),
-    MAN("男", 1);
+    IMAGE("图像验证码", 0),
+    EMAIL("邮箱验证码", 1),
+    MOBILE("手机验证码", 2);
 
     private final String desc;
     private final int value;
@@ -37,23 +36,15 @@ public enum UserGenderEnum {
      *
      * @param value 键
      */
-    public static UserGenderEnum getEnumByValue(int value) {
+    public static CheckCodeTypeEnum getEnumByValue(int value) {
         if (getValues().contains(value)) {
-            for (UserGenderEnum userEnum : UserGenderEnum.values()) {
-                if (userEnum.value == value) {
-                    return userEnum;
+            for (CheckCodeTypeEnum codeTypeEnum : CheckCodeTypeEnum.values()) {
+                if (codeTypeEnum.value == value) {
+                    return codeTypeEnum;
                 }
             }
         }
         return null;
     }
 
-    /**
-     * 获取相应的布尔值
-     *
-     * @return 布尔
-     */
-    public boolean getBool() {
-        return this.value == 1;
-    }
 }

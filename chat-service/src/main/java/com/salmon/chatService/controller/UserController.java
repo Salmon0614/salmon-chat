@@ -10,7 +10,7 @@ import com.salmon.chatService.model.dto.user.UserQueryRequest;
 import com.salmon.chatService.model.dto.user.UserUpdateRequest;
 import com.salmon.chatService.model.po.User;
 import com.salmon.chatService.model.vo.user.UserVO;
-import com.salmon.chatService.service.IUserService;
+import com.salmon.chatService.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ import javax.annotation.Resource;
 public class UserController extends BaseController {
 
     @Resource
-    private IUserService userService;
+    private UserService userService;
 
     @Operation(summary = "添加用户")
     @PostMapping("/add")
