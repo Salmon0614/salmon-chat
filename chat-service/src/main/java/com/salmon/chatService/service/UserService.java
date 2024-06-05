@@ -1,7 +1,7 @@
 package com.salmon.chatService.service;
 
-import com.salmon.chatService.model.dto.account.EmailLogin;
-import com.salmon.chatService.model.dto.account.EmailRegister;
+import com.salmon.chatService.model.dto.account.EmailLoginRequest;
+import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
 import com.salmon.chatService.model.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
@@ -20,16 +20,16 @@ public interface UserService extends IService<User> {
     /**
      * 根据邮箱注册
      *
-     * @param emailRegister 邮箱注册信息
+     * @param emailRegisterRequest 邮箱注册信息
      */
-    void register(EmailRegister emailRegister);
+    void register(EmailRegisterRequest emailRegisterRequest);
 
     /**
      * 通过邮箱进行登录
      *
-     * @param emailLogin 登录信息
+     * @param emailLoginRequest 登录信息
      */
-    UserVO login(EmailLogin emailLogin);
+    UserVO login(EmailLoginRequest emailLoginRequest);
 
     /**
      * 设置token

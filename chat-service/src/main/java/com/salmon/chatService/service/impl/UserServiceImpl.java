@@ -9,8 +9,8 @@ import com.salmon.chatService.constant.RedisPrefixConstant;
 import com.salmon.chatService.constant.UserConstant;
 import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
-import com.salmon.chatService.model.dto.account.EmailLogin;
-import com.salmon.chatService.model.dto.account.EmailRegister;
+import com.salmon.chatService.model.dto.account.EmailLoginRequest;
+import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
 import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
 import com.salmon.chatService.model.enums.user.UserJoinTypeEnum;
 import com.salmon.chatService.model.po.User;
@@ -50,8 +50,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public void register(EmailRegister emailRegister) {
-        String email = emailRegister.getEmail();
+    public void register(EmailRegisterRequest emailRegisterRequest) {
+        String email = emailRegisterRequest.getEmail();
         if (this.count(new QueryWrapper<User>().eq("email", email)) > 0) {
             throw new BusinessException("该邮箱已被注册！");
         }
@@ -71,14 +71,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             role = UserRoleEnum.ADMIN.getValue();
         }
         // 查询是否是指定管理员
-        String encryptPassword = Utils.encryptPassword(emailRegister.getPassword(), salt);
+        String encryptPassword = Utils.encryptPassword(emailRegisterRequest.getPassword(), salt);
         User user = User.builder()
                 .avatar(UserConstant.DEFAULT_AVATAR)
                 .gender(UserConstant.DEFAULT_GENDER.getBool())
                 .account(account)
                 .email(email)
                 .role(role)
-                .nickname(emailRegister.getNickname())
+                .nickname(emailRegisterRequest.getNickname())
                 .password(encryptPassword)
                 .status(StatusEnum.ENABLE.getBool())
                 .joinType(UserJoinTypeEnum.AUTH.getValue())
@@ -91,9 +91,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserVO login(EmailLogin emailLogin) {
-        String email = emailLogin.getEmail();
-        String password = emailLogin.getPassword();
+    public UserVO login(EmailLoginRequest emailLoginRequest) {
+        String email = emailLoginRequest.getEmail();
+        String password = emailLoginRequest.getPassword();
         User user = this.getOne(new QueryWrapper<User>().eq("email", email));
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.NOT_FOUND_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(!user.getPassword().equals(Utils.encryptPassword(password, user.getSalt())), ErrorCode.PARAMS_ERROR, "账号或密码不正确！");

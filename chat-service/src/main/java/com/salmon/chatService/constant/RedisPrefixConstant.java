@@ -19,4 +19,6 @@ public interface RedisPrefixConstant {
     String LOGIN_SESSION_TOKEN = APP + "login_session_token:";
     // 一天
     Long LOGIN_SESSION_EXPIRE_TIME = 24 * 60 * 60L;
+    // APP 配置信息
+    String APP_SYS_CONFIG_SETTING = APP + "app_sys_config_setting";
 }

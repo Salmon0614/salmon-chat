@@ -7,10 +7,9 @@ import com.salmon.chatService.common.BaseController;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.constant.RedisPrefixConstant;
-import com.salmon.chatService.model.dto.account.EmailLogin;
-import com.salmon.chatService.model.dto.account.EmailRegister;
+import com.salmon.chatService.model.dto.account.EmailLoginRequest;
+import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
 import com.salmon.chatService.model.vo.account.CaptchaVo;
-import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.user.UserVO;
 import com.salmon.chatService.service.UserService;
 import com.salmon.chatService.utils.RedisUtils;
@@ -53,16 +52,16 @@ public class AccountController extends BaseController {
     @Operation(summary = "通过邮箱进行注册")
     @PostMapping("/registerByEmail")
     @CheckCode
-    public BaseResponse<?> registerByEmail(@RequestBody @Valid EmailRegister emailRegister) {
-        userService.register(emailRegister);
+    public BaseResponse<?> registerByEmail(@RequestBody @Valid EmailRegisterRequest emailRegisterRequest) {
+        userService.register(emailRegisterRequest);
         return ResultUtils.success();
     }
 
     @Operation(summary = "通过邮箱进行登录")
     @PostMapping("/loginByEmail")
     @CheckCode
-    public BaseResponse<UserVO> loginByEmail(@RequestBody @Valid EmailLogin emailLogin) {
-        UserVO userVO = userService.login(emailLogin);
+    public BaseResponse<UserVO> loginByEmail(@RequestBody @Valid EmailLoginRequest emailLoginRequest) {
+        UserVO userVO = userService.login(emailLoginRequest);
         return ResultUtils.success(userVO);
     }
 }
