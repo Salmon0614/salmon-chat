@@ -25,4 +25,4 @@ logging:
   level:
     com:
       salmon:
-        chatService: error
+        chatService: debug

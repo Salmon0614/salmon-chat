@@ -1,5 +1,7 @@
 package com.salmon.chatService.common;
 
+import org.springframework.validation.BindingResult;
+
 /**
  * 返回工具类
  *
@@ -75,4 +77,10 @@ public class ResultUtils {
         return error(ErrorCode.OPERATION_ERROR);
     }
 
+    /**
+     * 参数校验失败的返回
+     */
+    public static <T> BaseResponse<T> validateFail(BindingResult bindingResult) {
+        return error(ErrorCode.PARAMS_ERROR, bindingResult.getAllErrors().get(0).getDefaultMessage());
+    }
 }
