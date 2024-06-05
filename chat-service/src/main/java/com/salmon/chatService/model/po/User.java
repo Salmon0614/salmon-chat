@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 import java.io.Serial;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -24,6 +27,9 @@ import lombok.experimental.Accessors;
  * @since 2024-06-04
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @TableName("tb_user")
 @Schema(name = "User", description = "用户")
@@ -68,8 +74,8 @@ public class User implements Serializable {
     private String password;
 
     @Schema(description = "盐")
-    @TableField("secret")
-    private String secret;
+    @TableField("salt")
+    private String salt;
 
     @Schema(description = "地区")
     @TableField("area")

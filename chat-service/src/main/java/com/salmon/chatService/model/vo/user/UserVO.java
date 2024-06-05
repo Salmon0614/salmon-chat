@@ -49,7 +49,7 @@ public class UserVO implements Serializable {
     private String password;
 
     @Schema(description = "盐")
-    private String secret;
+    private String salt;
 
     @Schema(description = "地区")
     private String area;
