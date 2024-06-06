@@ -6,51 +6,6 @@ const { proxy } = getCurrentInstance()
 const formData = ref({})
 const formDataRef = ref()
 
-// 邮箱校验
-// const validate_email = (rule, value, callback) => {
-//   const emailRegExp = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-//   const emailRegExp1 = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
-//   if ((!emailRegExp.test(value) && value !== '') || (!emailRegExp1.test(value) && value !== '')) {
-//     callback(new Error('请输入有效邮箱格式！'))
-//   } else {
-//     callback()
-//   }
-// }
-
-// const rules = {
-//   // 邮箱
-//   email: [
-//     { required: true, message: '请输入邮箱', trigger: 'blur' },
-//     { validator: validate_email, trigger: ['blur'] }
-//   ],
-//   // 密码
-//   password: [
-//     { required: true, message: '请输入密码', trigger: 'blur' },
-//     { pattern: /^\S{6,15}$/, message: '密码必须是 6-15位 的非空字符', trigger: 'blur' }
-//   ],
-//   // 再次输入密码
-//   rePassword: [
-//     { required: true, message: '请输入密码', trigger: 'blur' },
-//     { pattern: /^\S{6,15}$/, message: '密码必须是 6-15位 的非空字符', trigger: 'blur' },
-//     {
-//       validator: (rule, value, callback) => {
-//         // 判断 value 和 当前 form 中收集的 password 是否一致
-//         if (value !== formData.value.password) {
-//           callback(new Error('两次输入密码不一致'))
-//         } else {
-//           callback() // 校验成功
-//         }
-//       },
-//       trigger: 'blur'
-//     }
-//   ],
-//   // 验证码
-//   checkCode: [
-//     { required: true, message: '请输入验证码', trigger: 'blur' }
-//     // {len: 4, message: '验证码长度为4个字符', trigger: 'blur'}
-//   ]
-// }
-
 // 0-登录页 1-注册页 2-忘记密码
 const viewType = ref(0)
 /**
@@ -124,19 +79,6 @@ const errorMsg = ref(null)
  * 提交表单
  */
 const submit = () => {
-  // 用element-ui表单校验
-  // formDataRef.value.validate(async (valid) => {
-  //   if (!valid) {
-  //     return;
-  //   }
-  //   if (viewType.value === 0) {
-  //     login();
-  //   } else if (viewType.value === 1) {
-  //     register();
-  //   } else {
-  //     updatePassword();
-  //   }
-  // })
   // 使用自定义校验
   cleanVerify()
   if (!proxy.verify.validateEmail(formData.value.email)) {
