@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.salmon.chatService.annotation.AccessLimit;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ErrorCode;
+import com.salmon.chatService.common.GetCodeMethodEnum;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.constant.RedisPrefixConstant;
 import com.salmon.chatService.utils.IpUtils;
@@ -37,6 +38,13 @@ public class WebSecurityHandler implements HandlerInterceptor {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             AccessLimit accessLimit = handlerMethod.getMethodAnnotation(AccessLimit.class);
             if (accessLimit != null) {
+                // 系统相关逻辑获取的，不必处理
+                String type = request.getHeader("type");
+                log.info("type:" + type);
+                log.info("type:{}", type);
+                if (GetCodeMethodEnum.SYSTEM.getValue().equals(type)) {
+                    return true;
+                }
                 int maxCount = accessLimit.maxCount();
                 int second = accessLimit.second();
                 String ipAddress = IpUtils.getIpAddress(request);
@@ -46,7 +54,7 @@ public class WebSecurityHandler implements HandlerInterceptor {
                     long curCount = RedisUtils.incrExpire(limit_key, second);
                     if (curCount > maxCount) {
                         render(response, ResultUtils.error(ErrorCode.LIMIT_ERROR));
-                        log.warn(limit_key + "请求次数超过每" + second + "秒" + maxCount + "次");
+                        log.warn(type + ": " + limit_key + "请求次数超过每" + second + "秒" + maxCount + "次");
                         return false;
                     }
                     return true;

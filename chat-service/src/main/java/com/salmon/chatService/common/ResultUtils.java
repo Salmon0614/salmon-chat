@@ -14,7 +14,7 @@ public class ResultUtils {
      * 成功
      */
     public static <T> BaseResponse<T> success() {
-        return new BaseResponse<>(0, null, "ok");
+        return new BaseResponse<>(ErrorCode.SUCCESS.getCode(), null, "ok");
     }
 
     /**
@@ -23,7 +23,7 @@ public class ResultUtils {
      * @param data 响应数据
      */
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(0, data, "ok");
+        return new BaseResponse<>(ErrorCode.SUCCESS.getCode(), data, "ok");
     }
 
     /**

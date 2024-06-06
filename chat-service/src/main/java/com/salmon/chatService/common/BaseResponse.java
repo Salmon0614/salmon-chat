@@ -25,7 +25,7 @@ public class BaseResponse<T> implements Serializable {
     private String message;
 
     @Schema(description = "code是否200")
-    private boolean isSuccess;
+    private Boolean isSuccess;
 
     public boolean isSuccess() {
         return this.code == ErrorCode.SUCCESS.getCode();
