@@ -9,9 +9,9 @@ const api = {
   // 账号相关
   account: {
     getCheckCode: '/account/getCheckCode', // 验证码
-    loginByEmail: '/account/login', // 登录
-    register: '/account/register', // 注册
-    updatePassword: '/account/updatePassword' // 忘记密码修改
+    loginByEmail: '/account/loginByEmail', // 登录
+    registerByEmail: '/account/registerByEmail', // 注册
+    forgetPassword: '/account/forgetPassword' // 忘记密码
   },
   // 用户信息相关
   userInfo: {

@@ -1,7 +1,11 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { useUserStore } from '@/stores/userStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const { proxy } = getCurrentInstance()
+const userStore = useUserStore()
 
 const formData = ref({})
 const formDataRef = ref()
@@ -30,10 +34,16 @@ const changeType = (type) => {
       // 其它页面切换表单全部恢复初值
       formData.value = { email: null, agree: false }
     }
-    getCheckCode('sys')
+    changeCheckCode('sys')
   })
   viewType.value = type
 }
+
+/**
+ * 显示加载
+ * @type {Ref<UnwrapRef<boolean>>}
+ */
+const showLoading = ref(false)
 
 /**
  * 获取验证码
@@ -41,10 +51,11 @@ const changeType = (type) => {
 const checkCodeUrl = ref(null)
 /**
  * 获取验证码
+ *
  * @param type 0-点击 1-切换
  * @returns {Promise<void>}
  */
-const getCheckCode = async (type = 'click', event) => {
+const changeCheckCode = async (type = 'click') => {
   let result = await proxy.$request({
     url: proxy.$api.account.getCheckCode,
     headersConfig: {
@@ -58,47 +69,105 @@ const getCheckCode = async (type = 'click', event) => {
   localStorage.setItem('checkCodeKey', result.data.codeKey)
 }
 
-getCheckCode('sys')
+changeCheckCode('sys')
 
 /**
  * 登录
  */
-const login = () => {}
+const login = async () => {
+  const checkCodeKey = localStorage.getItem('checkCodeKey')
+  if (!checkCodeKey) {
+    proxy.$message.error('请刷新验证码')
+    return
+  }
+  let result = await proxy.$request({
+    url: proxy.$api.account.loginByEmail,
+    showLoading: false,
+    showError: false,
+    params: {
+      email: formData.value.email,
+      password: formData.value.password,
+      checkCode: formData.value.checkCode,
+      checkCodeKey: checkCodeKey
+    },
+    errorCallback: (response) => {
+      showLoading.value = false
+      changeCheckCode('sys')
+      errorMsg.value = response.message
+    }
+  })
+  if (!result.isSuccess) {
+    return
+  }
+  console.log(result.data)
+  userStore.setUserInfo(result.data)
+  localStorage.setItem('token', result.data.token)
+  router.push('/main')
+}
 /**
  * 注册
  */
-const register = () => {}
+const register = async () => {
+  const checkCodeKey = localStorage.getItem('checkCodeKey')
+  if (!checkCodeKey) {
+    proxy.$message.error('请刷新验证码')
+    return
+  }
+  let result = await proxy.$request({
+    url: proxy.$api.account.registerByEmail,
+    showLoading: true,
+    showError: false,
+    params: {
+      email: formData.value.email,
+      password: formData.value.password,
+      nickname: formData.value.nickname,
+      checkCode: formData.value.checkCode,
+      checkCodeKey: checkCodeKey
+    },
+    errorCallback: (response) => {
+      showLoading.value = false
+      changeCheckCode('sys')
+      errorMsg.value = response.message
+    }
+  })
+  if (!result.isSuccess) {
+    return
+  }
+  proxy.$message.success('注册成功')
+  // 切换到登录页
+  changeType(0)
+}
 /**
  * 修改密码
  */
-const updatePassword = () => {}
+const updatePassword = async () => {}
 
 const errorMsg = ref(null)
 
 /**
  * 提交表单
  */
-const submit = () => {
+const submit = async () => {
   // 使用自定义校验
   cleanVerify()
-  if (!proxy.verify.validateEmail(formData.value.email)) {
-    errorMsg.value = '请输入有效邮箱格式！'
+  if (!proxy.$verify.validateEmail(formData.value.email)) {
+    errorMsg.value = '请输入正确的邮箱'
     return
   }
-  if (!proxy.verify.validatePassword(formData.value.password)) {
-    errorMsg.value = '密码至少8个字符，包含大小写字母和数字！'
+  if (viewType.value === 1 && !proxy.$verify.validatePassword(formData.value.password)) {
+    errorMsg.value = '密码至少8个字符，包含大小写字母和数字'
     return
   }
   if (viewType.value !== 0 && formData.value.password !== formData.value.rePassword) {
-    errorMsg.value = '两次输入密码不一致！'
+    errorMsg.value = '两次输入密码不一致'
     return
   }
   if (viewType.value === 0) {
-    login()
+    await login()
   } else if (viewType.value === 1) {
-    register()
+    await register()
   } else {
-    updatePassword()
+    await updatePassword()
   }
 }
 
@@ -203,7 +272,7 @@ const cleanVerify = () => {
                 <span class="iconfont icon-checkcode"></span>
               </template>
             </el-input>
-            <img :src="checkCodeUrl" class="check-code" @click="getCheckCode()" />
+            <img :src="checkCodeUrl" class="check-code" @click="changeCheckCode()" />
           </div>
         </el-form-item>
         <div class="error-msg">{{ errorMsg }}</div>

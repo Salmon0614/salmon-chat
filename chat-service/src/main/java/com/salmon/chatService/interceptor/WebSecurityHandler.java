@@ -40,8 +40,6 @@ public class WebSecurityHandler implements HandlerInterceptor {
             if (accessLimit != null) {
                 // 系统相关逻辑获取的，不必处理
                 String type = request.getHeader("type");
-                log.info("type:" + type);
-                log.info("type:{}", type);
                 if (GetCodeMethodEnum.SYSTEM.getValue().equals(type)) {
                     return true;
                 }

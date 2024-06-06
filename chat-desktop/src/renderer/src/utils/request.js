@@ -83,13 +83,13 @@ const request = (config) => {
     showError = true,
     headersConfig = {}
   } = config
-  let contentType = contentTypeForm
+  let contentType = contentTypeJson
   let formData = new FormData() // 创建form对象
   for (let key in params) {
     formData.append(key, params[key] === undefined ? '' : params[key])
   }
-  if (dataType != null && dataType === 'json') {
-    contentType = contentTypeJson
+  if (dataType != null && dataType === 'form') {
+    contentType = contentTypeForm
   }
   const token = localStorage.getItem('token')
   let headers = {

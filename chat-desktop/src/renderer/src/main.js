@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
 import router from '@/router'
+import * as Pinia from 'pinia'
 
 // 样式
 import 'element-plus/dist/index.css'
@@ -20,7 +21,7 @@ const app = createApp(App)
 
 app.use(router)
 app.use(ElementPlus)
-
+app.use(Pinia.createPinia())
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request
