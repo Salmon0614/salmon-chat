@@ -51,6 +51,9 @@ public class UserVO implements Serializable {
     @Schema(description = "登录凭证")
     private String token;
 
+    @Schema(description = "是否是管理员")
+    private Boolean isAdmin;
+
 
     /**
      * 封装类转对象

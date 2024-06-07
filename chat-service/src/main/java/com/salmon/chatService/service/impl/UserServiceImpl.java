@@ -106,10 +106,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         TokenUserVo tokenUserVo = TokenUserVo.objToVo(user);
         String token = Utils.generateToken(user.getAccount());
         this.setUserToken(token, tokenUserVo);
-        // todo 查询群、联系人信息等、ws心跳 p-8
 
-        UserVO userVO=UserVO.objToVo(user);
+        // todo 查询群、联系人信息等、ws心跳 p-8
+        UserVO userVO = UserVO.objToVo(user);
         userVO.setToken(token);
+        userVO.setIsAdmin(user.getRole() == UserRoleEnum.ADMIN.getValue());
         return userVO;
     }
 
