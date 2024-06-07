@@ -24,6 +24,16 @@ const router = createRouter({
           path: '/chat',
           name: '聊天',
           component: () => import('@/views/chat/Chat.vue')
+        },
+        {
+          path: '/contact',
+          name: '联系人',
+          component: () => import('@/views/contact/Contact.vue')
+        },
+        {
+          path: '/setting',
+          name: '设置',
+          component: () => import('@/views/setting/Setting.vue')
         }
       ]
     }
