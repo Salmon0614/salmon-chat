@@ -1,4 +1,4 @@
-import {ElMessage} from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const showMessage = (msg, callback, type) => {
   ElMessage({
@@ -7,7 +7,7 @@ const showMessage = (msg, callback, type) => {
     duration: 2000,
     onClose: () => {
       if (callback) {
-        callback();
+        callback()
       }
     }
   })
@@ -15,14 +15,14 @@ const showMessage = (msg, callback, type) => {
 
 const message = {
   error: (msg, callback) => {
-    showMessage(msg, callback, "error");
+    showMessage(msg, callback, 'error')
   },
   success: (msg, callback) => {
-    showMessage(msg, callback, "success");
+    showMessage(msg, callback, 'success')
   },
   warning: (msg, callback) => {
-    showMessage(msg, callback, "warning");
-  },
+    showMessage(msg, callback, 'warning')
+  }
 }
 
-export default message;
+export default message
