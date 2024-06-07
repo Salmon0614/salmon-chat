@@ -18,7 +18,7 @@ const viewType = ref(0)
  */
 const changeType = (type) => {
   // 发生渲染进程通信
-  window.changeType.send(type)
+  window.changeWindowSize.changeLoginWindow(type)
   cleanVerify()
   nextTick(() => {
     formDataRef.value.resetFields()
@@ -80,6 +80,7 @@ const login = async () => {
     proxy.$message.error('请刷新验证码')
     return
   }
+  showLoading.value = true
   let result = await proxy.$request({
     url: proxy.$api.account.loginByEmail,
     showLoading: false,
@@ -96,13 +97,25 @@ const login = async () => {
       errorMsg.value = response.message
     }
   })
-  if (!result.isSuccess) {
+  if (!result || !result.isSuccess) {
     return
   }
-  console.log(result.data)
+  router.push('/main')
   userStore.setUserInfo(result.data)
   localStorage.setItem('token', result.data.token)
-  router.push('/main')
+  const screenWidth = window.screen.width
+  const screenHeight = window.screen.height
+  window.changeWindowSize.changeChatWindow({
+    email: result.data.email,
+    token: result.data.token,
+    account: result.data.account,
+    mobile: result.data.mobile,
+    nickname: result.data.nickname,
+    isAdmin: result.data.isAdmin,
+    userId: result.data.id,
+    screenWidth: screenWidth,
+    screenHeight: screenHeight
+  })
 }
 /**
  * 注册
@@ -202,6 +215,9 @@ const cleanVerify = () => {
 <template>
   <div class="login-panel">
     <div class="title drag">SalmonChat</div>
+    <div v-if="showLoading" class="loading-panel">
+      <img src="@/assets/img/loading.gif" />
+    </div>
     <div class="login-form">
       <el-form ref="formDataRef" :model="formData" label-width="0px" @submit.prevent>
         <el-form-item prop="email">

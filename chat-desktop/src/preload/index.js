@@ -1,6 +1,6 @@
 // preload.js 预加载脚本
-import {contextBridge, ipcRenderer} from 'electron'
-import {electronAPI} from '@electron-toolkit/preload'
+import { contextBridge, ipcRenderer } from 'electron'
+import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {}
@@ -13,13 +13,14 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
     // 将使用node模块的接口暴露给渲染进程使用
-    contextBridge.exposeInMainWorld(
-      'changeType', {
-        send: (data) => {
-          ipcRenderer.send("loginOrRegisterOrForget", data);
-        },
+    contextBridge.exposeInMainWorld('changeWindowSize', {
+      changeLoginWindow: (data) => {
+        ipcRenderer.send('loginOrRegisterOrForget', data)
+      },
+      changeChatWindow: (config) => {
+        ipcRenderer.send('openChatMain', config)
       }
-    )
+    })
   } catch (error) {
     console.error(error)
   }

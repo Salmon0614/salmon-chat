@@ -1,36 +1,38 @@
-import {app, shell, BrowserWindow, ipcMain} from 'electron'
-import {join} from 'path'
-import {electronApp, optimizer, is} from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { app, shell, BrowserWindow } from 'electron'
+import { join } from 'path'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+// import icon from '../../resources/icon.png?asset'
+
+import { resizeWindow, onLoginOrRegisterOrForget, onLogin, onLogout } from './ipc'
 
 const NODE_ENV = process.env.NODE_ENV
 
-const login_width = 330;
-const login_height = 440;
-const register_height = 570;
-const forget_password_height = 460;
+const login_width = 330
+const login_height = 440
+const register_height = 570
+const forget_password_height = 470
 
-let iconPath;
+let iconPath
 // 根据平台设置图标路径
 if (process.platform === 'darwin') {
-  iconPath = join(__dirname, '../../resources/icon.icns?asset');
+  iconPath = join(__dirname, '../../resources/icon.icns?asset')
 } else if (process.platform === 'win32') {
-  iconPath = join(__dirname, '../../resources/icon.ico?asset');
+  iconPath = join(__dirname, '../../resources/icon.ico?asset')
 } else if (process.platform === 'linux') {
-  iconPath = join(__dirname, '../../resources/icon.png?asset');
+  iconPath = join(__dirname, '../../resources/icon.png?asset')
 }
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    title: "SalmonChat",
+    title: 'SalmonChat',
     icon: iconPath,
     width: login_width,
     height: login_height,
     show: false,
     autoHideMenuBar: true,
     // 窗口的bar隐藏
-    titleBarStyle: "hidden",
+    titleBarStyle: 'hidden',
     // 是否可以调整窗口大小
     resizable: false,
     // 隐藏窗口的边框
@@ -40,40 +42,25 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true, // 为了解决require 识别问题
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: false
       // 上下文隔离（官方不建议关闭）
       // contextIsolation: false,
-    },
-  })
-
-  // 主进程监听渲染进程发送的消息（渲染进程触发该信号，主进程接收信号，实现渲染进程到主进程的通信）
-  ipcMain.on("loginOrRegisterOrForget", (event, viewType) => {
-    // 临时允许修改窗口大小
-    mainWindow.setResizable(true);
-    if (viewType === 2) {
-      mainWindow.setSize(login_width, forget_password_height);
-    } else if (viewType === 1) {
-      mainWindow.setSize(login_width, register_height);
-    } else {
-      mainWindow.setSize(login_width, login_height);
     }
-    // 不允许修改窗口大小
-    mainWindow.setResizable(false);
   })
 
   //打开控制台
   if (NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools()
   }
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
-    mainWindow.setTitle("SalmonChat");
+    mainWindow.show()
+    mainWindow.setTitle('SalmonChat')
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return {action: 'deny'}
+    return { action: 'deny' }
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -83,6 +70,36 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // 监听登录、注册、忘记密码窗口
+  onLoginOrRegisterOrForget((viewType) => {
+    let width = login_width
+    let height = login_height
+    if (viewType === 2) {
+      width = login_width
+      height = forget_password_height
+    } else if (viewType === 1) {
+      width = login_width
+      height = register_height
+    }
+    resizeWindow(mainWindow, width, height)
+  })
+
+  onLogin((config) => {
+    resizeWindow(mainWindow, 850, 800)
+    // 居中显示
+    mainWindow.center()
+    // 可以最大化
+    mainWindow.setMaximizable(true)
+    // 设置最小的窗口大小
+    mainWindow.setMinimumSize(800, 600)
+
+    // todo 管理后台的窗口操作，托盘操作
+    if (config.isAdmin) {
+      // 管理后台的窗口
+      console.log('admin')
+    }
+  })
 }
 
 // This method will be called when Electron has finished
@@ -101,7 +118,7 @@ app.whenReady().then(() => {
 
   if (process.platform === 'darwin') {
     // app.dock.setIcon(iconPath);
-    app.setName("SalmonChat");
+    app.setName('SalmonChat')
     // app.dock.setBadge("SalmonChat");
   }
 
