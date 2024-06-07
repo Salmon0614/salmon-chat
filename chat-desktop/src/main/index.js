@@ -86,7 +86,7 @@ function createWindow() {
   })
 
   onLogin((config) => {
-    resizeWindow(mainWindow, 850, 800)
+    resizeWindow(mainWindow, 850, 800, true)
     // 居中显示
     mainWindow.center()
     // 可以最大化

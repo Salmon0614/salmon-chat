@@ -41,14 +41,15 @@ const onLogout = (callback) => {
  * @param mainWindow
  * @param width
  * @param height
+ * @param isAllow
  */
-const resizeWindow = (mainWindow, width, height) => {
+const resizeWindow = (mainWindow, width, height, isAllow = false) => {
   console.log('调整窗口大小...', width, height)
   // 临时允许修改窗口大小
   mainWindow.setResizable(true)
   mainWindow.setSize(width, height)
   // 不允许修改窗口大小
-  mainWindow.setResizable(false)
+  mainWindow.setResizable(isAllow)
 }
 
 export { onLoginOrRegisterOrForget, onLogin, onLogout, resizeWindow }
