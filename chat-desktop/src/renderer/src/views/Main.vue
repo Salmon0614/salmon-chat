@@ -73,7 +73,10 @@ const changeMenu = (menu) => {
       </div>
     </div>
     <div class="right-container">
+      <!-- router-view 自动为你提供了当前匹配的组件，并通过作用域插槽传递出来 -->
       <router-view v-slot="{ Component }">
+        <!-- 缓存包裹的动态组件，chat 组件会被缓存，其他组件在被移除时不会被缓存 -->
+        <!-- 指定要渲染的组件，这里 Component 是从 router-view 传递过来的当前匹配的路由组件。-->
         <keep-alive include="chat">
           <component :is="Component" ref="componentRef"></component>
         </keep-alive>
@@ -88,7 +91,6 @@ const changeMenu = (menu) => {
   display: flex;
   border-radius: 0 3px 3px 0;
   overflow: hidden;
-  height: calc(100vh);
 
   //左侧边栏
   .left-sidebar {

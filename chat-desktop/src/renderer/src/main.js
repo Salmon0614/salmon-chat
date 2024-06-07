@@ -10,6 +10,9 @@ import '@/assets/cust-elementplus.scss'
 import '@/assets/base.scss'
 import '@/assets/icon/iconfont.css'
 
+// 常用组件
+import Layout from '@/components/Layout.vue'
+
 // 常用工具
 import utils from '@/utils/utils'
 import verify from '@/utils/verify'
@@ -22,6 +25,7 @@ const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
 app.use(Pinia.createPinia())
+app.component('Layout', Layout)
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request
