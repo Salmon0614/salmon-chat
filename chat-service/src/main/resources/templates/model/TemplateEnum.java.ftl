@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public enum ${entity}Enum {
-
+    USER("", 0);
     private final String desc;
     private final int value;
 
