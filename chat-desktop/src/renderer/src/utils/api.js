@@ -32,7 +32,7 @@ const api = {
   },
   // 好友相关
   contact: {
-    search: '/contact/search', //搜索好友
+    search: '/contact/search', //搜索好友/群
     applyAdd: '/contact/applyAdd', //申请加入
     loadApply: '/contact/loadApply', //获取申请列表
     dealWithApply: '/contact/dealWithApply', //处理申请

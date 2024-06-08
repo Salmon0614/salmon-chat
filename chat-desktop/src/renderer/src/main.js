@@ -13,6 +13,7 @@ import '@/assets/icon/iconfont.css'
 // 常用组件
 import Layout from '@/components/Layout.vue'
 import WinOp from '@/components/WinOp.vue'
+import ContentPanel from '@/components/ContentPanel.vue'
 
 // 常用工具
 import utils from '@/utils/utils'
@@ -28,6 +29,7 @@ app.use(ElementPlus)
 app.use(Pinia.createPinia())
 app.component('Layout', Layout)
 app.component('WinOp', WinOp)
+app.component('ContentPanel', ContentPanel)
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request

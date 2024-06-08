@@ -67,8 +67,17 @@ let partList = ref([
   }
 ])
 
+const rightTitle = ref(null)
 const search = () => {}
-const partJump = (part) => {}
+const partJump = (part) => {
+  if (part.showTitle) {
+    rightTitle.value = part.name
+  } else {
+    rightTitle.value = null
+  }
+  // todo 处理联系人好友申请数量已读
+  router.push(part.path)
+}
 </script>
 
 <template>
