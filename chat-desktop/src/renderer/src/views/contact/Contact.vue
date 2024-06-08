@@ -2,10 +2,12 @@
 import Layout from '../../components/Layout.vue'
 import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import WinOp from '../../components/WinOp.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { proxy } = getCurrentInstance()
+const isMac = window.electron.process.platform === 'darwin'
 
 const searchKey = ref(null)
 
@@ -96,7 +98,7 @@ const partJump = (part) => {}
               ></div>
               <div class="text">{{ subPart.name }}</div>
             </div>
-            <template v-for="(contact, index2) in part.contactData" :key="index2"> </template>
+            <template v-for="(contact, index2) in part.contactData" :key="index2"></template>
 
             <template v-if="part.contactData && part.contactData.length === 0">
               <div class="no-data">{{ part.emptyMsg }}</div>
@@ -109,6 +111,7 @@ const partJump = (part) => {}
       <div class="title-panel drag"></div>
     </template>
   </Layout>
+  <win-op :show-min="!isMac" :close-type="1" :show-max="!isMac" :show-close="!isMac"></win-op>
 </template>
 
 <style scoped lang="scss">
