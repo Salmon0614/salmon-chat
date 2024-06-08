@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ${superControllerClassPackage};
 </#if>
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -51,7 +52,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "添加${table.comment!}")
     @PostMapping("/add")
-    public BaseResponse<Object> add${entity}(@RequestBody ${entity}AddRequest request) {
+    public BaseResponse<Object> add${entity}(@RequestBody @Valid ${entity}AddRequest request) {
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
         ${entity} ${entityObj} = new ${entity}();
         BeanUtils.copyProperties(request, ${entityObj});
@@ -61,7 +62,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "修改${table.comment!}")
     @PostMapping("/update")
-    public BaseResponse<Object> update${entity}(@RequestBody ${entity}UpdateRequest request) {
+    public BaseResponse<Object> update${entity}(@RequestBody @Valid ${entity}UpdateRequest request) {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         ${entity} ${entityObj} = new ${entity}();
         BeanUtils.copyProperties(request, ${entityObj});
@@ -72,7 +73,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "删除${table.comment!}")
     @PostMapping("/delete")
-    public BaseResponse<Object> delete${entity}(@RequestBody DeleteRequest request) {
+    public BaseResponse<Object> delete${entity}(@RequestBody @Valid DeleteRequest request) {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(!${entityObj}Service.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(); 
@@ -80,7 +81,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "根据ID查询${table.comment!}")
     @PostMapping("/getById")
-    public BaseResponse<${entity}VO> get${entity}ById(@RequestBody IdRequest request) {
+    public BaseResponse<${entity}VO> get${entity}ById(@RequestBody @Valid IdRequest request) {
         ${entity} ${entityObj} = ${entityObj}Service.getById(request.getId());
         ${entity}VO ${entityObj}VO = new ${entity}VO();
         BeanUtils.copyProperties(${entityObj}, ${entityObj}VO);
@@ -89,7 +90,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "分页查询${table.comment!}")
     @PostMapping("/queryPage")
-    public BaseResponse<Page<${entity}>> query${entity}Page(@RequestBody ${entity}QueryRequest request) {
+    public BaseResponse<Page<${entity}>> query${entity}Page(@RequestBody @Valid ${entity}QueryRequest request) {
         long current = request.getCurrent();
         long size = request.getPageSize();
         QueryWrapper<${entity}> queryWrapper = new QueryWrapper<>();

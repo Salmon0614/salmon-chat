@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 </#if>
 import java.io.Serial;
 import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 <#assign a = 0>
 <#assign b = 0>
 <#assign c = 0>
@@ -52,6 +54,11 @@ public class ${entity}AddRequest implements Serializable {
      * ${field.comment}
      */
         </#if>
+    </#if>
+    <#if field.propertyType = "String">
+    @NotBlank(message = "${field.comment}不能为空")
+    <#else>
+    @NotNull(message = "${field.comment}不能为空")
     </#if>
     private ${field.propertyType} ${field.propertyName};
 
