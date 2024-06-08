@@ -80,14 +80,16 @@ function createWindow() {
   }
 
   // 托盘，mac默认有退出按钮，无需重复添加
-  const contextMenu = [
-    {
-      label: '退出',
-      click: function () {
-        app.exit()
-      }
-    }
-  ]
+  const contextMenu = isMac
+    ? []
+    : [
+        {
+          label: '退出',
+          click: function () {
+            app.exit()
+          }
+        }
+      ]
   const tray = new Tray(iconPath)
   const menu = Menu.buildFromTemplate(contextMenu)
   Menu.setApplicationMenu(menu)

@@ -109,6 +109,9 @@ const partJump = (part) => {}
     </template>
     <template #right-content>
       <div class="title-panel drag"></div>
+      <router-view v-slot="{ Component }">
+        <component :is="Component" ref="componentRef"></component>
+      </router-view>
     </template>
   </Layout>
   <win-op :show-min="!isMac" :close-type="1" :show-max="!isMac" :show-close="!isMac"></win-op>
