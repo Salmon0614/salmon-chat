@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GroupService extends IService<Group> {
 
+    /**
+     * 用户创建或修改群组
+     *
+     * @param group 群组
+     */
+    void saveOrUpdateGroup(Group group);
 }

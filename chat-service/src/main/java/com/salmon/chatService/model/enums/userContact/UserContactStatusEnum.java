@@ -17,8 +17,15 @@ import java.util.stream.Collectors;
  */
 @Getter
 @AllArgsConstructor
-public enum UserContactEnum {
-    USER("", 0);
+public enum UserContactStatusEnum {
+
+    NOT_FRIEND("非好友", 0),
+    FRIEND("好友", 1),
+    DEL("已删除好友", 2),
+    BE_DEL("被好友删除", 3),
+    BLACK("拉黑好友", 4),
+    BE_BLACK("被好友拉黑", 5);
+
     private final String desc;
     private final int value;
 
@@ -34,11 +41,11 @@ public enum UserContactEnum {
      *
      * @param value 键
      */
-    public static UserContactEnum getEnumByValue(int value) {
+    public static UserContactStatusEnum getEnumByValue(int value) {
         if (getValues().contains(value)) {
-            for (UserContactEnum userContactEnum : UserContactEnum.values()) {
-                if (userContactEnum.value == value) {
-                    return userContactEnum;
+            for (UserContactStatusEnum userContactStatusEnum : UserContactStatusEnum.values()) {
+                if (userContactStatusEnum.value == value) {
+                    return userContactStatusEnum;
                 }
             }
         }

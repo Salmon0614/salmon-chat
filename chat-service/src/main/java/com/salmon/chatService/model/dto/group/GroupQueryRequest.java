@@ -43,10 +43,10 @@ public class GroupQueryRequest extends PageRequest implements Serializable {
     private Integer version;
 
     @Schema(description = "加入类型 0-直接加入 1-管理员同意加入")
-    private Boolean joinType;
+    private Integer joinType;
 
     @Schema(description = "状态 0-正常 1-解散")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;

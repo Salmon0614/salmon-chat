@@ -29,14 +29,21 @@ public class Utils {
      * 生成用户账号
      */
     public static String generateAccount() {
-        return UserContactTypeEnum.USER.getPrefix() + RandomUtil.randomNumbers(10);
+        return UserContactTypeEnum.USER.getPrefix() + RandomUtil.randomNumbers(11);
+    }
+
+    /**
+     * 生成用户账号
+     */
+    public static String generateGroupNumber() {
+        return UserContactTypeEnum.GROUP.getPrefix() + RandomUtil.randomNumbers(11);
     }
 
     /**
      * 生成盐
      */
     public static String getSalt() {
-        return RandomStringUtils.random(8, true, true);
+        return RandomStringUtils.random(15, true, true);
     }
 
     /**

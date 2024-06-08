@@ -1,5 +1,6 @@
 package com.salmon.chatService.controller;
 
+import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.model.dto.admin.SystemConfigRequest;
@@ -34,6 +35,7 @@ public class AppController {
 
     @Operation(summary = "获取APP系统配置参数")
     @PostMapping("/getSystemConfig")
+    @CheckAuth(needAdmin = true)
     public BaseResponse<SystemConfigVo> getSystemConfig() {
         SystemConfigVo systemConfig = appService.getSystemConfig();
         return ResultUtils.success(systemConfig);
@@ -41,6 +43,7 @@ public class AppController {
 
     @Operation(summary = "保存APP系统配置参数")
     @PostMapping("/saveSystemConfig")
+    @CheckAuth(needAdmin = true)
     public BaseResponse<SystemConfigVo> saveSystemConfig(@RequestBody SystemConfigRequest systemConfigRequest) {
         appService.saveOrUpdateSystemConfig(systemConfigRequest);
         return ResultUtils.success(new SystemConfigVo());

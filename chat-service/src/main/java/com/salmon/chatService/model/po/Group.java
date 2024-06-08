@@ -62,11 +62,15 @@ public class Group implements Serializable {
 
     @Schema(description = "加入类型 0-直接加入 1-管理员同意加入")
     @TableField("join_type")
-    private Boolean joinType;
+    private Integer joinType;
 
     @Schema(description = "状态 0-正常 1-解散")
     @TableField("status")
-    private Boolean status;
+    private Integer status;
+
+    @Schema(description = "群封面")
+    @TableField("group_cover")
+    private String groupCover;
 
     @Schema(description = "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)

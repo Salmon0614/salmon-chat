@@ -29,13 +29,13 @@ public class UserContactAddRequest implements Serializable {
     private Integer contactId;
 
     @Schema(description = "联系人类型 0-好友 1-群组")
-    private Boolean contactType;
+    private Integer contactType;
 
     @Schema(description = "版本号")
     private Integer version;
 
     @Schema(description = "状态 0-非好友 1-好友 2-已删除好友 3-被好友删除 4-拉黑好友 5-被好友拉黑")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;

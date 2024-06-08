@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 群组枚举
+ * 群组状态枚举
  * </p>
  *
  * @author Salmon
@@ -17,8 +17,11 @@ import java.util.stream.Collectors;
  */
 @Getter
 @AllArgsConstructor
-public enum GroupEnum {
-    USER("", 0);
+public enum GroupStatusEnum {
+
+    NORMAL("正常", 0),
+    DISSOLUTION("解散", 1);
+
     private final String desc;
     private final int value;
 
@@ -34,11 +37,11 @@ public enum GroupEnum {
      *
      * @param value 键
      */
-    public static GroupEnum getEnumByValue(int value) {
+    public static GroupStatusEnum getEnumByValue(int value) {
         if (getValues().contains(value)) {
-            for (GroupEnum groupEnum : GroupEnum.values()) {
-                if (groupEnum.value == value) {
-                    return groupEnum;
+            for (GroupStatusEnum groupStatusEnum : GroupStatusEnum.values()) {
+                if (groupStatusEnum.value == value) {
+                    return groupStatusEnum;
                 }
             }
         }

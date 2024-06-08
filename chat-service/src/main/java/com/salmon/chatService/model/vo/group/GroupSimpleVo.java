@@ -1,25 +1,22 @@
 package com.salmon.chatService.model.vo.group;
 
-import lombok.Data;
 import com.salmon.chatService.model.po.Group;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
- * <p>
- * 群组视图
- * </p>
+ * 群组视图（好友列表页）
  *
  * @author Salmon
- * @since 2024-06-08
+ * @since 2024-06-09
  */
 @Data
-@Schema(name = "GroupVO", description = "群组视图")
-public class GroupVO implements Serializable {
+@Schema(name = "GroupSimpleVo", description = "群组视图（好友列表页）")
+public class GroupSimpleVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,34 +36,18 @@ public class GroupVO implements Serializable {
     @Schema(description = "群封面")
     private String groupCover;
 
-    @Schema(description = "群主账号")
-    private String groupOwnerAccount;
-
-    @Schema(description = "群通知")
-    private String groupNotice;
-
-    @Schema(description = "加入类型 0-直接加入 1-管理员同意加入")
-    private Integer joinType;
-
-    @Schema(description = "状态 0-正常 1-解散")
-    private Integer status;
-
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
-
-
     /**
      * 封装类转对象
      *
-     * @param groupVO 视图对象
+     * @param groupSimpleVo 视图对象
      * @return 数据库对象
      */
-    public static Group voToObj(GroupVO groupVO) {
-        if (groupVO == null) {
+    public static Group voToObj(GroupSimpleVo groupSimpleVo) {
+        if (groupSimpleVo == null) {
             return null;
         }
         Group group = new Group();
-        BeanUtils.copyProperties(groupVO, group);
+        BeanUtils.copyProperties(groupSimpleVo, group);
         return group;
     }
 
@@ -76,12 +57,12 @@ public class GroupVO implements Serializable {
      * @param group 数据库对象
      * @return 视图对象
      */
-    public static GroupVO objToVo(Group group) {
+    public static GroupSimpleVo objToVo(Group group) {
         if (group == null) {
             return null;
         }
-        GroupVO groupVO = new GroupVO();
-        BeanUtils.copyProperties(group, groupVO);
-        return groupVO;
+        GroupSimpleVo groupSimpleVo = new GroupSimpleVo();
+        BeanUtils.copyProperties(group, groupSimpleVo);
+        return groupSimpleVo;
     }
 }
