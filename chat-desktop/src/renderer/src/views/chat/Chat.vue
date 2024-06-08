@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+import Layout from '../../components/Layout.vue'
+</script>
 
 <template>
-  <div class="body">聊天主窗口.。。。。</div>
+  <Layout> </Layout>
 </template>
 
 <style scoped lang="scss">

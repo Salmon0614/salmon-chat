@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+import Layout from '../../components/Layout.vue'
+</script>
 
 <template>
-  <div>设置页面</div>
+  <Layout></Layout>
 </template>
 
 <style scoped lang="scss"></style>
