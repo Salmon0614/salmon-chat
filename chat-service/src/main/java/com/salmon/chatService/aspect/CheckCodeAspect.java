@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 public class CheckCodeAspect {
 
     /**
-     * 设置操作日志切入点 记录操作日志 在注解的位置切入代码
+     * 切入点，在注解的位置切入代码
      */
     @Pointcut("@annotation(com.salmon.chatService.annotation.CheckCode)")
     public void checkCodeCut() {

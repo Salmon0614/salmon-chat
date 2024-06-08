@@ -1,6 +1,6 @@
 package com.salmon.chatService.model.vo.app;
 
-import com.salmon.chatService.constant.CommonConstant;
+import com.salmon.chatService.constant.Settings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class SystemConfigVo implements Serializable {
     // 文件大小
     private Integer maxFileSize = 5;
     // 机器人账号
-    private String robotUAccount = CommonConstant.ROBOT_ACCOUNT;
+    private String robotUAccount = Settings.ROBOT_ACCOUNT;
     // 机器人昵称
     private String robotNickName = "SalmonChat";
     // 机器人欢迎语

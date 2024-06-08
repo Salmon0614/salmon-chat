@@ -14,11 +14,13 @@ public interface RedisPrefixConstant {
     Long CODE_EXPIRE_TIME = 10 * 60L;
     // 限流
     String ACCESS_LIMIT = APP + "access_limit:";
-    // 登录状态
-    String LOGIN_SESSION = APP + "login_session:";
-    String LOGIN_SESSION_TOKEN = APP + "login_session_token:";
-    // 一天
-    Long LOGIN_SESSION_EXPIRE_TIME = 24 * 60 * 60L;
     // APP 配置信息
     String APP_SYS_CONFIG_SETTING = APP + "app_sys_config_setting";
+
+    //----------------------登录-------------------------
+    // 用户登录信息存储 token
+    String LOGIN_SESSION = APP + "login_session:";
+    // 存储用户token信息
+    String USER_TOKEN = APP + "user_token:";
+
 }

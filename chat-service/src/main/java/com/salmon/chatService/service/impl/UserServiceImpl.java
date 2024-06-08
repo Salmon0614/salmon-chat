@@ -6,6 +6,7 @@ import com.salmon.chatService.common.StatusEnum;
 import com.salmon.chatService.common.UserRoleEnum;
 import com.salmon.chatService.config.app.AppConfig;
 import com.salmon.chatService.constant.RedisPrefixConstant;
+import com.salmon.chatService.constant.Settings;
 import com.salmon.chatService.constant.UserConstant;
 import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
@@ -116,8 +117,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public void setUserToken(String token, TokenUserVo tokenUserVo) {
-        RedisUtils.set(RedisPrefixConstant.LOGIN_SESSION + token, tokenUserVo, RedisPrefixConstant.LOGIN_SESSION_EXPIRE_TIME);
-        RedisUtils.set(RedisPrefixConstant.LOGIN_SESSION_TOKEN + tokenUserVo.getId(), token, RedisPrefixConstant.LOGIN_SESSION_EXPIRE_TIME);
+        RedisUtils.set(RedisPrefixConstant.LOGIN_SESSION + token, tokenUserVo, Settings.SESSION_EXPIRE_TIME);
+        RedisUtils.set(RedisPrefixConstant.USER_TOKEN + tokenUserVo.getId(), token,  Settings.SESSION_EXPIRE_TIME);
     }
 
     @Override

@@ -22,8 +22,10 @@ public interface CommonConstant {
      * 响应 JSON 格式
      */
     String APPLICATION_JSON = "application/json;charset=utf-8";
+
     /**
-     * 机器人账号
+     * header头token字段
      */
-    String ROBOT_ACCOUNT = "SU9913111088";
+    String TOKEN = "token";
+
 }
