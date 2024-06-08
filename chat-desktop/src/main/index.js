@@ -1,32 +1,25 @@
-import { app, shell, BrowserWindow } from 'electron'
+import electron, { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import icon from '../../resources/icon.png?asset'
 
-import { resizeWindow, onLoginOrRegisterOrForget, onLogin, onLogout } from './ipc'
+import { resizeWindow, onLoginOrRegisterOrForget, onLogin, onLogout, winOperate } from './ipc'
 
 const NODE_ENV = process.env.NODE_ENV
+const isMac = process.platform === 'darwin'
 
 const login_width = 330
 const login_height = 440
 const register_height = 570
 const forget_password_height = 470
 
-let iconPath
-// 根据平台设置图标路径
-if (process.platform === 'darwin') {
-  iconPath = join(__dirname, '../../resources/icon.icns?asset')
-} else if (process.platform === 'win32') {
-  iconPath = join(__dirname, '../../resources/icon.ico?asset')
-} else if (process.platform === 'linux') {
-  iconPath = join(__dirname, '../../resources/icon.png?asset')
-}
+let iconPath = join(__dirname, '../../resources/icon.png')
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'SalmonChat',
-    icon: iconPath,
+    icon: iconPath, // 只对 windows/Linux 系统生效
     width: login_width,
     height: login_height,
     show: false,
@@ -40,17 +33,23 @@ function createWindow() {
     // 创建透明窗口
     transparent: true,
     webPreferences: {
-      nodeIntegration: true, // 为了解决require 识别问题
+      nodeIntegration: true, // 为了解决 require 识别问题
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
       // 上下文隔离（官方不建议关闭）
-      // contextIsolation: false,
+      contextIsolation: true, // 保持 contextIsolation 为 true 以确保安全
+      sandbox: false
     }
   })
 
   //打开控制台
   if (NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools()
+  }
+
+  // mac设置图标
+  if (isMac) {
+    electron.app.dock.setIcon(iconPath)
+    electron.app.setName('SalmonChat')
   }
 
   mainWindow.on('ready-to-show', () => {
@@ -72,7 +71,10 @@ function createWindow() {
   }
 
   // 监听登录、注册、忘记密码窗口
-  onLoginOrRegisterOrForget((viewType) => {
+  onLoginOrRegisterOrForget((event, viewType) => {
+    const webContents = event.sender
+    // 拿到当前操作的窗口
+    const win = BrowserWindow.fromWebContents(webContents)
     let width = login_width
     let height = login_height
     if (viewType === 2) {
@@ -82,22 +84,69 @@ function createWindow() {
       width = login_width
       height = register_height
     }
-    resizeWindow(mainWindow, width, height)
+    resizeWindow(win, width, height)
   })
 
-  onLogin((config) => {
-    resizeWindow(mainWindow, 850, 800, true)
+  onLogin((event, config) => {
+    const webContents = event.sender
+    // 拿到当前操作的窗口
+    const win = BrowserWindow.fromWebContents(webContents)
+    resizeWindow(win, 850, 800, true)
     // 居中显示
-    mainWindow.center()
+    win.center()
     // 可以最大化
-    mainWindow.setMaximizable(true)
+    win.setMaximizable(true)
     // 设置最小的窗口大小
-    mainWindow.setMinimumSize(800, 600)
+    win.setMinimumSize(800, 600)
 
     // todo 管理后台的窗口操作，托盘操作
     if (config.isAdmin) {
       // 管理后台的窗口
       console.log('admin')
+    }
+  })
+
+  winOperate((event, { action, data }) => {
+    const webContents = event.sender
+    // 拿到当前操作的窗口
+    const win = BrowserWindow.fromWebContents(webContents)
+    switch (action) {
+      case 'top': {
+        win.setAlwaysOnTop(data.top)
+        break
+      }
+      case 'minimize': {
+        win.minimize()
+        break
+      }
+      case 'unMaximize': {
+        win.unmaximize()
+        break
+      }
+      case 'maximize': {
+        win.maximize()
+        break
+      }
+      case 'close': {
+        if (data.closeType === 0) {
+          if (isMac) {
+            // 在 macOS 上退出应用程序
+            // app.quit()
+          } else {
+            win.close()
+          }
+        } else {
+          // 隐藏于系统托盘区域，mac有自己的按钮，非自定义按钮
+          // win缩小到托盘
+          if (!isMac) {
+            win.setSkipTaskbar(true) // 使窗口不显示在任务栏中
+            win.hide() // 隐藏窗口
+          } else {
+            win.hide() // 隐藏窗口
+          }
+        }
+        break
+      }
     }
   })
 }
@@ -116,12 +165,6 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  if (process.platform === 'darwin') {
-    // app.dock.setIcon(iconPath);
-    app.setName('SalmonChat')
-    // app.dock.setBadge("SalmonChat");
-  }
-
   createWindow()
 
   app.on('activate', function () {
@@ -135,7 +178,9 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  // 在 macOS 上，除非用户用 Cmd + Q 确定地退出，
+  // 否则绝大部分应用及其菜单栏会保持激活。
+  if (!isMac) {
     app.quit()
   }
 })
