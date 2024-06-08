@@ -8,7 +8,7 @@ import store from './store'
 const onLoginOrRegisterOrForget = (callback) => {
   // 主进程监听渲染进程发送的消息（渲染进程触发该信号，主进程接收信号，实现渲染进程到主进程的通信）
   ipcMain.on('loginOrRegisterOrForget', (event, viewType) => {
-    callback(viewType)
+    callback(event, viewType)
   })
 }
 
@@ -21,7 +21,7 @@ const onLogin = (callback) => {
     store.initUserId(config.userId)
     store.setUserData('token', config.token)
     // todo 增加用户配置，本地存储的时候（本地数据库）
-    callback(config)
+    callback(event, config)
     // todo 初始化ws连接
   })
 }
@@ -52,4 +52,13 @@ const resizeWindow = (mainWindow, width, height, isAllow = false) => {
   mainWindow.setResizable(isAllow)
 }
 
-export { onLoginOrRegisterOrForget, onLogin, onLogout, resizeWindow }
+/**
+ * 窗口操作
+ */
+const winOperate = (callback) => {
+  ipcMain.on('winOperate', (event, { action, data }) => {
+    callback(event, { action, data })
+  })
+}
+
+export { onLoginOrRegisterOrForget, onLogin, onLogout, resizeWindow, winOperate }

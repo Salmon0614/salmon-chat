@@ -13,12 +13,19 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
     // 将使用node模块的接口暴露给渲染进程使用
+    // 调整窗口
     contextBridge.exposeInMainWorld('changeWindowSize', {
       changeLoginWindow: (data) => {
         ipcRenderer.send('loginOrRegisterOrForget', data)
       },
       changeChatWindow: (config) => {
         ipcRenderer.send('openChatMain', config)
+      }
+    })
+    // 操作窗口
+    contextBridge.exposeInMainWorld('operateWindow', {
+      operateWindowTitle: ({ action, data }) => {
+        ipcRenderer.send('winOperate', { action, data })
       }
     })
   } catch (error) {

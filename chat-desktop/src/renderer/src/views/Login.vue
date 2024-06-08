@@ -2,10 +2,12 @@
 import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
+import WinOp from '../components/WinOp.vue'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
+const isMac = window.electron.process.platform === 'darwin'
 
 const formData = ref({})
 const formDataRef = ref()
@@ -354,6 +356,13 @@ const cleanVerify = () => {
       </el-form>
     </div>
   </div>
+  <win-op
+    :show-set-top="false"
+    :show-min="false"
+    :close-type="0"
+    :show-max="false"
+    :show-close="!isMac"
+  ></win-op>
 </template>
 
 <style scoped lang="scss">
