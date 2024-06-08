@@ -9,7 +9,10 @@ const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
 const isMac = window.electron.process.platform === 'darwin'
 
-const formData = ref({})
+const formData = ref({
+  email: '1179732961@qq.com',
+  password: 'Cxw07716'
+})
 const formDataRef = ref()
 
 // 0-登录页 1-注册页 2-忘记密码
@@ -228,6 +231,7 @@ const cleanVerify = () => {
             size="large"
             clearable
             placeholder="请输入邮箱"
+            :autocomplete="viewType === 0 ? 'on' : 'off'"
             @focus="cleanVerify"
           >
             <template #prefix>

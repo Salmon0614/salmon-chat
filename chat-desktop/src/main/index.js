@@ -1,4 +1,4 @@
-import electron, { app, shell, BrowserWindow } from 'electron'
+import electron, { app, shell, BrowserWindow, Menu, Tray } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import icon from '../../resources/icon.png?asset'
@@ -14,6 +14,7 @@ const register_height = 570
 const forget_password_height = 470
 
 let iconPath = join(__dirname, '../../resources/icon.png')
+let willQuitApp = false
 
 function createWindow() {
   // Create the browser window.
@@ -57,6 +58,14 @@ function createWindow() {
     mainWindow.setTitle('SalmonChat')
   })
 
+  mainWindow.on('close', (event) => {
+    // 阻止默认退出事件改为最小化到托盘
+    if (isMac && !willQuitApp) {
+      event.preventDefault()
+      app.hide()
+    }
+  })
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
@@ -68,6 +77,30 @@ function createWindow() {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+
+  // 托盘，mac默认有退出按钮，无需重复添加
+  const contextMenu = [
+    {
+      label: '退出',
+      click: function () {
+        app.exit()
+      }
+    }
+  ]
+  const tray = new Tray(iconPath)
+  const menu = Menu.buildFromTemplate(contextMenu)
+  Menu.setApplicationMenu(menu)
+  tray.setTitle('SalmonChat')
+  tray.setToolTip('SalmonChat')
+  tray.setContextMenu(menu)
+  tray.on('click', () => {
+    mainWindow.setSkipTaskbar(false)
+    mainWindow.show()
+    app.show()
+  })
+  if (isMac) {
+    app.dock.setMenu(menu)
   }
 
   // 监听登录、注册、忘记密码窗口
@@ -104,6 +137,23 @@ function createWindow() {
       // 管理后台的窗口
       console.log('admin')
     }
+
+    contextMenu.unshift(
+      {
+        label: '用户: ' + config.nickname,
+        click: function () {}
+      },
+      {
+        label: '退出登录',
+        click: function () {}
+      }
+    )
+    // 重新加载
+    if (isMac) {
+      app.dock.setMenu(Menu.buildFromTemplate(contextMenu))
+    } else {
+      tray.setContextMenu(Menu.buildFromTemplate(contextMenu))
+    }
   })
 
   winOperate((event, { action, data }) => {
@@ -128,20 +178,13 @@ function createWindow() {
         break
       }
       case 'close': {
-        if (data.closeType === 0) {
-          if (isMac) {
-            // 在 macOS 上退出应用程序
-            // app.quit()
-          } else {
+        if (!isMac) {
+          if (data.closeType === 0) {
             win.close()
-          }
-        } else {
-          // 隐藏于系统托盘区域，mac有自己的按钮，非自定义按钮
-          // win缩小到托盘
-          if (!isMac) {
-            win.setSkipTaskbar(true) // 使窗口不显示在任务栏中
-            win.hide() // 隐藏窗口
           } else {
+            // 隐藏于系统托盘区域，mac有自己的按钮，非自定义按钮
+            // win缩小到托盘
+            win.setSkipTaskbar(true) // 使窗口不显示在任务栏中
             win.hide() // 隐藏窗口
           }
         }
@@ -167,11 +210,20 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  // 点击MacOS底部菜单时重新启动窗口
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
   })
+})
+
+// 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
+app.on('before-quit', () => {
+  console.log('before-quit')
+  willQuitApp = true
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
