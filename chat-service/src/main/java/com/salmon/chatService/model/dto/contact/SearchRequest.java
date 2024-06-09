@@ -1,4 +1,4 @@
-package com.salmon.chatService.model.dto.userContact;
+package com.salmon.chatService.model.dto.contact;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

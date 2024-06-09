@@ -1,7 +1,7 @@
 package com.salmon.chatService.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.salmon.chatService.model.dto.userContact.SearchRequest;
+import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
 import com.salmon.chatService.model.po.Group;

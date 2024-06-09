@@ -1,6 +1,6 @@
 package com.salmon.chatService.service;
 
-import com.salmon.chatService.model.dto.userContact.SearchRequest;
+import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.po.UserContact;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
