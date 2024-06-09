@@ -3,21 +3,28 @@ package com.salmon.chatService.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.*;
 import com.salmon.chatService.exception.ThrowUtils;
+import com.salmon.chatService.model.dto.userContact.SearchRequest;
 import com.salmon.chatService.model.dto.userContact.UserContactAddRequest;
 import com.salmon.chatService.model.dto.userContact.UserContactQueryRequest;
 import com.salmon.chatService.model.dto.userContact.UserContactUpdateRequest;
 import com.salmon.chatService.model.po.UserContact;
+import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.userContact.UserContactVO;
 import com.salmon.chatService.service.UserContactService;
+import com.salmon.chatService.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.salmon.chatService.common.BaseController;
+
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -28,13 +35,22 @@ import javax.annotation.Resource;
  * @since 2024-06-08
  */
 @RestController
-@RequestMapping("/userContact")
+@RequestMapping("/contact")
 @Slf4j
 @Tag(name = "UserContactController", description = "联系人前端控制器")
 public class UserContactController extends BaseController {
 
     @Resource
     private UserContactService userContactService;
+
+    @Operation(summary = "搜索联系人/群")
+    @PostMapping("/search")
+    @CheckAuth
+    public BaseResponse<SearchContactVO> search(@RequestBody @Valid SearchRequest request) {
+        SearchContactVO contactVO = userContactService.search(request);
+        return ResultUtils.success(contactVO);
+    }
+
 
     @Operation(summary = "添加联系人")
     @PostMapping("/add")
@@ -62,7 +78,7 @@ public class UserContactController extends BaseController {
     public BaseResponse<Object> deleteUserContact(@RequestBody DeleteRequest request) {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(!userContactService.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(); 
+        return ResultUtils.success();
     }
 
     @Operation(summary = "根据ID查询联系人")

@@ -53,7 +53,7 @@ public class UserBeauty implements Serializable {
 
     @Schema(description = "状态 0-未使用 1-已使用")
     @TableField("status")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "版本号")
     @TableField("version")

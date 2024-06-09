@@ -2,6 +2,7 @@ package com.salmon.chatService.model.enums.contact;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,4 +47,23 @@ public enum UserContactTypeEnum {
         }
         return null;
     }
+
+    /**
+     * 根据账户获取枚举类型
+     *
+     * @param account 账号
+     */
+    public static UserContactTypeEnum getByPrefix(String account) {
+        if (!StringUtils.hasText(account)) {
+            return null;
+        }
+        if (account.startsWith(USER.prefix)) {
+            return USER;
+        } else if (account.startsWith(GROUP.prefix)) {
+            return GROUP;
+        } else {
+            return null;
+        }
+    }
+
 }

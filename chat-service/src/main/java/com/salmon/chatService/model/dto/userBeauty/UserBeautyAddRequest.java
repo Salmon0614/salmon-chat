@@ -35,7 +35,7 @@ public class UserBeautyAddRequest implements Serializable {
     private Integer userId;
 
     @Schema(description = "状态 0-未使用 1-已使用")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "版本号")
     private Integer version;

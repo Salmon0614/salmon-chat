@@ -47,13 +47,4 @@ public enum UserGenderEnum {
         }
         return null;
     }
-
-    /**
-     * 获取相应的布尔值
-     *
-     * @return 布尔
-     */
-    public boolean getBool() {
-        return this.value == 1;
-    }
 }

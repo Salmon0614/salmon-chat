@@ -65,7 +65,7 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private String address;
 
     @Schema(description = "状态 0-禁用 1-启用")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "版本号")
     private Integer version;

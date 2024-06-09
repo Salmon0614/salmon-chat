@@ -1,7 +1,9 @@
 package com.salmon.chatService.service;
 
+import com.salmon.chatService.model.dto.userContact.SearchRequest;
 import com.salmon.chatService.model.po.UserContact;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
 
 import java.util.List;
@@ -24,4 +26,12 @@ public interface UserContactService extends IService<UserContact> {
      * @param status      关系状态
      */
     List<UserContactVO> selectContactUserInfo(Long contactId, Integer contactType, Integer status);
+
+    /**
+     * 搜索联系人
+     *
+     * @param request 搜索请求
+     * @return SearchContactVO
+     */
+    SearchContactVO search(SearchRequest request);
 }

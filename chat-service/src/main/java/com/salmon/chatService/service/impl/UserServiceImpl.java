@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String account;
         UserBeauty userBeauty = userBeautyService.getOne(new QueryWrapper<UserBeauty>()
                 .eq("email", email)
-                .eq("status", AccountBeautyStatusEnum.UNUSED.getBool()));
+                .eq("status", AccountBeautyStatusEnum.UNUSED.getValue()));
         // 是否有指定靓号
         if (Objects.nonNull(userBeauty)) {
             account = userBeauty.getAccount();
@@ -75,17 +75,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String encryptPassword = Utils.encryptPassword(emailRegisterRequest.getPassword(), salt);
         User user = User.builder()
                 .avatar(UserConstant.DEFAULT_AVATAR)
-                .gender(UserConstant.DEFAULT_GENDER.getBool())
+                .gender(UserConstant.DEFAULT_GENDER.getValue())
                 .account(account)
                 .email(email)
                 .role(role)
                 .nickname(emailRegisterRequest.getNickname())
                 .password(encryptPassword)
-                .status(StatusEnum.ENABLE.getBool())
+                .status(StatusEnum.ENABLE.getValue())
                 .joinType(UserJoinTypeEnum.AUTH.getValue())
                 .salt(salt).build();
         ThrowUtils.throwIf(!this.save(user), "注册失败");
-        userBeauty.setStatus(AccountBeautyStatusEnum.USED.getBool());
+        userBeauty.setStatus(AccountBeautyStatusEnum.USED.getValue());
         userBeauty.setUserId(user.getId());
         ThrowUtils.throwIf(!userBeautyService.updateById(userBeauty), "注册失败");
         // todo 创建机器人好友
@@ -98,7 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = this.getOne(new QueryWrapper<User>().eq("email", email));
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.NOT_FOUND_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(!user.getPassword().equals(Utils.encryptPassword(password, user.getSalt())), ErrorCode.PARAMS_ERROR, "账号或密码不正确！");
-        ThrowUtils.throwIf(!user.getStatus(), ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用！");
+        ThrowUtils.throwIf(user.getStatus() == StatusEnum.DISABLED.getValue(), ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用！");
 
         // todo 此账号已经在别处登录
         user.setLastLoginTime(LocalDateTime.now());
@@ -118,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void setUserToken(String token, TokenUserVo tokenUserVo) {
         RedisUtils.set(RedisPrefixConstant.LOGIN_SESSION + token, tokenUserVo, Settings.SESSION_EXPIRE_TIME);
-        RedisUtils.set(RedisPrefixConstant.USER_TOKEN + tokenUserVo.getId(), token,  Settings.SESSION_EXPIRE_TIME);
+        RedisUtils.set(RedisPrefixConstant.USER_TOKEN + tokenUserVo.getId(), token, Settings.SESSION_EXPIRE_TIME);
     }
 
     @Override

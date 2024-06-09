@@ -10,7 +10,11 @@ import com.baomidou.mybatisplus.annotation.Version;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.io.Serial;
+import java.util.Objects;
 
+import com.salmon.chatService.common.StatusEnum;
+import com.salmon.chatService.model.enums.user.UserGenderEnum;
+import com.salmon.chatService.model.enums.user.UserJoinTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,7 +71,11 @@ public class User implements Serializable {
 
     @Schema(description = "性别 0-女 1-男")
     @TableField("gender")
-    private Boolean gender;
+    private Integer gender;
+
+    @Schema(description = "性别描述")
+    @TableField(exist = false)
+    private String genderDesc;
 
     @Schema(description = "密码")
     @TableField("password")
@@ -91,7 +99,11 @@ public class User implements Serializable {
 
     @Schema(description = "状态 0-禁用 1-启用")
     @TableField("status")
-    private Boolean status;
+    private Integer status;
+
+    @Schema(description = "状态描述")
+    @TableField(exist = false)
+    private String statusDesc;
 
     @Schema(description = "角色 0-普通用户 1-管理员")
     @TableField("role")
@@ -105,6 +117,10 @@ public class User implements Serializable {
     @Schema(description = "加入好友类型 0-直接加入 1-需要验证")
     @TableField("join_type")
     private Integer joinType;
+
+    @Schema(description = "加入好友类型描述")
+    @TableField(exist = false)
+    private String joinTypeDesc;
 
     @Schema(description = "最近登录时间")
     @TableField("last_login_time")
@@ -126,5 +142,27 @@ public class User implements Serializable {
     @TableField("is_delete")
     private Boolean isDelete;
 
+    public String getStatusDesc() {
+        StatusEnum statusEnum = StatusEnum.getEnumByValue(this.status);
+        if (Objects.isNull(statusEnum)) {
+            return "";
+        }
+        return statusEnum.getDesc();
+    }
 
+    public String getJoinTypeDesc() {
+        UserJoinTypeEnum joinTypeEnum = UserJoinTypeEnum.getEnumByValue(this.joinType);
+        if (Objects.isNull(joinTypeEnum)) {
+            return "";
+        }
+        return joinTypeEnum.getDesc();
+    }
+
+    public String getGenderDesc() {
+        UserGenderEnum genderEnum = UserGenderEnum.getEnumByValue(this.gender);
+        if (Objects.isNull(genderEnum)) {
+            return "";
+        }
+        return genderEnum.getDesc();
+    }
 }

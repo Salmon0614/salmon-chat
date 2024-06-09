@@ -46,7 +46,7 @@ public class UserVO implements Serializable {
     private String avatar;
 
     @Schema(description = "状态 0-禁用 1-启用")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "登录凭证")
     private String token;
