@@ -24,4 +24,9 @@ public @interface CheckAuth {
      * 是否需要管理员权限
      */
     boolean needAdmin() default false;
+
+    /**
+     * 是否需要用户session存储到ThreadLocal
+     */
+    boolean needHolder() default true;
 }

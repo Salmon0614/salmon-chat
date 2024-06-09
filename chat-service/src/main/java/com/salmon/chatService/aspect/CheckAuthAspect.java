@@ -9,11 +9,10 @@ import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.utils.RedisUtils;
+import com.salmon.chatService.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -60,9 +59,10 @@ public class CheckAuthAspect {
             }
             boolean needLogin = checkAuthAnnotation.needLogin();
             boolean needAdmin = checkAuthAnnotation.needAdmin();
+            boolean needHolder = checkAuthAnnotation.needHolder();
             // 只有必须登录的，才校验是否需要管理员权限
             if (needLogin) {
-                check(needAdmin);
+                check(needAdmin, needHolder);
             }
         } catch (BusinessException e) {
             throw e;
@@ -73,11 +73,25 @@ public class CheckAuthAspect {
     }
 
     /**
+     * 方法返回后（无论是否抛异常）移除 threadLocal ，避免内存泄漏
+     *
+     * @param joinPoint 切入点
+     */
+    @After(value = "CheckAuthCut()")
+    public void removeThreadLocalInAfter(JoinPoint joinPoint) {
+        log.debug("After......");
+        if (Objects.nonNull(UserHolder.getUser())) {
+            UserHolder.removeUser();
+        }
+    }
+
+    /**
      * 验证
      *
-     * @param needAdmin 是否需要管理员
+     * @param needAdmin  是否需要管理员
+     * @param needHolder 是否需要用户session存储到ThreadLocal
      */
-    private void check(boolean needAdmin) {
+    private void check(boolean needAdmin, boolean needHolder) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader(CommonConstant.TOKEN);
         ThrowUtils.throwIf(!StringUtils.hasText(token), ErrorCode.NOT_LOGIN_ERROR);
@@ -85,6 +99,10 @@ public class CheckAuthAspect {
         ThrowUtils.throwIf(Objects.isNull(tokenUserVo), ErrorCode.NOT_LOGIN_ERROR);
         if (needAdmin) {
             ThrowUtils.throwIf(tokenUserVo.getRole() != UserRoleEnum.ADMIN.getValue(), ErrorCode.FORBIDDEN_ERROR);
+        }
+        // 存进ThreadLocal
+        if (needHolder) {
+            UserHolder.setUser(tokenUserVo);
         }
     }
 }
