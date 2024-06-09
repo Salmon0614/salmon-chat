@@ -3,7 +3,9 @@ package com.salmon.chatService.controller;
 import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.ResultUtils;
+import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
+import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.service.UserContactService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,4 +42,11 @@ public class ContactController {
         return ResultUtils.success(contactVO);
     }
 
+    @Operation(summary = "申请加入好友/群聊")
+    @PostMapping("/applyAdd")
+    @CheckAuth
+    public BaseResponse<ApplyResultVO> applyAdd(@RequestBody @Valid ApplyRequest request) {
+        ApplyResultVO applyResultVO = userContactService.applyAdd(request);
+        return ResultUtils.success(applyResultVO);
+    }
 }

@@ -52,7 +52,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
      * @param group 群聊
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdateGroup(Group group) {
         // 如果是新增，查看创建的群数量是否达到限制数，以及生成群号
         if (Objects.isNull(group.getId())) {

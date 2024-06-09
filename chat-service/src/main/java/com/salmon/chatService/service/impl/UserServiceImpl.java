@@ -50,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void register(EmailRegisterRequest emailRegisterRequest) {
         String email = emailRegisterRequest.getEmail();
         if (this.count(new QueryWrapper<User>().eq("email", email)) > 0) {
