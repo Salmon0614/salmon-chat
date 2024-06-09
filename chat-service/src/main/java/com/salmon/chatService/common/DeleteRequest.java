@@ -3,6 +3,7 @@ package com.salmon.chatService.common;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class DeleteRequest implements Serializable {
      * id
      */
     @NotNull(message = "ID不能为空")
+    @Min(value = 1)
     @Schema(description = "ID")
     private Long id;
 }
