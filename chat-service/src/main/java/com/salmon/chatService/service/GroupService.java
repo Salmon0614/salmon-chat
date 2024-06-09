@@ -1,11 +1,14 @@
 package com.salmon.chatService.service;
 
+import com.salmon.chatService.common.IdRequest;
 import com.salmon.chatService.model.po.Group;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.salmon.chatService.model.vo.group.GroupChatVO;
+import com.salmon.chatService.model.vo.group.GroupVO;
 
 /**
  * <p>
- * 群组 服务类
+ * 群聊 服务类
  * </p>
  *
  * @author Salmon
@@ -16,7 +19,31 @@ public interface GroupService extends IService<Group> {
     /**
      * 用户创建或修改群组
      *
-     * @param group 群组
+     * @param group 群聊
      */
     void saveOrUpdateGroup(Group group);
+
+    /**
+     * 获取群组信息
+     *
+     * @param request ID请求
+     * @return GroupVO
+     */
+    GroupVO getGroupInfo(IdRequest request);
+
+    /**
+     * 查询群组详情
+     *
+     * @param groupId 群ID
+     * @return Group
+     */
+    Group getGroupDetail(Integer groupId);
+
+    /**
+     * 获取群聊详细信息（包括成员）
+     *
+     * @param request ID请求
+     * @return GroupChatVO
+     */
+    GroupChatVO getGroupInfo4Chat(IdRequest request);
 }

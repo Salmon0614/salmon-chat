@@ -43,7 +43,7 @@ public class UserContactApply implements Serializable {
     @TableField("receive_user_id")
     private Integer receiveUserId;
 
-    @Schema(description = "联系人类型 0-好友 1-群组")
+    @Schema(description = "联系人类型 0-好友 1-群聊")
     @TableField("contact_type")
     private Integer contactType;
 

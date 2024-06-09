@@ -13,7 +13,7 @@ const contactTypeName = computed(() => {
     return '用户'
   }
   if (searchResult.value.contactType === 'GROUP') {
-    return '群组'
+    return '群聊'
   }
 })
 

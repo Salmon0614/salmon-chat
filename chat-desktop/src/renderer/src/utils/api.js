@@ -25,7 +25,7 @@ const api = {
     loadMyGroup: '/group/loadMyGroup', //获取我创建的群组
     saveGroup: '/group/saveGroup', //保存群组
     getGroupInfo: '/group/getGroupInfo', //获取群组信息
-    getGroupInfo4Chat: '/group/getGroupInfo4Chat', //获取群聊群详细信息
+    getGroupInfo4Chat: '/group/getGroupInfo4Chat', //获取群聊详细信息
     dissolutionGroup: '/group/dissolutionGroup', //解散群组
     leaveGroup: '/group/leaveGroup', //退出群组
     addOrRemoveGroupUser: '/group/addOrRemoveGroupUser' //添加或者删除群成员

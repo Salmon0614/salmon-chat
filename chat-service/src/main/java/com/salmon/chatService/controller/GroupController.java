@@ -13,9 +13,11 @@ import com.salmon.chatService.model.dto.group.GroupUpdateRequest;
 import com.salmon.chatService.model.enums.group.GroupStatusEnum;
 import com.salmon.chatService.model.po.Group;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
-import com.salmon.chatService.model.vo.group.GroupSimpleVo;
+import com.salmon.chatService.model.vo.group.GroupChatVO;
+import com.salmon.chatService.model.vo.group.GroupSimpleVO;
 import com.salmon.chatService.model.vo.group.GroupVO;
 import com.salmon.chatService.service.GroupService;
+import com.salmon.chatService.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 群组 前端控制器
+ * 群聊 前端控制器
  * </p>
  *
  * @author Salmon
@@ -52,7 +54,7 @@ public class GroupController extends BaseController {
     @CheckAuth
     public BaseResponse<Object> saveOrUpdateGroup(@RequestBody @Valid GroupSaveRequest request) {
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
-        TokenUserVo tokenUser = getTokenUser();
+        TokenUserVo tokenUser = UserHolder.getUser();
         ThrowUtils.throwIf(tokenUser == null, ErrorCode.NOT_LOGIN_ERROR);
         Group group = new Group();
         BeanUtils.copyProperties(request, group);
@@ -67,21 +69,38 @@ public class GroupController extends BaseController {
     @Operation(summary = "获取我创建的群组")
     @PostMapping("/loadMyGroup")
     @CheckAuth
-    public BaseResponse<List<GroupSimpleVo>> loadMyGroup() {
-        TokenUserVo tokenUser = getTokenUser();
-        ThrowUtils.throwIf(tokenUser == null, ErrorCode.NOT_LOGIN_ERROR);
+    public BaseResponse<List<GroupSimpleVO>> loadMyGroup() {
+        TokenUserVo tokenUser = UserHolder.getUser();
         Group group = new Group();
         group.setGroupOwnerId(tokenUser.getId());
         group.setStatus(GroupStatusEnum.NORMAL.getValue());
         QueryWrapper<Group> queryWrapper = new QueryWrapper<>(group);
         queryWrapper.orderByDesc("id");
         List<Group> groupList = groupService.list(queryWrapper);
-        if(CollectionUtils.isEmpty(groupList)){
-           return ResultUtils.success(new ArrayList<>());
+        if (CollectionUtils.isEmpty(groupList)) {
+            return ResultUtils.success(new ArrayList<>());
         }
-        List<GroupSimpleVo> groupSimpleVos = groupList.stream().map(GroupSimpleVo::objToVo).collect(Collectors.toList());
-        return ResultUtils.success(groupSimpleVos);
+        List<GroupSimpleVO> groupSimpleVOS = groupList.stream().map(GroupSimpleVO::objToVo).collect(Collectors.toList());
+        return ResultUtils.success(groupSimpleVOS);
     }
+
+
+    @Operation(summary = "获取群聊信息")
+    @PostMapping("/getGroupInfo")
+    @CheckAuth
+    public BaseResponse<GroupVO> getGroupInfo(@RequestBody @Valid IdRequest request) {
+        GroupVO groupVO = groupService.getGroupInfo(request);
+        return ResultUtils.success(groupVO);
+    }
+
+    @Operation(summary = "获取群聊详细信息（包括成员）")
+    @PostMapping("/getGroupInfo4Chat")
+    @CheckAuth
+    public BaseResponse<GroupChatVO> getGroupInfo4Chat(@RequestBody @Valid IdRequest request) {
+        GroupChatVO groupChatVO = groupService.getGroupInfo4Chat(request);
+        return ResultUtils.success(groupChatVO);
+    }
+
 
     @Operation(summary = "添加群组")
     @PostMapping("/add")

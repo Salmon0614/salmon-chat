@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 群组
+ * 群聊
  * </p>
  *
  * @author Salmon
@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("tb_group")
-@Schema(name = "Group", description = "群组")
+@Schema(name = "Group", description = "群聊")
 public class Group implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,7 +35,7 @@ public class Group implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "群号")
+    @Schema(description = "群聊号")
     @TableField("group_number")
     private String groupNumber;
 

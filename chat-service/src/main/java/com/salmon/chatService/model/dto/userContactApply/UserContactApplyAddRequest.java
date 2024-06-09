@@ -28,7 +28,7 @@ public class UserContactApplyAddRequest implements Serializable {
     @Schema(description = "接收人ID")
     private Integer receiveUserId;
 
-    @Schema(description = "联系人类型 0-好友 1-群组")
+    @Schema(description = "联系人类型 0-好友 1-群聊")
     private Integer contactType;
 
     @Schema(description = "联系人/群组ID")

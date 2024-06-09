@@ -2,9 +2,8 @@ package com.salmon.chatService.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.salmon.chatService.common.ErrorCode;
-import com.salmon.chatService.exception.BusinessException;
+import com.salmon.chatService.common.IdRequest;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.enums.group.GroupStatusEnum;
@@ -13,20 +12,27 @@ import com.salmon.chatService.model.po.Group;
 import com.salmon.chatService.mapper.GroupMapper;
 import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.model.vo.app.SystemConfigVo;
+import com.salmon.chatService.model.vo.contact.UserContactVO;
+import com.salmon.chatService.model.vo.group.GroupChatVO;
+import com.salmon.chatService.model.vo.group.GroupVO;
 import com.salmon.chatService.service.AppService;
 import com.salmon.chatService.service.GroupService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.service.UserContactService;
+import com.salmon.chatService.utils.UserHolder;
 import com.salmon.chatService.utils.Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * <p>
- * 群组 服务实现类
+ * 群聊 服务实现类
  * </p>
  *
  * @author Salmon
@@ -43,7 +49,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
     /**
      * 用户创建或修改群组
      *
-     * @param group 群组
+     * @param group 群聊
      */
     @Override
     @Transactional
@@ -82,5 +88,74 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
             // todo 修改群昵称发送ws消息
         }
         // todo 封面图片 路径 + 群组ID 区分 原图，缩略图
+    }
+
+    /**
+     * 获取群组信息
+     *
+     * @param request 请求
+     * @return GroupVO
+     */
+    @Override
+    public GroupVO getGroupInfo(IdRequest request) {
+        Long groupId = request.getId();
+        Group group = this.getGroupDetail(groupId.intValue());
+        GroupVO groupVO = GroupVO.objToVo(group);
+        // 查询群成员数
+        long count = userContactService.count(
+                new LambdaQueryWrapper<UserContact>()
+                        .eq(UserContact::getContactId, groupId)
+                        .eq(UserContact::getContactType, UserContactTypeEnum.GROUP.getType())
+                        .eq(UserContact::getStatus, UserContactStatusEnum.FRIEND.getValue())
+        );
+        groupVO.setMemberCount((int) count);
+        return groupVO;
+    }
+
+    /**
+     * 查询群组详情
+     *
+     * @param groupId 群ID
+     * @return Group
+     */
+    @Override
+    public Group getGroupDetail(Integer groupId) {
+        Group group = this.getById(groupId);
+        ThrowUtils.throwIf(
+                Objects.isNull(group) || !group.getStatus().equals(GroupStatusEnum.NORMAL.getValue()),
+                "群聊不存在或已解散"
+        );
+        Integer userId = UserHolder.getUser().getId();
+        // 查询用户是否已经在群聊中
+        UserContact userContact = userContactService.getOne(new LambdaQueryWrapper<UserContact>()
+                .eq(UserContact::getContactId, groupId)
+                .eq(UserContact::getUserId, userId)
+        );
+        ThrowUtils.throwIf(
+                Objects.isNull(userContact) || !userContact.getStatus().equals(UserContactStatusEnum.FRIEND.getValue()),
+                "你不在群聊中");
+        return group;
+    }
+
+    /**
+     * 获取群聊详细信息（包括成员）
+     *
+     * @param request ID请求
+     * @return GroupVO
+     */
+    @Override
+    public GroupChatVO getGroupInfo4Chat(IdRequest request) {
+        Long groupId = request.getId();
+        Group group = this.getGroupDetail(groupId.intValue());
+        GroupVO groupVO = GroupVO.objToVo(group);
+        List<UserContactVO> userContactVOS = userContactService.selectContactUserInfo(groupId, UserContactTypeEnum.GROUP.getType(), UserContactStatusEnum.FRIEND.getValue());
+        if (CollectionUtils.isEmpty(userContactVOS)) {
+            userContactVOS = new ArrayList<>();
+        }
+        groupVO.setMemberCount(userContactVOS.size());
+        GroupChatVO groupChatVO = new GroupChatVO();
+        groupChatVO.setGroupVO(groupVO);
+        groupChatVO.setUserContactVOS(userContactVOS);
+        return groupChatVO;
     }
 }

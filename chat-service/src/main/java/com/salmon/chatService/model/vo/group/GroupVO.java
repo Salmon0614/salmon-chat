@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 群组视图
+ * 群聊视图
  * </p>
  *
  * @author Salmon
  * @since 2024-06-08
  */
 @Data
-@Schema(name = "GroupVO", description = "群组视图")
+@Schema(name = "GroupVO", description = "群聊视图")
 public class GroupVO implements Serializable {
 
     @Serial
@@ -27,7 +27,7 @@ public class GroupVO implements Serializable {
     @Schema(description = "id")
     private Integer id;
 
-    @Schema(description = "群号")
+    @Schema(description = "群聊号")
     private String groupNumber;
 
     @Schema(description = "群名")
@@ -50,6 +50,9 @@ public class GroupVO implements Serializable {
 
     @Schema(description = "状态 0-正常 1-解散")
     private Integer status;
+
+    @Schema(description = "群成员数量")
+    private Integer memberCount;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
- * 群组 Mapper 接口
+ * 群聊 Mapper 接口
  * </p>
  *
  * @author Salmon

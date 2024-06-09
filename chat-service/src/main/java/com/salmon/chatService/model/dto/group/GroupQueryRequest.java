@@ -24,7 +24,7 @@ public class GroupQueryRequest extends PageRequest implements Serializable {
     @Schema(description = "id")
     private Integer id;
 
-    @Schema(description = "群号")
+    @Schema(description = "群聊号")
     private String groupNumber;
 
     @Schema(description = "群名")

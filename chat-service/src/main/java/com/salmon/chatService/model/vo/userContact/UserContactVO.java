@@ -31,7 +31,7 @@ public class UserContactVO implements Serializable {
     @Schema(description = "联系人ID或者群组ID")
     private Integer contactId;
 
-    @Schema(description = "联系人类型 0-好友 1-群组")
+    @Schema(description = "联系人类型 0-好友 1-群聊")
     private Integer contactType;
 
     @Schema(description = "版本号")

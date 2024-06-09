@@ -15,8 +15,8 @@ import java.io.Serializable;
  * @since 2024-06-09
  */
 @Data
-@Schema(name = "GroupSimpleVo", description = "群组视图（好友列表页）")
-public class GroupSimpleVo implements Serializable {
+@Schema(name = "GroupSimpleVO", description = "群聊视图（好友列表页）")
+public class GroupSimpleVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,7 +24,7 @@ public class GroupSimpleVo implements Serializable {
     @Schema(description = "id")
     private Integer id;
 
-    @Schema(description = "群号")
+    @Schema(description = "群聊号")
     private String groupNumber;
 
     @Schema(description = "群名")
@@ -42,7 +42,7 @@ public class GroupSimpleVo implements Serializable {
      * @param groupSimpleVo 视图对象
      * @return 数据库对象
      */
-    public static Group voToObj(GroupSimpleVo groupSimpleVo) {
+    public static Group voToObj(GroupSimpleVO groupSimpleVo) {
         if (groupSimpleVo == null) {
             return null;
         }
@@ -57,11 +57,11 @@ public class GroupSimpleVo implements Serializable {
      * @param group 数据库对象
      * @return 视图对象
      */
-    public static GroupSimpleVo objToVo(Group group) {
+    public static GroupSimpleVO objToVo(Group group) {
         if (group == null) {
             return null;
         }
-        GroupSimpleVo groupSimpleVo = new GroupSimpleVo();
+        GroupSimpleVO groupSimpleVo = new GroupSimpleVO();
         BeanUtils.copyProperties(group, groupSimpleVo);
         return groupSimpleVo;
     }
