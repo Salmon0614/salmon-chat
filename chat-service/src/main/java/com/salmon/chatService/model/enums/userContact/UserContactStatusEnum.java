@@ -24,7 +24,8 @@ public enum UserContactStatusEnum {
     DEL("已删除好友", 2),
     BE_DEL("被好友删除", 3),
     BLACK("拉黑好友", 4),
-    BE_BLACK("被好友拉黑", 5);
+    BE_BLACK("被好友拉黑", 5),
+    FIRST_BE_BLACK("首次被好友拉黑", 6);
 
     private final String desc;
     private final int value;

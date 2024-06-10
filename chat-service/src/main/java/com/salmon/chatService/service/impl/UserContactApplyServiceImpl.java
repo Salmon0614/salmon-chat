@@ -91,7 +91,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
                     userContact.setContactType(contactApply.getContactType());
                     userContact.setContactId(contactApply.getContactId());
                 }
-                userContact.setStatus(UserContactStatusEnum.BE_BLACK.getValue());
+                userContact.setStatus(UserContactStatusEnum.FIRST_BE_BLACK.getValue());
                 ThrowUtils.throwIf(!userContactService.save(userContact), "处理失败");
             }
         }

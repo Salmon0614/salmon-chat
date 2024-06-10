@@ -36,6 +36,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -187,7 +188,11 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         // 先查询该好友是否已经添加，如果他拉黑了这个用户，则不能添加
         UserContact userContact = this.selectContact(applyUserId, contactId, contactTypeEnum.getType());
         ThrowUtils.throwIf(
-                Objects.nonNull(userContact) && userContact.getStatus().equals(UserContactStatusEnum.BE_BLACK.getValue()),
+                Objects.nonNull(userContact) &&
+                        Arrays.asList(
+                                UserContactStatusEnum.BE_BLACK.getValue(),
+                                UserContactStatusEnum.FIRST_BE_BLACK.getValue()
+                        ).contains(userContact.getStatus()),
                 "对方已把你拉黑，无法添加"
         );
         // 如果已经是好友，不做处理
