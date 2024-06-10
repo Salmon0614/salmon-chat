@@ -1,5 +1,6 @@
 package com.salmon.chatService.common;
 
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -81,6 +82,10 @@ public class ResultUtils {
      * 参数校验失败的返回
      */
     public static <T> BaseResponse<T> validateFail(BindingResult bindingResult) {
-        return error(ErrorCode.PARAMS_ERROR, bindingResult.getAllErrors().get(0).getDefaultMessage());
+        String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+        if (!StringUtils.hasText(message)) {
+            message = ErrorCode.PARAMS_ERROR.getMsg();
+        }
+        return error(ErrorCode.PARAMS_ERROR, message);
     }
 }
