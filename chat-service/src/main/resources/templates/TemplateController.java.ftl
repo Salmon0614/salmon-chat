@@ -83,8 +83,7 @@ public class ${table.controllerName} {
     @PostMapping("/getById")
     public BaseResponse<${entity}VO> get${entity}ById(@RequestBody @Valid IdRequest request) {
         ${entity} ${entityObj} = ${entityObj}Service.getById(request.getId());
-        ${entity}VO ${entityObj}VO = new ${entity}VO();
-        BeanUtils.copyProperties(${entityObj}, ${entityObj}VO);
+        ${entity}VO ${entityObj}VO = ${entity}VO.objToVo(${entityObj});
         return ResultUtils.success(${entityObj}VO);
     }
 
