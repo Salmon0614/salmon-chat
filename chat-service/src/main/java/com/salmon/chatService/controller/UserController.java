@@ -3,14 +3,15 @@ package com.salmon.chatService.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.*;
 import com.salmon.chatService.exception.ThrowUtils;
-import com.salmon.chatService.model.dto.user.UserAddRequest;
-import com.salmon.chatService.model.dto.user.UserQueryRequest;
-import com.salmon.chatService.model.dto.user.UserUpdateRequest;
+import com.salmon.chatService.model.dto.user.*;
 import com.salmon.chatService.model.po.User;
+import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.user.UserVO;
 import com.salmon.chatService.service.UserService;
+import com.salmon.chatService.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.salmon.chatService.common.BaseController;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -36,6 +38,31 @@ public class UserController extends BaseController {
 
     @Resource
     private UserService userService;
+
+    @Operation(summary = "保存用户信息")
+    @PostMapping("/saveUserInfo")
+    @CheckAuth
+    public BaseResponse<UserVO> saveUserInfo(@RequestBody @Valid UserSaveRequest request) {
+        UserVO userVO = userService.updateUserInfo(request);
+        return ResultUtils.success(userVO);
+    }
+
+    @Operation(summary = "获取用户信息")
+    @PostMapping("/getUserInfo")
+    @CheckAuth
+    public BaseResponse<UserVO> getUserInfo() {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        User user = userService.getById(tokenUserVo.getId());
+        return ResultUtils.success(UserVO.objToVo(user));
+    }
+
+    @Operation(summary = "更新密码")
+    @PostMapping("/updatePassword")
+    @CheckAuth
+    public BaseResponse<?> updatePassword(@RequestBody @Valid UpdatePassword request) {
+        userService.updatePassword(request);
+        return ResultUtils.success();
+    }
 
     @Operation(summary = "添加用户")
     @PostMapping("/add")
@@ -70,8 +97,7 @@ public class UserController extends BaseController {
     @PostMapping("/getById")
     public BaseResponse<UserVO> getUserById(@RequestBody IdRequest request) {
         User user = userService.getById(request.getId());
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        UserVO userVO = UserVO.objToVo(user);
         return ResultUtils.success(userVO);
     }
 

@@ -2,6 +2,8 @@ package com.salmon.chatService.service;
 
 import com.salmon.chatService.model.dto.account.EmailLoginRequest;
 import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
+import com.salmon.chatService.model.dto.user.UpdatePassword;
+import com.salmon.chatService.model.dto.user.UserSaveRequest;
 import com.salmon.chatService.model.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
@@ -52,4 +54,19 @@ public interface UserService extends IService<User> {
      * @return 新的登录信息
      */
     TokenUserVo refreshToken(String token);
+
+    /**
+     * 用户更新信息
+     *
+     * @param request 信息请求
+     * @return UserVO
+     */
+    UserVO updateUserInfo(UserSaveRequest request);
+
+    /**
+     * 更新密码
+     *
+     * @param request 请求
+     */
+    void updatePassword(UpdatePassword request);
 }

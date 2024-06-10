@@ -64,4 +64,12 @@ public class AccountController extends BaseController {
         UserVO userVO = userService.login(emailLoginRequest);
         return ResultUtils.success(userVO);
     }
+
+    @Operation(summary = "退出登录")
+    @PostMapping("/logout")
+    @CheckCode
+    public BaseResponse<?> logout() {
+        // todo 退出登录，关闭ws连接
+        return ResultUtils.success();
+    }
 }

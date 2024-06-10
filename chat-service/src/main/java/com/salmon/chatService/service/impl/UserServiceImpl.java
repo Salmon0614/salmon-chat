@@ -12,6 +12,8 @@ import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.account.EmailLoginRequest;
 import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
+import com.salmon.chatService.model.dto.user.UpdatePassword;
+import com.salmon.chatService.model.dto.user.UserSaveRequest;
 import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
 import com.salmon.chatService.model.enums.user.UserJoinTypeEnum;
 import com.salmon.chatService.model.po.User;
@@ -23,7 +25,9 @@ import com.salmon.chatService.service.UserBeautyService;
 import com.salmon.chatService.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.utils.RedisUtils;
+import com.salmon.chatService.utils.UserHolder;
 import com.salmon.chatService.utils.Utils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,12 +71,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             account = Utils.generateAccount();
         }
         String salt = Utils.getSalt();
+        String encryptPassword = Utils.encryptPassword(emailRegisterRequest.getPassword(), salt);
+        // 查询是否是指定管理员
         int role = UserRoleEnum.USER.getValue();
         if (appConfig.getEmails().contains(email)) {
             role = UserRoleEnum.ADMIN.getValue();
         }
-        // 查询是否是指定管理员
-        String encryptPassword = Utils.encryptPassword(emailRegisterRequest.getPassword(), salt);
         User user = User.builder()
                 .avatar(UserConstant.DEFAULT_AVATAR)
                 .gender(UserConstant.DEFAULT_GENDER.getValue())
@@ -99,10 +103,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.NOT_FOUND_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(!user.getPassword().equals(Utils.encryptPassword(password, user.getSalt())), ErrorCode.PARAMS_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(user.getStatus() == StatusEnum.DISABLED.getValue(), ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用！");
-
         // todo 此账号已经在别处登录
         user.setLastLoginTime(LocalDateTime.now());
-        this.updateById(user);
+        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
         // 存储 token
         TokenUserVo tokenUserVo = TokenUserVo.objToVo(user);
         String token = Utils.generateToken(user.getAccount());
@@ -111,7 +114,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // todo 查询群、联系人信息等、ws心跳 p-8
         UserVO userVO = UserVO.objToVo(user);
         userVO.setToken(token);
-        userVO.setIsAdmin(user.getRole() == UserRoleEnum.ADMIN.getValue());
         return userVO;
     }
 
@@ -134,6 +136,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         TokenUserVo newTokenUserVo = TokenUserVo.objToVo(user);
         RedisUtils.set(RedisPrefixConstant.LOGIN_SESSION + token, newTokenUserVo);
         return newTokenUserVo;
+    }
+
+    /**
+     * 用户更新信息
+     *
+     * @param request 信息请求
+     * @return UserVO
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public UserVO updateUserInfo(UserSaveRequest request) {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        User user = this.getById(tokenUserVo.getId());
+        String dbNickname = user.getNickname();
+        BeanUtils.copyProperties(request, user);
+        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
+        if (!dbNickname.equals(request.getNickname())) {
+            // todo 更新会话信息中的昵称信息
+        }
+        return UserVO.objToVo(user);
+    }
+
+    @Override
+    public void updatePassword(UpdatePassword request) {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        User user = this.getById(tokenUserVo.getId());
+        String encryptPassword = Utils.encryptPassword(request.getPassword(), user.getSalt());
+        user.setPassword(encryptPassword);
+        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
+        // todo 强制退出，重新登录
     }
 
 

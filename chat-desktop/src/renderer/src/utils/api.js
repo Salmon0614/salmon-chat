@@ -11,14 +11,14 @@ const api = {
     getCheckCode: '/account/getCheckCode', // 验证码
     loginByEmail: '/account/loginByEmail', // 登录
     registerByEmail: '/account/registerByEmail', // 注册
-    forgetPassword: '/account/forgetPassword' // 忘记密码
+    forgetPassword: '/account/forgetPassword', // 忘记密码
+    logout: '/account/logout' // 退出登录
   },
   // 用户信息相关
   userInfo: {
-    saveUserInfo: '/userInfo/saveUserInfo', // 保存用户信息
-    getUserInfo: '/userInfo/getUserInfo', // 获取用户信息
-    updatePassword: '/userInfo/updatePassword', // 更新密码
-    logout: '/userInfo/logout' // 退出登录
+    saveUserInfo: '/user/saveUserInfo', // 保存用户信息
+    getUserInfo: '/user/getUserInfo', // 获取用户信息
+    updatePassword: '/user/updatePassword' // 更新密码
   },
   // 群组相关
   group: {

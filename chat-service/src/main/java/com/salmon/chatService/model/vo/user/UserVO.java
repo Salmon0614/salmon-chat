@@ -1,5 +1,6 @@
 package com.salmon.chatService.model.vo.user;
 
+import com.salmon.chatService.common.UserRoleEnum;
 import lombok.Data;
 import com.salmon.chatService.model.po.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * <p>
@@ -51,9 +53,18 @@ public class UserVO implements Serializable {
     @Schema(description = "登录凭证")
     private String token;
 
+    @Schema(description = "角色 0-普通用户 1-管理员")
+    private Integer role;
+
     @Schema(description = "是否是管理员")
     private Boolean isAdmin;
 
+    public Boolean getAdmin() {
+        if(Objects.isNull(this.role)) {
+            return false;
+        }
+        return this.role == UserRoleEnum.ADMIN.getValue();
+    }
 
     /**
      * 封装类转对象
