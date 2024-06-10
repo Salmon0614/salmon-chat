@@ -4,6 +4,7 @@ import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.po.UserContact;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
@@ -54,4 +55,14 @@ public interface UserContactService extends IService<UserContact> {
      * @return UserContact
      */
     UserContact selectContact(Integer userId, Integer contactId, Integer contactType);
+
+    /**
+     * 添加联系人
+     *
+     * @param userId        用户ID
+     * @param contactId     联系人ID/群ID
+     * @param receiveUserId 联系人ID/群管理员ID
+     * @param contactType   联系类型
+     */
+    void addContact(Integer userId, Integer contactId, Integer receiveUserId, Integer contactType);
 }

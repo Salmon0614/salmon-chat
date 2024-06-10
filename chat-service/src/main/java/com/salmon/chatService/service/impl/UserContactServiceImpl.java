@@ -20,14 +20,12 @@ import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.mapper.UserContactMapper;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.model.vo.app.SystemConfigVo;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
-import com.salmon.chatService.service.GroupService;
-import com.salmon.chatService.service.UserContactApplyService;
-import com.salmon.chatService.service.UserContactService;
+import com.salmon.chatService.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.salmon.chatService.service.UserService;
 import com.salmon.chatService.utils.UserHolder;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +56,8 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     private GroupService groupService;
     @Resource
     private UserContactApplyService userContactApplyService;
+    @Resource
+    private AppService appService;
 
     /**
      * 查询联系人信息
@@ -138,7 +139,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         String account = request.getContactAccount();
         ApplyOriginTypeEnum applyOriginTypeEnum = ApplyOriginTypeEnum.validType(account);
         UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getByPrefix(account);
-        if (applyOriginTypeEnum.getValue() == ApplyOriginTypeEnum.ACCOUNT.getValue()) {
+        if (applyOriginTypeEnum == ApplyOriginTypeEnum.ACCOUNT) {
             ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
         } else {
             contactTypeEnum = UserContactTypeEnum.USER;
@@ -194,7 +195,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         }
         // 如果无需审核，直接加入
         if (joinType.equals(JoinTypeEnum.JOIN.getValue())) {
-            // todo 添加联系人
+            addContact(applyUserId, contactId, receiveUserId, contactTypeEnum.getType());
             return ApplyResultVO.builder().joinType(joinType).build();
         }
         // 默认申请信息
@@ -204,7 +205,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             // 添加方式是从群成员列表添加的
             if (request.getApplyType() == ApplyTypeEnum.GROUP.getValue()) {
                 // 如果通过群聊添加好友，那枚举是群就不合法
-                ThrowUtils.throwIf(contactTypeEnum.getType() == UserContactTypeEnum.GROUP.getType(), ErrorCode.PARAMS_ERROR);
+                ThrowUtils.throwIf(contactTypeEnum == UserContactTypeEnum.GROUP, ErrorCode.PARAMS_ERROR);
                 Group group = groupService.getById(request.getGroupId());
                 // 群不存在或者已经解散
                 ThrowUtils.throwIf(Objects.isNull(group) || group.getStatus().equals(GroupStatusEnum.DISSOLUTION.getValue()), ErrorCode.PARAMS_ERROR);
@@ -264,4 +265,54 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 .eq(UserContact::getContactType, contactType)
         );
     }
+
+    /**
+     * 添加联系人
+     *
+     * @param userId        用户ID
+     * @param contactId     联系人ID/群ID
+     * @param receiveUserId 联系人ID/群管理员ID
+     * @param contactType   联系类型
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addContact(Integer userId, Integer contactId, Integer receiveUserId, Integer contactType) {
+        UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getEnumByValue(contactType);
+        ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
+        if (contactTypeEnum == UserContactTypeEnum.GROUP) {
+            // 校验人数是否已满
+            long count = this.count(new LambdaQueryWrapper<UserContact>()
+                    .eq(UserContact::getContactId, contactId)
+                    .eq(UserContact::getContactType, contactType)
+                    .eq(UserContact::getStatus, UserContactStatusEnum.FRIEND.getValue())
+            );
+            SystemConfigVo systemConfig = appService.getSystemConfig();
+            ThrowUtils.throwIf(count >= systemConfig.getMaxGroupCount(), "该群聊成员已满，无法加入");
+        }
+        List<UserContact> userContacts = new ArrayList<>();
+        // 申请人添加对方
+        UserContact addContact = this.selectContact(userId, contactId, contactType);
+        if (Objects.isNull(addContact)) {
+            addContact = new UserContact();
+            addContact.setUserId(userId);
+            addContact.setContactType(contactType);
+            addContact.setContactId(contactId);
+        }
+        addContact.setStatus(UserContactStatusEnum.FRIEND.getValue());
+        userContacts.add(addContact);
+        // 接收人添加申请人（群的话不需要）
+        if (contactTypeEnum == UserContactTypeEnum.USER) {
+            UserContact beAddContact = new UserContact();
+            beAddContact.setUserId(contactId);
+            beAddContact.setContactType(contactType);
+            beAddContact.setContactId(userId);
+            beAddContact.setStatus(UserContactStatusEnum.FRIEND.getValue());
+            userContacts.add(beAddContact);
+        }
+        ThrowUtils.throwIf(!this.saveOrUpdateBatch(userContacts), "添加失败");
+        // todo 发送ws 添加缓存
+
+        // todo 创建会话，发送消息
+    }
+
 }

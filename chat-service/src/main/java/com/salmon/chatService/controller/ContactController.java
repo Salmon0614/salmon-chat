@@ -8,6 +8,7 @@ import com.salmon.chatService.common.BaseResponse;
 import com.salmon.chatService.common.PageRequest;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
+import com.salmon.chatService.model.dto.contact.DealWithApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
@@ -67,5 +68,13 @@ public class ContactController {
     public BaseResponse<Page<ApplyRecordVO>> loadApply(@RequestBody @Valid PageRequest request) {
         Page<ApplyRecordVO> recordVOPage = userContactApplyService.loadApply(request);
         return ResultUtils.success(recordVOPage);
+    }
+
+    @Operation(summary = "处理申请")
+    @PostMapping("/dealWithApply")
+    @CheckAuth
+    public BaseResponse<Page<ApplyRecordVO>> dealWithApply(@RequestBody @Valid DealWithApplyRequest request) {
+        userContactApplyService.dealWithApply(request);
+        return ResultUtils.success();
     }
 }

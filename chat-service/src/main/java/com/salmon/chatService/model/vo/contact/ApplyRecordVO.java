@@ -1,11 +1,13 @@
 package com.salmon.chatService.model.vo.contact;
 
+import com.salmon.chatService.model.enums.contact.ContactApplyStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 申请记录视图
@@ -38,6 +40,9 @@ public class ApplyRecordVO implements Serializable {
     @Schema(description = "状态 0-待处理 1-已同意 2-已拒绝 3-已拉黑")
     private Integer status;
 
+    @Schema(description = "状态 0-待处理 1-已同意 2-已拒绝 3-已拉黑")
+    private String statusDesc;
+
     @Schema(description = "申请信息")
     private String applyInfo;
 
@@ -55,4 +60,12 @@ public class ApplyRecordVO implements Serializable {
 
     @Schema(description = "地区")
     private String area;
+
+    public String getStatusDesc() {
+        ContactApplyStatusEnum applyStatusEnum = ContactApplyStatusEnum.getEnumByValue(this.status);
+        if (Objects.isNull(applyStatusEnum)) {
+            return "";
+        }
+        return applyStatusEnum.getDesc();
+    }
 }
