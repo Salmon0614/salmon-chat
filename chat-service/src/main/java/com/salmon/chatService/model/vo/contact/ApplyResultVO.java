@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 申请加入结果
+ * 申请加入结果视图
  *
  * @author Salmon
  * @since 2024-06-09
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "ApplyResultVO", description = "申请加入结果")
+@Schema(name = "ApplyResultVO", description = "申请加入结果视图")
 public class ApplyResultVO implements Serializable {
 
     @Serial

@@ -1,7 +1,10 @@
 package com.salmon.chatService.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.salmon.chatService.common.PageRequest;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.salmon.chatService.model.vo.contact.ApplyRecordVO;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserContactApplyService extends IService<UserContactApply> {
 
+    /**
+     * 加载申请列表
+     *
+     * @param request 分页请求
+     * @return Page<ApplyRecordVO>
+     */
+    Page<ApplyRecordVO> loadApply(PageRequest request);
 }
