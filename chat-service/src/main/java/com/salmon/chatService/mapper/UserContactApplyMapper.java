@@ -17,29 +17,29 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface UserContactApplyMapper extends BaseMapper<UserContactApply> {
 
-    @Select("select\n" +
-            "uca.*,\n" +
-            "u.area as area,\n" +
-            "u.gender as gender,\n" +
-            "case \n" +
-            "when uca.contact_type=0\n" +
-            "then u.avatar\n" +
-            "when uca.contact_type=1 \n" +
-            "then g.group_cover \n" +
-            "end as avatar,\n" +
-            "case \n" +
-            "when uca.contact_type=0\n" +
-            "then u.nickname\n" +
-            "when uca.contact_type=1 \n" +
-            "then g.group_name \n" +
-            "end as contactName\n" +
-            "from tb_user_contact_apply uca\n" +
-            "left join tb_user u\n" +
-            "on uca.apply_user_id=u.id and uca.receive_user_id=#{receiveUserId}\n" +
-            "left join tb_group g\n" +
-            "on uca.contact_id=g.id and uca.receive_user_id=#{receiveUserId}\n" +
-            "where\n" +
-            "uca.receive_user_id=#{receiveUserId}\n" +
+    @Select("select " +
+            "uca.*, " +
+            "u.area as area, " +
+            "u.gender as gender, " +
+            "case " +
+            "when uca.contact_type=0 " +
+            "then u.avatar " +
+            "when uca.contact_type=1 " +
+            "then g.group_cover " +
+            "end as avatar, " +
+            "case " +
+            "when uca.contact_type=0 " +
+            "then u.nickname " +
+            "when uca.contact_type=1 " +
+            "then g.group_name " +
+            "end as contactName " +
+            "from tb_user_contact_apply uca " +
+            "left join tb_user u " +
+            "on uca.apply_user_id=u.id and uca.receive_user_id=#{receiveUserId} " +
+            "left join tb_group g " +
+            "on uca.contact_id=g.id and uca.receive_user_id=#{receiveUserId} " +
+            "where " +
+            "uca.receive_user_id=#{receiveUserId} " +
             "order by uca.last_apply_time desc")
     @Results({
             @Result(column = "id", property = "id"),

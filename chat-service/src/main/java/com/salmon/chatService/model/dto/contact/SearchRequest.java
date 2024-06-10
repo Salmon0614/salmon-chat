@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 2024-06-09
  */
 @Data
-@Schema(name = "SearchRequest)", description = "搜索联系人请求")
+@Schema(name = "SearchRequest", description = "搜索联系人请求")
 public class SearchRequest implements Serializable {
 
     @Serial

@@ -1,10 +1,9 @@
 package com.salmon.chatService.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.po.UserContact;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
@@ -65,4 +64,12 @@ public interface UserContactService extends IService<UserContact> {
      * @param contactType   联系类型
      */
     void addContact(Integer userId, Integer contactId, Integer receiveUserId, Integer contactType);
+
+    /**
+     * 加载联系人列表
+     *
+     * @param contactType 类型
+     * @return List<UserContactVO>
+     */
+    List<UserContactVO> loadContact(Integer contactType);
 }

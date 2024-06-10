@@ -21,25 +21,68 @@ import java.util.List;
 public interface UserContactMapper extends BaseMapper<UserContact> {
 
     @Select(value = "SELECT " +
-            "c.id as id, " +
-            "c.user_id as userId, " +
-            "c.contact_id as contactId, " +
-            "u.account as account, " +
-            "u.nickname as nickname, " +
-            "u.description as description, " +
-            "u.mobile as mobile, " +
-            "u.email as email, " +
-            "u.avatar as avatar, " +
-            "u.gender as gender, " +
-            "u.area as area, " +
-            "u.last_login_time as lastLoginTime, " +
-            "u.last_off_time as lastOffTime " +
-            "FROM tb_user_contact as c " +
-            "INNER JOIN tb_user as u " +
+            "c.id AS id, " +
+            "c.user_id AS userId, " +
+            "c.contact_id AS contactId, " +
+            "u.account AS account, " +
+            "u.nickname AS nickname, " +
+            "u.description AS description, " +
+            "u.mobile AS mobile, " +
+            "u.email AS email, " +
+            "u.avatar AS avatar, " +
+            "u.gender AS gender, " +
+            "u.area AS area, " +
+            "u.last_login_time AS lastLoginTime, " +
+            "u.last_off_time AS lastOffTime " +
+            "FROM tb_user_contact AS c " +
+            "INNER JOIN tb_user AS u " +
             "ON c.user_id = u.id " +
             "WHERE c.contact_id = #{contactId} " +
             "AND c.contact_type = #{contactType} " +
             "AND c.status = #{status} " +
-            "ORDER BY c.id ASC")
+            "AND u.is_delete = 0 " +
+            "ORDER BY c.id")
     List<UserContactVO> selectContactUserInfo(@Param("contactId") Long contactId, @Param("contactType") Integer contactType, @Param("status") Integer status);
+
+    @Select(value = "SELECT " +
+            "c.id AS id, " +
+            "c.user_id AS userId, " +
+            "c.contact_id AS contactId, " +
+            "g.group_number AS account, " +
+            "g.group_name AS nickname, " +
+            "g.group_cover AS avatar " +
+            "FROM tb_user_contact AS c " +
+            "INNER JOIN tb_group AS g " +
+            "ON c.contact_id = g.id " +
+            "AND g.group_owner_id != c.user_id " +
+            "WHERE c.user_id = #{contactId} " +
+            "AND c.contact_type = #{contactType} " +
+            "AND c.status in ${status} " +
+            "AND g.group_owner_id != #{contactId} " +
+            "ORDER BY c.id")
+    List<UserContactVO> selectContactGroupInfoList(@Param("contactId") Integer contactId, @Param("contactType") Integer contactType, @Param("status") String status);
+
+    @Select(value = "SELECT " +
+            "c.id AS id, " +
+            "c.user_id AS userId, " +
+            "c.contact_id AS contactId, " +
+            "u.account AS account, " +
+            "u.nickname AS nickname, " +
+            "u.description AS description, " +
+            "u.mobile AS mobile, " +
+            "u.email AS email, " +
+            "u.avatar AS avatar, " +
+            "u.gender AS gender, " +
+            "u.area AS area, " +
+            "u.last_login_time AS lastLoginTime, " +
+            "u.last_off_time AS lastOffTime " +
+            "FROM tb_user_contact AS c " +
+            "INNER JOIN tb_user AS u " +
+            "ON c.contact_id = u.id " +
+            "WHERE c.contact_id = #{contactId} " +
+            "AND c.contact_type = #{contactType} " +
+            "AND c.status in ${status} " +
+            "AND u.is_delete = 0 " +
+            "ORDER BY c.id")
+    List<UserContactVO> selectContactUserInfoList(@Param("contactId") Integer contactId, @Param("contactType") Integer contactType, @Param("status") String status);
 }

@@ -1,6 +1,7 @@
 package com.salmon.chatService.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.salmon.chatService.common.ErrorCode;
 import com.salmon.chatService.common.JoinTypeEnum;
@@ -315,4 +316,26 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         // todo 创建会话，发送消息
     }
 
+    /**
+     * 加载联系人列表
+     *
+     * @param contactType 类型
+     * @return List<UserContactVO>
+     */
+    @Override
+    public List<UserContactVO> loadContact(Integer contactType) {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        String statusArr = "(" + StrUtil.join(
+                ",",
+                UserContactStatusEnum.FRIEND.getValue(),
+                UserContactStatusEnum.BE_DEL.getValue(),
+                UserContactStatusEnum.BE_BLACK.getValue()
+        ) + ")";
+        if (contactType == UserContactTypeEnum.USER.getType()) {
+            return this.baseMapper.selectContactUserInfoList(tokenUserVo.getId(), contactType, statusArr);
+        } else {
+            // 排除自己创建的群
+            return this.baseMapper.selectContactGroupInfoList(tokenUserVo.getId(), contactType, statusArr);
+        }
+    }
 }

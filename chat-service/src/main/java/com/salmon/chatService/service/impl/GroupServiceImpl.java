@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.salmon.chatService.common.ErrorCode;
 import com.salmon.chatService.common.IdRequest;
+import com.salmon.chatService.constant.Settings;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.enums.group.GroupStatusEnum;
@@ -24,6 +25,7 @@ import com.salmon.chatService.utils.Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -65,6 +67,9 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
             ThrowUtils.throwIf(count >= maxGroupCount, "最多只能创建" + maxGroupCount + "个群组");
             String groupNumber = Utils.generateGroupNumber();
             group.setGroupNumber(groupNumber);
+            if (!StringUtils.hasText(group.getGroupCover())) {
+                group.setGroupCover(Settings.DEFAULT_GROUP_COVER);
+            }
             ThrowUtils.throwIf(!this.save(group), ErrorCode.OPERATION_ERROR, "创建失败");
 
             // 将群组添加为联系人

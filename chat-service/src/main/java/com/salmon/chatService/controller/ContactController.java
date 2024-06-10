@@ -5,16 +5,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.BaseResponse;
+import com.salmon.chatService.common.ErrorCode;
 import com.salmon.chatService.common.PageRequest;
 import com.salmon.chatService.common.ResultUtils;
+import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.DealWithApplyRequest;
+import com.salmon.chatService.model.dto.contact.LoadContactRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
+import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.contact.ApplyRecordVO;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
+import com.salmon.chatService.model.vo.contact.UserContactVO;
 import com.salmon.chatService.service.UserContactApplyService;
 import com.salmon.chatService.service.UserContactService;
 import com.salmon.chatService.utils.UserHolder;
@@ -28,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 联系人相关API
@@ -76,5 +83,16 @@ public class ContactController {
     public BaseResponse<Page<ApplyRecordVO>> dealWithApply(@RequestBody @Valid DealWithApplyRequest request) {
         userContactApplyService.dealWithApply(request);
         return ResultUtils.success();
+    }
+
+    @Operation(summary = "获取联系人列表")
+    @PostMapping("/loadContact")
+    @CheckAuth
+    public BaseResponse<?> loadContact(@RequestBody @Valid LoadContactRequest request) {
+        Integer contactType = request.getContactType();
+        UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getEnumByValue(contactType);
+        ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
+        List<UserContactVO> userContactVOS = userContactService.loadContact(contactType);
+        return ResultUtils.success(userContactVOS);
     }
 }
