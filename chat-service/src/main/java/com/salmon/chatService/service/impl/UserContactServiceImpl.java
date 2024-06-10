@@ -23,6 +23,7 @@ import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.app.SystemConfigVo;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
+import com.salmon.chatService.model.vo.contact.ContactInfoVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
 import com.salmon.chatService.service.*;
@@ -342,5 +343,52 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             // 排除自己创建的群
             return this.baseMapper.selectContactGroupInfoList(tokenUserVo.getId(), contactType, statusArr);
         }
+    }
+
+    /**
+     * 获取联系人详情（不一定是好友，比如群成员里看详情））
+     *
+     * @param id 联系人ID
+     * @return ContactInfoVO
+     */
+    @Override
+    public ContactInfoVO getContactInfo(Long id) {
+        User user = userService.getById(id);
+        ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.PARAMS_ERROR);
+        ContactInfoVO contactInfoVO = ContactInfoVO.objToVo(user);
+        contactInfoVO.setStatus(UserContactStatusEnum.NOT_FRIEND.getValue());
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        UserContact userContact = this.selectContact(tokenUserVo.getId(), id.intValue(), UserContactTypeEnum.USER.getType());
+        // 判断是否是好友
+        if (Objects.nonNull(userContact)) {
+            contactInfoVO.setStatus(userContact.getStatus());
+        }
+        return contactInfoVO;
+    }
+
+    /**
+     * 获取联系人详情（必须是好友（包含被拉黑或者被删））
+     *
+     * @param id 联系人ID
+     * @return ContactInfoVO
+     */
+    @Override
+    public ContactInfoVO getContactUserInfo(Long id) {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        UserContact userContact = this.selectContact(tokenUserVo.getId(), id.intValue(), UserContactTypeEnum.USER.getType());
+        ThrowUtils.throwIf(
+                Objects.isNull(userContact)
+                        || !Arrays.asList(
+                        UserContactStatusEnum.FRIEND.getValue(),
+                        UserContactStatusEnum.BE_DEL.getValue(),
+                        UserContactStatusEnum.BE_BLACK.getValue()
+                ).contains(userContact.getStatus())
+                , ErrorCode.PARAMS_ERROR
+        );
+        User user = userService.getById(id);
+        ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.PARAMS_ERROR);
+        ContactInfoVO contactInfoVO = ContactInfoVO.objToVo(user);
+        contactInfoVO.setStatus(userContact.getStatus());
+        return contactInfoVO;
     }
 }

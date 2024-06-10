@@ -5,6 +5,7 @@ import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
+import com.salmon.chatService.model.vo.contact.ContactInfoVO;
 import com.salmon.chatService.model.vo.contact.SearchContactVO;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
 
@@ -72,4 +73,20 @@ public interface UserContactService extends IService<UserContact> {
      * @return List<UserContactVO>
      */
     List<UserContactVO> loadContact(Integer contactType);
+
+    /**
+     * 获取联系人详情（不一定是好友，比如群成员里看详情））
+     *
+     * @param id 联系人ID
+     * @return ContactInfoVO
+     */
+    ContactInfoVO getContactInfo(Long id);
+
+    /**
+     * 获取联系人详情（必须是好友（包含被拉黑或者被删））
+     *
+     * @param id 联系人ID
+     * @return ContactInfoVO
+     */
+    ContactInfoVO getContactUserInfo(Long id);
 }

@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.salmon.chatService.annotation.CheckAuth;
-import com.salmon.chatService.common.BaseResponse;
-import com.salmon.chatService.common.ErrorCode;
-import com.salmon.chatService.common.PageRequest;
-import com.salmon.chatService.common.ResultUtils;
+import com.salmon.chatService.common.*;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.DealWithApplyRequest;
@@ -16,10 +13,7 @@ import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
-import com.salmon.chatService.model.vo.contact.ApplyRecordVO;
-import com.salmon.chatService.model.vo.contact.ApplyResultVO;
-import com.salmon.chatService.model.vo.contact.SearchContactVO;
-import com.salmon.chatService.model.vo.contact.UserContactVO;
+import com.salmon.chatService.model.vo.contact.*;
 import com.salmon.chatService.service.UserContactApplyService;
 import com.salmon.chatService.service.UserContactService;
 import com.salmon.chatService.utils.UserHolder;
@@ -88,11 +82,27 @@ public class ContactController {
     @Operation(summary = "获取联系人列表")
     @PostMapping("/loadContact")
     @CheckAuth
-    public BaseResponse<?> loadContact(@RequestBody @Valid LoadContactRequest request) {
+    public BaseResponse<List<UserContactVO>> loadContact(@RequestBody @Valid LoadContactRequest request) {
         Integer contactType = request.getContactType();
         UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getEnumByValue(contactType);
         ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
         List<UserContactVO> userContactVOS = userContactService.loadContact(contactType);
         return ResultUtils.success(userContactVOS);
+    }
+
+    @Operation(summary = "获取联系人详情（不一定是好友，比如群成员里看详情））")
+    @PostMapping("/getContactInfo")
+    @CheckAuth
+    public BaseResponse<ContactInfoVO> getContactInfo(@RequestBody @Valid IdRequest request) {
+        ContactInfoVO contactInfo = userContactService.getContactInfo(request.getId());
+        return ResultUtils.success(contactInfo);
+    }
+
+    @Operation(summary = "获取联系人详情（必须是好友（包含被拉黑或者被删））")
+    @PostMapping("/getContactUserInfo")
+    @CheckAuth
+    public BaseResponse<ContactInfoVO> getContactUserInfo(@RequestBody @Valid IdRequest request) {
+        ContactInfoVO contactInfo = userContactService.getContactUserInfo(request.getId());
+        return ResultUtils.success(contactInfo);
     }
 }
