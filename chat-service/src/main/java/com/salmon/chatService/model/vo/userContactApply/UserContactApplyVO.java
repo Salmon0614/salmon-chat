@@ -49,6 +49,9 @@ public class UserContactApplyVO implements Serializable {
     @Schema(description = "申请信息")
     private String applyInfo;
 
+    @Schema(description = "来源类型 0-搜索账号 1-通过群聊添加 2-搜索邮箱 3-搜索手机号")
+    private Integer originType;
+
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

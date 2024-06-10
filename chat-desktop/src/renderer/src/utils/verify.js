@@ -4,7 +4,7 @@ const regs = {
   passwordRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, // 至少8个字符，包含大小写字母和数字
   versionRegex: /^[0-9\.]+$/,
   numberRegex: /^\+?[1-9][0-9]*$/,
-  phoneNumberRegex: /^1[3-9]\d{9}$/
+  phoneNumberRegex: /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/
 }
 
 const verify = (rule, value, reg, callback) => {

@@ -8,6 +8,7 @@ import com.salmon.chatService.constant.CommonConstant;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
+import com.salmon.chatService.model.enums.contact.ApplyOriginTypeEnum;
 import com.salmon.chatService.model.enums.contact.ApplyTypeEnum;
 import com.salmon.chatService.model.enums.contact.ContactApplyStatusEnum;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
@@ -135,15 +136,33 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     @Transactional(rollbackFor = Exception.class)
     public ApplyResultVO applyAdd(ApplyRequest request) {
         String account = request.getContactAccount();
+        ApplyOriginTypeEnum applyOriginTypeEnum = ApplyOriginTypeEnum.validType(account);
         UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getByPrefix(account);
-        ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
+        if (applyOriginTypeEnum.getValue() == ApplyOriginTypeEnum.ACCOUNT.getValue()) {
+            ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
+        } else {
+            contactTypeEnum = UserContactTypeEnum.USER;
+        }
         TokenUserVo tokenUserVo = UserHolder.getUser();
         Integer joinType = null;
         Integer contactId = null;
         Integer receiveUserId = null;
+        int originType = applyOriginTypeEnum.getValue();
         switch (contactTypeEnum) {
             case USER -> {
-                User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getAccount, account));
+                LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+                switch (applyOriginTypeEnum) {
+                    case ACCOUNT -> {
+                        queryWrapper.eq(User::getAccount, account);
+                    }
+                    case EMAIL -> {
+                        queryWrapper.eq(User::getEmail, account);
+                    }
+                    case MOBILE -> {
+                        queryWrapper.eq(User::getMobile, account);
+                    }
+                }
+                User user = userService.getOne(queryWrapper);
                 ThrowUtils.throwIf(Objects.isNull(user), "该用户不存在");
                 joinType = user.getJoinType();
                 contactId = user.getId();
@@ -182,6 +201,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         String applyInfo = request.getApplyInfo();
         if (!StringUtils.hasText(applyInfo)) {
             applyInfo = String.format(CommonConstant.applyInfoForUser, tokenUserVo.getNickname());
+            // 添加方式是从群成员列表添加的
             if (request.getApplyType() == ApplyTypeEnum.GROUP.getValue()) {
                 // 如果通过群聊添加好友，那枚举是群就不合法
                 ThrowUtils.throwIf(contactTypeEnum.getType() == UserContactTypeEnum.GROUP.getType(), ErrorCode.PARAMS_ERROR);
@@ -189,6 +209,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 // 群不存在或者已经解散
                 ThrowUtils.throwIf(Objects.isNull(group) || group.getStatus().equals(GroupStatusEnum.DISSOLUTION.getValue()), ErrorCode.PARAMS_ERROR);
                 applyInfo = String.format(CommonConstant.applyInfoForGroup, group.getGroupName(), tokenUserVo.getNickname());
+                originType = ApplyOriginTypeEnum.GROUP.getValue();
             }
         }
         // 封装申请记录信息
@@ -206,6 +227,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             userContactApply.setReceiveUserId(receiveUserId);
             userContactApply.setContactType(contactTypeEnum.getType());
             userContactApply.setApplyInfo(applyInfo);
+            userContactApply.setOriginType(originType);
             userContactApply.setStatus(ContactApplyStatusEnum.WAIT.getValue());
             userContactApply.setLastApplyTime(LocalDateTime.now());
             ThrowUtils.throwIf(!userContactApplyService.save(userContactApply), "申请失败，请刷新重试");
@@ -215,6 +237,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             // 更新申请记录（可能对方已删除，重新添加）
             userContactApply.setStatus(ContactApplyStatusEnum.WAIT.getValue());
             userContactApply.setLastApplyTime(LocalDateTime.now());
+            userContactApply.setOriginType(originType);
             userContactApply.setApplyInfo(applyInfo);
             ThrowUtils.throwIf(!userContactApplyService.updateById(userContactApply), "申请失败，请刷新重试");
         }

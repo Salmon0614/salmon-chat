@@ -68,6 +68,10 @@ public class UserContactApply implements Serializable {
     @TableField("apply_info")
     private String applyInfo;
 
+    @Schema(description = "来源类型 0-搜索账号 1-通过群聊添加 2-搜索邮箱 3-搜索手机号")
+    @TableField("originType")
+    private Integer originType;
+
     @Schema(description = "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
