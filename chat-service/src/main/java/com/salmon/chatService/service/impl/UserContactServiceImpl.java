@@ -186,7 +186,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         // 这些参数有空值，直接抛
         ThrowUtils.throwIf(ObjectUtil.hasEmpty(joinType, contactId, receiveUserId), ErrorCode.PARAMS_ERROR);
         Integer applyUserId = tokenUserVo.getId();
-        // 先查询该好友是否已经添加，如果他拉黑了这个用户，则不能添加
+        // 先查询该好友是否已经添加，如果拉黑了这个用户，则不能添加
         UserContact userContact = this.selectContact(applyUserId, contactId, contactTypeEnum.getType());
         ThrowUtils.throwIf(
                 Objects.nonNull(userContact) &&
@@ -208,7 +208,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         // 默认申请信息
         String applyInfo = request.getApplyInfo();
         if (!StringUtils.hasText(applyInfo)) {
-            applyInfo = String.format(CommonConstant.applyInfoForUser, tokenUserVo.getNickname());
+            applyInfo = String.format(CommonConstant.APPLY_INFO_FOR_USER, tokenUserVo.getNickname());
             // 添加方式是从群成员列表添加的
             if (request.getApplyType() == ApplyTypeEnum.GROUP.getValue()) {
                 // 如果通过群聊添加好友，那枚举是群就不合法
@@ -216,7 +216,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 Group group = groupService.getById(request.getGroupId());
                 // 群不存在或者已经解散
                 ThrowUtils.throwIf(Objects.isNull(group) || group.getStatus().equals(GroupStatusEnum.DISSOLUTION.getValue()), ErrorCode.PARAMS_ERROR);
-                applyInfo = String.format(CommonConstant.applyInfoForGroup, group.getGroupName(), tokenUserVo.getNickname());
+                applyInfo = String.format(CommonConstant.APPLY_INFO_FOR_GROUP, group.getGroupName(), tokenUserVo.getNickname());
                 originType = ApplyOriginTypeEnum.GROUP.getValue();
             }
         }
@@ -390,5 +390,33 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         ContactInfoVO contactInfoVO = ContactInfoVO.objToVo(user);
         contactInfoVO.setStatus(userContact.getStatus());
         return contactInfoVO;
+    }
+
+    /**
+     * 移除联系人（删除或者拉黑）
+     *
+     * @param contactId         联系人ID
+     * @param contactStatusEnum 状态枚举
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeUserContact(int contactId, UserContactStatusEnum contactStatusEnum) {
+        TokenUserVo tokenUserVo = UserHolder.getUser();
+        // 移除好友
+        UserContact myContact = this.selectContact(tokenUserVo.getId(), contactId, UserContactTypeEnum.USER.getType());
+        ThrowUtils.throwIf(Objects.isNull(myContact), ErrorCode.PARAMS_ERROR);
+        myContact.setStatus(contactStatusEnum.getValue());
+        ThrowUtils.throwIf(!this.updateById(myContact), "操作失败");
+        // 将好友中也移除自己
+        UserContact friendContact = this.selectContact(contactId, tokenUserVo.getId(), UserContactTypeEnum.USER.getType());
+        if (contactStatusEnum == UserContactStatusEnum.DEL) {
+            friendContact.setStatus(UserContactStatusEnum.BE_DEL.getValue());
+        } else if (contactStatusEnum == UserContactStatusEnum.BLACK) {
+            friendContact.setStatus(UserContactStatusEnum.BE_BLACK.getValue());
+        }
+        ThrowUtils.throwIf(!this.updateById(friendContact), "操作失败");
+        // todo 从我的好友缓存列表删除好友
+
+        // todo 从好友的缓存列表删除我
     }
 }

@@ -31,11 +31,11 @@ public interface CommonConstant {
     /**
      * 添加用户/加入群的默认申请信息
      */
-    String applyInfoForUser = "我是%s";
+    String APPLY_INFO_FOR_USER = "我是%s";
 
     /**
      * 从群中添加好友的默认申请信息
      */
-    String applyInfoForGroup = "我是群聊“%s”群的%s";
+    String APPLY_INFO_FOR_GROUP = "我是群聊“%s”群的%s";
 
 }

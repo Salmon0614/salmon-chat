@@ -1,7 +1,5 @@
 package com.salmon.chatService.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.*;
@@ -11,12 +9,10 @@ import com.salmon.chatService.model.dto.contact.DealWithApplyRequest;
 import com.salmon.chatService.model.dto.contact.LoadContactRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
-import com.salmon.chatService.model.po.UserContactApply;
-import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
 import com.salmon.chatService.model.vo.contact.*;
 import com.salmon.chatService.service.UserContactApplyService;
 import com.salmon.chatService.service.UserContactService;
-import com.salmon.chatService.utils.UserHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -104,5 +100,21 @@ public class ContactController {
     public BaseResponse<ContactInfoVO> getContactUserInfo(@RequestBody @Valid IdRequest request) {
         ContactInfoVO contactInfo = userContactService.getContactUserInfo(request.getId());
         return ResultUtils.success(contactInfo);
+    }
+
+    @Operation(summary = "删除联系人")
+    @PostMapping("/delContact")
+    @CheckAuth
+    public BaseResponse<ContactInfoVO> delContact(@RequestBody @Valid IdRequest request) {
+        userContactService.removeUserContact(request.getId().intValue(), UserContactStatusEnum.DEL);
+        return ResultUtils.success();
+    }
+
+    @Operation(summary = "拉黑联系人")
+    @PostMapping("/addContactToBlackList")
+    @CheckAuth
+    public BaseResponse<ContactInfoVO> addContactToBlackList(@RequestBody @Valid IdRequest request) {
+        userContactService.removeUserContact(request.getId().intValue(), UserContactStatusEnum.BLACK);
+        return ResultUtils.success();
     }
 }

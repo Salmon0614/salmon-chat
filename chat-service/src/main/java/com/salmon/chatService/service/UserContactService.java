@@ -3,6 +3,7 @@ package com.salmon.chatService.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
+import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
 import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
 import com.salmon.chatService.model.vo.contact.ContactInfoVO;
@@ -89,4 +90,12 @@ public interface UserContactService extends IService<UserContact> {
      * @return ContactInfoVO
      */
     ContactInfoVO getContactUserInfo(Long id);
+
+    /**
+     * 移除联系人（删除或者拉黑）
+     *
+     * @param contactId         联系人ID
+     * @param contactStatusEnum 状态枚举
+     */
+    void removeUserContact(int contactId, UserContactStatusEnum contactStatusEnum);
 }

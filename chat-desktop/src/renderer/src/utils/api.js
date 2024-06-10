@@ -38,7 +38,7 @@ const api = {
     dealWithApply: '/contact/dealWithApply', //处理申请
     loadContact: '/contact/loadContact', //获取联系人列表
     getContactUserInfo: '/contact/getContactUserInfo', //获取联系人详情（必须是好友（包含被拉黑或者被删））
-    addContact2BlackList: '/contact/addContact2BlackList', //拉黑联系人
+    addContactToBlackList: '/contact/addContactToBlackList', //拉黑联系人
     delContact: '/contact/delContact', //删除联系人
     getContactInfo: '/contact/getContactInfo' //获取联系人详情（不一定是好友，比如群成员里看详情））
   },
