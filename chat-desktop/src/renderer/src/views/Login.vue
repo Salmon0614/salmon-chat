@@ -148,7 +148,7 @@ const register = async () => {
       errorMsg.value = response.message
     }
   })
-  if (!result.isSuccess) {
+  if (!result || !result.isSuccess) {
     return
   }
   proxy.$message.success('注册成功')
