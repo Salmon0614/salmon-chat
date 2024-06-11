@@ -81,7 +81,31 @@ function createWindow() {
 
   // 托盘，mac默认有退出按钮，无需重复添加
   const contextMenu = isMac
-    ? []
+    ? [
+        {
+          label: '我的应用',
+          submenu: [
+            { label: '关于', accelerator: 'CommandOrControl+I', role: 'about' },
+            { type: 'separator' },
+            { label: '隐藏', role: 'hide' },
+            { label: '隐藏其他', role: 'hideOthers' },
+            { type: 'separator' },
+            { label: '服务', role: 'services' },
+            { label: '退出', accelerator: 'Command+Q', role: 'quit' }
+          ]
+        },
+        {
+          label: '编辑',
+          submenu: [
+            { label: '复制', accelerator: 'CommandOrControl+C', role: 'copy' },
+            { label: '粘贴', accelerator: 'CommandOrControl+V', role: 'paste' },
+            { label: '剪切', accelerator: 'CommandOrControl+X', role: 'cut' },
+            { label: '撤销', accelerator: 'CommandOrControl+Z', role: 'undo' },
+            { label: '重做', accelerator: 'Shift+CommandOrControl+Z', role: 'redo' },
+            { label: '全选', accelerator: 'CommandOrControl+A', role: 'selectAll' }
+          ]
+        }
+      ]
     : [
         {
           label: '退出',
