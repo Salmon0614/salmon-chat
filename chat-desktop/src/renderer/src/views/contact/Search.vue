@@ -6,21 +6,17 @@ import ContentPanel from '@/components/ContentPanel.vue'
 const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
 const contactTypeName = computed(() => {
-  if (userStore.getUserInfo().userId === searchResult.value.contactId) {
+  if (userStore.getUserInfo().account === searchResult.value.account) {
     return '自己'
   }
-  if (searchResult.value.contactType === 'USER') {
-    return '用户'
-  }
-  if (searchResult.value.contactType === 'GROUP') {
-    return '群聊'
-  }
+  return searchResult.value.contactTypeDesc
 })
-
+const isShow = ref(false)
 const isClickSearch = ref(false)
 const contactId = ref(null)
 const searchResult = ref({})
 const search = async () => {
+  // SG73689195198
   if (contactId.value == null) {
     return
   }
@@ -28,12 +24,19 @@ const search = async () => {
   let result = await proxy.$request({
     url: proxy.$api.contact.search,
     params: {
-      contactId: contactId.value
+      keyword: contactId.value
     }
   })
-  if (!result || result.isSuccess) {
+  if (!result || !result.isSuccess) {
+    isShow.value = true
     return
   }
+  console.log(result)
+  if (proxy.$utils.isEmpty(result.data)) {
+    isShow.value = true
+    return
+  }
+  isShow.value = false
   searchResult.value = result.data
 }
 
@@ -55,9 +58,9 @@ const sendMessage = () => {}
     <div class="search-result-panel" v-if="searchResult && Object.keys(searchResult).length > 0">
       <div class="search-result">
         <span class="contact-type">{{ contactTypeName }}</span>
-        <div>{{ searchResult.nickname }}</div>
+        <div>{{ searchResult.name }}</div>
       </div>
-      <div class="op-btn" v-if="searchResult.contactId !== userStore.getUserInfo().userId">
+      <div class="op-btn" v-if="searchResult.account !== userStore.getUserInfo().account">
         <el-button
           type="primary"
           v-if="
@@ -69,7 +72,7 @@ const sendMessage = () => {}
           "
           @click="applyContact"
         >
-          {{ searchResult.contactType === 'USER' ? '添加到联系人' : '申请加入到群组' }}
+          {{ searchResult.contactType === 0 ? '添加到联系人' : '申请加入到群组' }}
         </el-button>
         <el-button type="primary" v-if="searchResult.status === 1" @click="sendMessage"
           >发消息
@@ -79,7 +82,7 @@ const sendMessage = () => {}
         </span>
       </div>
     </div>
-    <div class="no-data" v-if="isClickSearch && !searchResult">没有搜索到任何结果</div>
+    <div class="no-data" v-if="isClickSearch && isShow">没有搜索到任何结果</div>
   </ContentPanel>
 </template>
 

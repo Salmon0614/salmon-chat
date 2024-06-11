@@ -1,11 +1,13 @@
 package com.salmon.chatService.model.vo.contact;
 
+import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 搜索结果视图
@@ -30,6 +32,9 @@ public class SearchContactVO implements Serializable {
     @Schema(description = "联系人类型")
     private Integer contactType;
 
+    @Schema(description = "联系人类型描述")
+    private String contactTypeDesc;
+
     @Schema(description = "昵称/群名称")
     private String name;
 
@@ -44,4 +49,12 @@ public class SearchContactVO implements Serializable {
 
     @Schema(description = "群封面/用户头像")
     private String avatar;
+
+    public String getContactTypeDesc() {
+        UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getEnumByValue(this.contactType);
+        if (Objects.isNull(contactTypeEnum)) {
+            return "";
+        }
+        return contactTypeEnum.getDesc();
+    }
 }
