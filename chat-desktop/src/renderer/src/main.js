@@ -18,6 +18,7 @@ import ShowLocalImage from '@/components/ShowLocalImage.vue'
 import UserBaseInfo from '@/components/UserBaseInfo.vue'
 import MyDialog from '@/components/MyDialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AvatarUpload from '@/components/AvatarUpload.vue'
 
 // 常用工具
 import utils from '@/utils/utils'
@@ -38,6 +39,7 @@ app.component('ShowLocalImage', ShowLocalImage)
 app.component('UserBaseInfo', UserBaseInfo)
 app.component('MyDialog', MyDialog)
 app.component('Avatar', Avatar)
+app.component('AvatarUpload', AvatarUpload)
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request

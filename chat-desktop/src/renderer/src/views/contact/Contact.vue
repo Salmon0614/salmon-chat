@@ -118,7 +118,8 @@ loadContact(1)
  */
 const loadMyGroup = async () => {
   let result = await proxy.$request({
-    url: proxy.$api.group.loadMyGroup
+    url: proxy.$api.group.loadMyGroup,
+    showLoading: false
   })
   if (!result || !result.isSuccess) {
     return
@@ -146,6 +147,10 @@ watch(
       case 0:
       case 1:
         loadContact(newVal)
+        contactStateStore.setContactReload(null)
+        break
+      case 2:
+        loadMyGroup()
         contactStateStore.setContactReload(null)
         break
     }

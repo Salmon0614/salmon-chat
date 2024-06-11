@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -33,12 +34,14 @@ public class GroupSaveRequest implements Serializable {
     @NotBlank(message = "群名不能为空")
     private String groupName;
 
-    @Schema(description = "群通知")
-    @NotBlank(message = "群通知不能为空")
+    @Schema(description = "群公告")
+    @NotBlank(message = "群公告不能为空")
     private String groupNotice;
 
     @Schema(description = "加入类型 0-直接加入 1-管理员同意加入")
     @NotNull(message = "请选择加入类型")
+    @Min(value = 0)
+    @Max(value = 1)
     private Integer joinType;
 
     @Schema(description = "群封面")

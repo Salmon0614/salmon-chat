@@ -1,7 +1,7 @@
 <script setup>
 import { computed, getCurrentInstance, nextTick, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
-import ContentPanel from '@/components/ContentPanel.vue'
+// import ContentPanel from '@/components/ContentPanel.vue'
 import SearchAdd from '@/views/contact/SearchAdd.vue'
 
 const { proxy } = getCurrentInstance()
