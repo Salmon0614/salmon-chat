@@ -26,6 +26,7 @@ import verify from '@/utils/verify'
 import request from '@/utils/request'
 import message from '@/utils/message'
 import api from '@/utils/api'
+import confirm from '@/utils/confirm'
 
 const app = createApp(App)
 
@@ -45,4 +46,5 @@ app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request
 app.config.globalProperties.$message = message
 app.config.globalProperties.$api = api
+app.config.globalProperties.$confirm = confirm
 app.mount('#app')

@@ -71,7 +71,7 @@ let partList = ref([
     contactName: 'contactName',
     contactImage: 'avatar',
     contactData: [],
-    contactPath: '/contact/Detail',
+    contactPath: '/contact/userDetail',
     emptyMsg: '暂无好友'
   }
 ])
@@ -90,7 +90,7 @@ const partJump = (part) => {
 
 /**
  * 加载联系人
- * @param contactType 联系人类型
+ * @param contactType 联系人类型 0-用户 1-群聊
  * @returns {Promise<void>}
  */
 const loadContact = async (contactType) => {
@@ -131,7 +131,20 @@ loadMyGroup()
 /**
  * 联系人/群聊详情
  */
-const contactDetail = (contact, part) => {}
+const contactDetail = (contact, part) => {
+  if (part.showTitle) {
+    rightTitle.value = contact[part.contactName]
+  } else {
+    rightTitle.value = null
+  }
+  router.push({
+    path: part.contactPath,
+    query: {
+      contactId: contact[part.contactId],
+      contactAccount: contact[part.contactAccount]
+    }
+  })
+}
 
 /**
  * 监听状态
@@ -139,18 +152,28 @@ const contactDetail = (contact, part) => {}
 watch(
   () => contactStateStore.contactReload,
   (newVal, oldVal) => {
-    console.debug('watch...', newVal, oldVal)
+    console.debug('contact watch...', newVal, oldVal)
     if (newVal == null) {
       return
     }
     switch (newVal) {
+      // 用户/群聊
       case 0:
       case 1:
         loadContact(newVal)
         contactStateStore.setContactReload(null)
         break
+      // 我的群聊
       case 2:
         loadMyGroup()
+        contactStateStore.setContactReload(null)
+        break
+      // 删除/拉黑联系人
+      case 3:
+        loadContact(0)
+        rightTitle.value = null
+        // 删除完后，跳到空白区
+        router.push('/contact/blank')
         contactStateStore.setContactReload(null)
         break
     }
