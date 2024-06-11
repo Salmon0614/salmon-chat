@@ -1,7 +1,9 @@
 <script setup>
 import { ref, getCurrentInstance, nextTick } from 'vue'
 import { useUserStore } from '@/stores/userStore'
+import { useContactStateStore } from '@/stores/contactStateStore'
 
+const contactStateStore = useContactStateStore()
 const userStore = useUserStore()
 
 const { proxy } = getCurrentInstance()
@@ -39,7 +41,6 @@ defineExpose({
 })
 
 const submitApply = async () => {
-  console.log(formData)
   const postData = {
     contactAccount: formData.value.account,
     applyInfo: formData.value.applyInfo,
@@ -59,6 +60,11 @@ const submitApply = async () => {
   }
   dialogConfig.value.show = false
   emit('reload')
+  console.debug(result.data)
+  if (result.data.joinType === 0) {
+    console.debug('before reload...', formData.value.contactType)
+    contactStateStore.setContactReload(formData.value.contactType)
+  }
 }
 </script>
 <template>

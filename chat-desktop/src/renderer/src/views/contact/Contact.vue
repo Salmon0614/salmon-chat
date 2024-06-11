@@ -1,10 +1,12 @@
 <script setup>
 import Layout from '@/components/Layout.vue'
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, getCurrentInstance, nextTick, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import WinOp from '@/components/WinOp.vue'
 import Avatar from '../../components/Avatar.vue'
+import { useContactStateStore } from '@/stores/contactStateStore'
 
+const contactStateStore = useContactStateStore()
 const router = useRouter()
 const route = useRoute()
 const { proxy } = getCurrentInstance()
@@ -129,6 +131,27 @@ loadMyGroup()
  * 联系人/群聊详情
  */
 const contactDetail = (contact, part) => {}
+
+/**
+ * 监听状态
+ */
+watch(
+  () => contactStateStore.contactReload,
+  (newVal, oldVal) => {
+    console.debug('watch...', newVal, oldVal)
+    if (newVal == null) {
+      return
+    }
+    switch (newVal) {
+      case 0:
+      case 1:
+        loadContact(newVal)
+        contactStateStore.setContactReload(null)
+        break
+    }
+  },
+  { immediate: true, deep: true }
+)
 </script>
 
 <template>
@@ -164,7 +187,7 @@ const contactDetail = (contact, part) => {}
               <div
                 :class="[
                   'part-item',
-                  contact[part.contactId] === route.query.contactId ? 'active' : ''
+                  contact[part.contactAccount] === route.query.contactAccount ? 'active' : ''
                 ]"
                 @click="contactDetail(contact, part)"
               >

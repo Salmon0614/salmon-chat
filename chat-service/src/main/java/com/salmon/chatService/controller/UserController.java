@@ -39,7 +39,7 @@ public class UserController extends BaseController {
     @Resource
     private UserService userService;
 
-    @Operation(summary = "保存用户信息")
+    @Operation(summary = "保存当前登录用户信息")
     @PostMapping("/saveUserInfo")
     @CheckAuth
     public BaseResponse<UserVO> saveUserInfo(@RequestBody @Valid UserSaveRequest request) {
@@ -47,7 +47,7 @@ public class UserController extends BaseController {
         return ResultUtils.success(userVO);
     }
 
-    @Operation(summary = "获取用户信息")
+    @Operation(summary = "获取当前登录用户信息")
     @PostMapping("/getUserInfo")
     @CheckAuth
     public BaseResponse<UserVO> getUserInfo() {
@@ -56,7 +56,7 @@ public class UserController extends BaseController {
         return ResultUtils.success(UserVO.objToVo(user));
     }
 
-    @Operation(summary = "更新密码")
+    @Operation(summary = "更新当前登录用户密码")
     @PostMapping("/updatePassword")
     @CheckAuth
     public BaseResponse<?> updatePassword(@RequestBody @Valid UpdatePassword request) {
