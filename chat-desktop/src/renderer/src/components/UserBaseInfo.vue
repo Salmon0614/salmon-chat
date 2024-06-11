@@ -1,8 +1,9 @@
 <script setup>
-import AvatarBase from '@/components/AvatarBase.vue'
 import { ref, reactive, getCurrentInstance, nextTick, onMounted, computed } from 'vue'
 
 const { proxy } = getCurrentInstance()
+
+import AvatarBase from '@/components/AvatarBase.vue'
 
 const props = defineProps({
   userInfo: {
@@ -25,6 +26,7 @@ const props = defineProps({
       :height="60"
       :border-radius="5"
       :show-detail="true"
+      :image-src="userInfo.avatar"
     ></AvatarBase>
     <div class="user-info">
       <div class="nick-name">

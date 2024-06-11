@@ -45,7 +45,6 @@ const submitApply = async () => {
     applyInfo: formData.value.applyInfo,
     contactType: formData.value.contactType
   }
-  console.log(postData)
   let result = await proxy.$request({
     url: proxy.$api.contact.applyAdd,
     params: postData

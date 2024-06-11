@@ -1,11 +1,17 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick, onMounted, computed } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
   userId: {
     type: Number
+  },
+  account: {
+    type: String
+  },
+  imageSrc: {
+    type: String
   },
   width: {
     type: Number,
@@ -26,10 +32,12 @@ const props = defineProps({
 })
 
 const showDetailHandler = () => {
+  console.log(props.imageSrc)
   if (!props.showDetail) {
     return
   }
   // todo 查看图片详情（原图）
+  console.log(props.imageSrc)
 }
 </script>
 
@@ -39,7 +47,7 @@ const showDetailHandler = () => {
     :style="{
       width: width + 'px',
       height: height + 'px',
-      borderRadius: borderRadius + 'px'
+      'border-radius': borderRadius + 'px'
     }"
     @click="showDetailHandler"
   >
@@ -49,6 +57,7 @@ const showDetailHandler = () => {
       :file-id="userId"
       part-type="avatar"
       :force-get="true"
+      :image-src="imageSrc"
     ></ShowLocalImage>
   </div>
 </template>

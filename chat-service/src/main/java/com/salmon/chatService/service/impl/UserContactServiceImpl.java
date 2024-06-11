@@ -375,12 +375,12 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         User user = userService.getById(id);
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.PARAMS_ERROR);
         ContactInfoVO contactInfoVO = ContactInfoVO.objToVo(user);
-        contactInfoVO.setStatus(UserContactStatusEnum.NOT_FRIEND.getValue());
+        contactInfoVO.setContactStatus(UserContactStatusEnum.NOT_FRIEND.getValue());
         TokenUserVo tokenUserVo = UserHolder.getUser();
         UserContact userContact = this.selectContact(tokenUserVo.getId(), id.intValue(), UserContactTypeEnum.USER.getType());
         // 判断是否是好友
         if (Objects.nonNull(userContact)) {
-            contactInfoVO.setStatus(userContact.getStatus());
+            contactInfoVO.setContactStatus(userContact.getStatus());
         }
         return contactInfoVO;
     }
@@ -407,7 +407,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         User user = userService.getById(id);
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.PARAMS_ERROR);
         ContactInfoVO contactInfoVO = ContactInfoVO.objToVo(user);
-        contactInfoVO.setStatus(userContact.getStatus());
+        contactInfoVO.setContactStatus(userContact.getStatus());
         return contactInfoVO;
     }
 

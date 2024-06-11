@@ -1,8 +1,9 @@
 <script setup>
-import Layout from '../../components/Layout.vue'
+import Layout from '@/components/Layout.vue'
 import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import WinOp from '../../components/WinOp.vue'
+import WinOp from '@/components/WinOp.vue'
+import Avatar from '../../components/Avatar.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -41,8 +42,10 @@ let partList = ref([
         path: '/contact/createGroup'
       }
     ],
-    contactId: 'groupId',
+    contactId: 'id',
+    contactAccount: 'groupNumber',
     contactName: 'groupName',
+    contactImage: 'groupCover',
     showTitle: true,
     contactData: [],
     contactPath: '/contact/groupDetail'
@@ -50,7 +53,9 @@ let partList = ref([
   {
     partName: '我加入的群聊',
     contactId: 'contactId',
+    contactAccount: 'contactAccount',
     contactName: 'contactName',
+    contactImage: 'avatar',
     showTitle: true,
     contactData: [],
     contactPath: '/contact/groupDetail',
@@ -60,7 +65,9 @@ let partList = ref([
     partName: '我的好友',
     children: [],
     contactId: 'contactId',
+    contactAccount: 'contactAccount',
     contactName: 'contactName',
+    contactImage: 'avatar',
     contactData: [],
     contactPath: '/contact/Detail',
     emptyMsg: '暂无好友'
@@ -78,6 +85,50 @@ const partJump = (part) => {
   // todo 处理联系人好友申请数量已读
   router.push(part.path)
 }
+
+/**
+ * 加载联系人
+ * @param contactType 联系人类型
+ * @returns {Promise<void>}
+ */
+const loadContact = async (contactType) => {
+  let result = await proxy.$request({
+    url: proxy.$api.contact.loadContact,
+    params: {
+      contactType: contactType
+    }
+  })
+  if (!result || !result.isSuccess) {
+    return
+  }
+  if (contactType === 0) {
+    partList.value[3].contactData = result.data
+  } else if (contactType === 1) {
+    partList.value[2].contactData = result.data
+  }
+}
+loadContact(0)
+loadContact(1)
+
+/**
+ * 加载我创建的群聊
+ * @type {(function(): Promise<void>)|*}
+ */
+const loadMyGroup = async () => {
+  let result = await proxy.$request({
+    url: proxy.$api.group.loadMyGroup
+  })
+  if (!result || !result.isSuccess) {
+    return
+  }
+  partList.value[1].contactData = result.data
+}
+loadMyGroup()
+
+/**
+ * 联系人/群聊详情
+ */
+const contactDetail = (contact, part) => {}
 </script>
 
 <template>
@@ -85,7 +136,7 @@ const partJump = (part) => {
     <template #left-content>
       <div class="drag-panel drag"></div>
       <div class="top-search">
-        <el-input clearable placeholder="搜索" v-model="searchKey" size="small" @click="search">
+        <el-input v-model="searchKey" clearable placeholder="搜索" size="small" @click="search">
           <template #prefix>
             <span class="iconfont icon-search"></span>
           </template>
@@ -107,8 +158,27 @@ const partJump = (part) => {
               ></div>
               <div class="text">{{ subPart.name }}</div>
             </div>
-            <template v-for="(contact, index2) in part.contactData" :key="index2"></template>
-
+            <template v-for="(contact, index2) in part.contactData" :key="index2">
+              <!-- todo  这里的判断可能需要调整，id 改为 account-->
+              <!--               -->
+              <div
+                :class="[
+                  'part-item',
+                  contact[part.contactId] === route.query.contactId ? 'active' : ''
+                ]"
+                @click="contactDetail(contact, part)"
+              >
+                <Avatar
+                  :user-id="contact[part.contactId]"
+                  :account="contact[part.contactAccount]"
+                  :image-src="contact[part.contactImage]"
+                  :width="35"
+                  :height="35"
+                  :is-group="part.partName !== '我的好友'"
+                ></Avatar>
+                <div class="text">{{ contact[part.contactName] }}</div>
+              </div>
+            </template>
             <template v-if="part.contactData && part.contactData.length === 0">
               <div class="no-data">{{ part.emptyMsg }}</div>
             </template>

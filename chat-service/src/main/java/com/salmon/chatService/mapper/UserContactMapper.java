@@ -24,16 +24,16 @@ public interface UserContactMapper extends BaseMapper<UserContact> {
             "c.id AS id, " +
             "c.user_id AS userId, " +
             "c.contact_id AS contactId, " +
-            "u.account AS account, " +
-            "u.nickname AS nickname, " +
-            "u.description AS description, " +
-            "u.mobile AS mobile, " +
-            "u.email AS email, " +
-            "u.avatar AS avatar, " +
-            "u.gender AS gender, " +
-            "u.area AS area, " +
-            "u.last_login_time AS lastLoginTime, " +
-            "u.last_off_time AS lastOffTime " +
+            "u.account AS contactAccount, " +
+            "u.nickname AS contactName, " +
+//            "u.description AS description, " +
+//            "u.mobile AS mobile, " +
+//            "u.email AS email, " +
+            "u.avatar AS avatar " +
+//            "u.gender AS gender, " +
+//            "u.area AS area, " +
+//            "u.last_login_time AS lastLoginTime, " +
+//            "u.last_off_time AS lastOffTime " +
             "FROM tb_user_contact AS c " +
             "INNER JOIN tb_user AS u " +
             "ON c.user_id = u.id " +
@@ -48,41 +48,41 @@ public interface UserContactMapper extends BaseMapper<UserContact> {
             "c.id AS id, " +
             "c.user_id AS userId, " +
             "c.contact_id AS contactId, " +
-            "g.group_number AS account, " +
-            "g.group_name AS nickname, " +
+            "g.group_number AS contactAccount, " +
+            "g.group_name AS contactName, " +
             "g.group_cover AS avatar " +
             "FROM tb_user_contact AS c " +
             "INNER JOIN tb_group AS g " +
             "ON c.contact_id = g.id " +
             "AND g.group_owner_id != c.user_id " +
-            "WHERE c.user_id = #{contactId} " +
+            "WHERE c.user_id = #{userId} " +
             "AND c.contact_type = #{contactType} " +
             "AND c.status in ${status} " +
-            "AND g.group_owner_id != #{contactId} " +
+            "AND g.group_owner_id != #{userId} " +
             "ORDER BY c.id")
-    List<UserContactVO> selectContactGroupInfoList(@Param("contactId") Integer contactId, @Param("contactType") Integer contactType, @Param("status") String status);
+    List<UserContactVO> selectContactGroupInfoList(@Param("userId") Integer userId, @Param("contactType") Integer contactType, @Param("status") String status);
 
     @Select(value = "SELECT " +
             "c.id AS id, " +
             "c.user_id AS userId, " +
             "c.contact_id AS contactId, " +
-            "u.account AS account, " +
-            "u.nickname AS nickname, " +
-            "u.description AS description, " +
-            "u.mobile AS mobile, " +
-            "u.email AS email, " +
-            "u.avatar AS avatar, " +
-            "u.gender AS gender, " +
-            "u.area AS area, " +
-            "u.last_login_time AS lastLoginTime, " +
-            "u.last_off_time AS lastOffTime " +
+            "u.account AS contactAccount, " +
+            "u.nickname AS contactName, " +
+//            "u.description AS description, " +
+//            "u.mobile AS mobile, " +
+//            "u.email AS email, " +
+            "u.avatar AS avatar " +
+//            "u.gender AS gender, " +
+//            "u.area AS area, " +
+//            "u.last_login_time AS lastLoginTime, " +
+//            "u.last_off_time AS lastOffTime " +
             "FROM tb_user_contact AS c " +
             "INNER JOIN tb_user AS u " +
             "ON c.contact_id = u.id " +
-            "WHERE c.contact_id = #{contactId} " +
+            "WHERE c.user_id = #{userId} " +
             "AND c.contact_type = #{contactType} " +
             "AND c.status in ${status} " +
             "AND u.is_delete = 0 " +
             "ORDER BY c.id")
-    List<UserContactVO> selectContactUserInfoList(@Param("contactId") Integer contactId, @Param("contactType") Integer contactType, @Param("status") String status);
+    List<UserContactVO> selectContactUserInfoList(@Param("userId") Integer userId, @Param("contactType") Integer contactType, @Param("status") String status);
 }

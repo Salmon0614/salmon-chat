@@ -56,13 +56,13 @@ public class ContactInfoVO implements Serializable {
     private String area;
 
     @Schema(description = "状态")
-    private Integer status;
+    private Integer contactStatus;
 
     @Schema(description = "状态描述")
-    private String statusDesc;
+    private String contactStatusDesc;
 
-    public String getStatusDesc() {
-        UserContactStatusEnum statusEnum = UserContactStatusEnum.getEnumByValue(this.status);
+    public String getContactStatusDesc() {
+        UserContactStatusEnum statusEnum = UserContactStatusEnum.getEnumByValue(this.contactStatus);
         if (Objects.isNull(statusEnum)) {
             return "";
         }

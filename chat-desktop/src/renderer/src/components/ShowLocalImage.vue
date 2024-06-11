@@ -4,6 +4,9 @@ import { ref, reactive, getCurrentInstance, nextTick, onMounted, computed } from
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
+  imageSrc: {
+    type: String
+  },
   width: {
     type: Number,
     default: 170
@@ -46,7 +49,7 @@ const showImageHandler = () => {}
 
 <template>
   <div class="image-panel" @click="showImageHandler">
-    <el-image :src="serverUrl" fit="scale-down" :width="width"></el-image>
+    <el-image :src="imageSrc || serverUrl" fit="scale-down" :width="width"></el-image>
   </div>
 </template>
 

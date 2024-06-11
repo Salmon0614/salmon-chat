@@ -28,6 +28,9 @@ public class ApplyRequest implements Serializable {
     @Schema(description = "申请信息")
     private String applyInfo;
 
+    @Schema(description = "类型")
+    private Integer contactType;
+
     @Schema(description = "申请方式 0-搜索方式 1-群里添加方式")
     private Integer applyType = ApplyTypeEnum.SEARCH.getValue();
 

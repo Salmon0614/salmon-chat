@@ -17,6 +17,7 @@ import ContentPanel from '@/components/ContentPanel.vue'
 import ShowLocalImage from '@/components/ShowLocalImage.vue'
 import UserBaseInfo from '@/components/UserBaseInfo.vue'
 import MyDialog from '@/components/MyDialog.vue'
+import Avatar from '@/components/Avatar.vue'
 
 // 常用工具
 import utils from '@/utils/utils'
@@ -36,6 +37,7 @@ app.component('ContentPanel', ContentPanel)
 app.component('ShowLocalImage', ShowLocalImage)
 app.component('UserBaseInfo', UserBaseInfo)
 app.component('MyDialog', MyDialog)
+app.component('Avatar', Avatar)
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request

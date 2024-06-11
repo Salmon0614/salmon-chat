@@ -20,7 +20,7 @@ const contactId = ref(null)
 const searchResult = ref({})
 const searchAddRef = ref()
 const search = async () => {
-  // SG73689195198
+  searchResult.value = {}
   if (contactId.value == null) {
     return
   }
@@ -49,8 +49,15 @@ const search = async () => {
 const applyContact = () => {
   searchAddRef.value.show(searchResult.value)
 }
+// todo 发现消息
 const sendMessage = () => {}
-const resetForm = () => {}
+/**
+ * 重置搜索信息
+ */
+const resetForm = () => {
+  searchResult.value = {}
+  contactId.value = undefined
+}
 </script>
 
 <template>
