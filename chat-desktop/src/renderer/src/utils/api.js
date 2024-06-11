@@ -16,9 +16,9 @@ const api = {
   },
   // 用户信息相关
   userInfo: {
-    saveUserInfo: '/user/saveUserInfo', // 保存用户信息
-    getUserInfo: '/user/getUserInfo', // 获取用户信息
-    updatePassword: '/user/updatePassword' // 更新密码
+    saveUserInfo: '/user/saveUserInfo', // 保存当前用户信息
+    getUserInfo: '/user/getUserInfo', // 获取当前用户信息
+    updatePassword: '/user/updatePassword' // 更新当前用户密码
   },
   // 群组相关
   group: {
