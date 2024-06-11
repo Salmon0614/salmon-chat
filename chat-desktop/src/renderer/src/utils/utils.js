@@ -8,7 +8,15 @@ const validateLength = (string, minLength, maxLength) => {
   return string.length >= minLength && string.length <= maxLength
 }
 
+// 处理地区信息
+const getAreaInfo = (data) => {
+  if (isEmpty(data)) {
+    return '-'
+  }
+  return data.replace(',', '')
+}
 export default {
   isEmpty,
-  validateLength
+  validateLength,
+  getAreaInfo
 }

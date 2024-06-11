@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum UserContactTypeEnum {
 
-    USER(0, "SU", "好友"),
-    GROUP(1, "SG", "群");
+    USER(0, "SU", "用户"),
+    GROUP(1, "SG", "群聊");
 
     private final int type;
     private final String prefix;

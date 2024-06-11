@@ -42,7 +42,7 @@ public class SearchContactVO implements Serializable {
     private Integer status;
 
     @Schema(description = "性别")
-    private String gender;
+    private Integer gender;
 
     @Schema(description = "区域")
     private String area;

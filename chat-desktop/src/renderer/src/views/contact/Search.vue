@@ -6,6 +6,8 @@ import ContentPanel from '@/components/ContentPanel.vue'
 const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
 const contactTypeName = computed(() => {
+  console.log(userStore.getUserInfo())
+  console.log(searchResult.value)
   if (userStore.getUserInfo().account === searchResult.value.account) {
     return '自己'
   }
@@ -40,6 +42,7 @@ const search = async () => {
   searchResult.value = result.data
 }
 
+const applyContact = () => {}
 const sendMessage = () => {}
 </script>
 
@@ -47,22 +50,24 @@ const sendMessage = () => {}
   <ContentPanel>
     <div class="search-form">
       <el-input
+        v-model="contactId"
         clearable
         placeholder="请输入用户账号或者群聊号"
-        v-model="contactId"
         size="large"
         @keydown.enter="search"
       ></el-input>
       <div class="search-btn iconfont icon-search" @click="search"></div>
     </div>
-    <div class="search-result-panel" v-if="searchResult && Object.keys(searchResult).length > 0">
+    <div v-if="searchResult && Object.keys(searchResult).length > 0" class="search-result-panel">
       <div class="search-result">
         <span class="contact-type">{{ contactTypeName }}</span>
-        <div>{{ searchResult.name }}</div>
+        <UserBaseInfo
+          :user-info="searchResult"
+          :show-area="searchResult.contactType === 0"
+        ></UserBaseInfo>
       </div>
-      <div class="op-btn" v-if="searchResult.account !== userStore.getUserInfo().account">
+      <div v-if="searchResult.account !== userStore.getUserInfo().account" class="op-btn">
         <el-button
-          type="primary"
           v-if="
             searchResult.status === null ||
             searchResult.status === 0 ||
@@ -70,19 +75,20 @@ const sendMessage = () => {}
             searchResult.status === 3 ||
             searchResult.status === 4
           "
+          type="primary"
           @click="applyContact"
         >
           {{ searchResult.contactType === 0 ? '添加到联系人' : '申请加入到群组' }}
         </el-button>
-        <el-button type="primary" v-if="searchResult.status === 1" @click="sendMessage"
+        <el-button v-if="searchResult.status === 1" type="primary" @click="sendMessage"
           >发消息
         </el-button>
-        <span type="primary" v-if="searchResult.status === 5 || searchResult.status === 6">
+        <span v-if="searchResult.status === 5 || searchResult.status === 6" type="primary">
           对方拉黑了你
         </span>
       </div>
     </div>
-    <div class="no-data" v-if="isClickSearch && isShow">没有搜索到任何结果</div>
+    <div v-if="isClickSearch && isShow" class="no-data">没有搜索到任何结果</div>
   </ContentPanel>
 </template>
 

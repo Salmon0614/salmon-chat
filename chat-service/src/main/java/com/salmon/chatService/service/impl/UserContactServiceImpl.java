@@ -114,7 +114,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 searchContactVO.setAccount(user.getAccount());
                 searchContactVO.setName(user.getNickname());
                 searchContactVO.setAvatar(user.getAvatar());
-                searchContactVO.setGender(user.getGenderDesc());
+                searchContactVO.setGender(user.getGender());
                 searchContactVO.setArea(user.getArea());
                 searchContactVO.setId(user.getId());
             }

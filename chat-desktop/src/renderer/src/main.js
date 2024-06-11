@@ -14,6 +14,8 @@ import '@/assets/icon/iconfont.css'
 import Layout from '@/components/Layout.vue'
 import WinOp from '@/components/WinOp.vue'
 import ContentPanel from '@/components/ContentPanel.vue'
+import ShowLocalImage from '@/components/ShowLocalImage.vue'
+import UserBaseInfo from '@/components/UserBaseInfo.vue'
 
 // 常用工具
 import utils from '@/utils/utils'
@@ -30,6 +32,8 @@ app.use(Pinia.createPinia())
 app.component('Layout', Layout)
 app.component('WinOp', WinOp)
 app.component('ContentPanel', ContentPanel)
+app.component('ShowLocalImage', ShowLocalImage)
+app.component('UserBaseInfo', UserBaseInfo)
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$verify = verify
 app.config.globalProperties.$request = request
