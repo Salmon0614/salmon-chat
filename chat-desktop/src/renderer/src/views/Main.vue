@@ -1,7 +1,9 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, getCurrentInstance, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 
+const userStore = useUserStore()
 const router = useRouter()
 const { proxy } = getCurrentInstance()
 
@@ -37,6 +39,19 @@ const changeMenu = (menu) => {
   currentMenu.value = menu
   router.push(menu.path)
 }
+
+const getLoginInfo = async () => {
+  let result = await proxy.$request({
+    url: proxy.$api.userInfo.getUserInfo
+  })
+  if (!result || !result.isSuccess) {
+    return
+  }
+  userStore.setUserInfo(result.data)
+}
+onMounted(() => {
+  getLoginInfo()
+})
 </script>
 
 <template>
