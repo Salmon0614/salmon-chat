@@ -89,9 +89,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .joinType(UserJoinTypeEnum.AUTH.getValue())
                 .salt(salt).build();
         ThrowUtils.throwIf(!this.save(user), "注册失败");
-        userBeauty.setStatus(AccountBeautyStatusEnum.USED.getValue());
-        userBeauty.setUserId(user.getId());
-        ThrowUtils.throwIf(!userBeautyService.updateById(userBeauty), "注册失败");
+        if (Objects.nonNull(userBeauty)) {
+            userBeauty.setStatus(AccountBeautyStatusEnum.USED.getValue());
+            userBeauty.setUserId(user.getId());
+            ThrowUtils.throwIf(!userBeautyService.updateById(userBeauty), "注册失败");
+        }
         // todo 创建机器人好友
     }
 

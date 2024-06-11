@@ -21,6 +21,6 @@ public class SearchRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "搜索信息不能为空")
-    @Schema(description = "用户账号/群聊号")
-    private String contactAccount;
+    @Schema(description = "关键字 用户账号/群聊号/手机号/邮箱")
+    private String keyword;
 }

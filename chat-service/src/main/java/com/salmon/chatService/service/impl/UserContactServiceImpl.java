@@ -83,18 +83,35 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     @Override
     public SearchContactVO search(SearchRequest request) {
         TokenUserVo tokenUserVo = UserHolder.getUser();
-        String account = request.getContactAccount();
-        UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getByPrefix(account);
+        String keyword = request.getKeyword();
+        ApplyOriginTypeEnum applyOriginTypeEnum = ApplyOriginTypeEnum.validType(keyword);
+        UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getByPrefix(keyword);
+        if (applyOriginTypeEnum != ApplyOriginTypeEnum.ACCOUNT) {
+            contactTypeEnum = UserContactTypeEnum.USER;
+        }
         if (Objects.isNull(contactTypeEnum)) {
             return null;
         }
         SearchContactVO searchContactVO = new SearchContactVO();
         switch (contactTypeEnum) {
             case USER -> {
-                User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getAccount, account));
+                LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+                switch (applyOriginTypeEnum) {
+                    case ACCOUNT -> {
+                        queryWrapper.eq(User::getAccount, keyword);
+                    }
+                    case EMAIL -> {
+                        queryWrapper.eq(User::getEmail, keyword);
+                    }
+                    case MOBILE -> {
+                        queryWrapper.eq(User::getMobile, keyword);
+                    }
+                }
+                User user = userService.getOne(queryWrapper);
                 if (Objects.isNull(user)) {
                     return null;
                 }
+                searchContactVO.setAccount(user.getAccount());
                 searchContactVO.setName(user.getNickname());
                 searchContactVO.setAvatar(user.getAvatar());
                 searchContactVO.setGender(user.getGenderDesc());
@@ -103,7 +120,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             }
             case GROUP -> {
                 Group group = groupService.getOne(new LambdaQueryWrapper<Group>()
-                        .eq(Group::getGroupNumber, account)
+                        .eq(Group::getGroupNumber, keyword)
                         .eq(Group::getStatus, GroupStatusEnum.NORMAL.getValue())
                 );
                 if (Objects.isNull(group)) {
@@ -112,13 +129,12 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 searchContactVO.setName(group.getGroupName());
                 searchContactVO.setAvatar(group.getGroupCover());
                 searchContactVO.setId(group.getId());
+                searchContactVO.setAccount(group.getGroupNumber());
             }
         }
         searchContactVO.setContactType(contactTypeEnum.getType());
-        searchContactVO.setAccount(account);
-
         // 搜出来的是自己
-        if (tokenUserVo.getAccount().equals(account)) {
+        if (tokenUserVo.getAccount().equals(keyword)) {
             searchContactVO.setStatus(UserContactStatusEnum.FRIEND.getValue());
             return searchContactVO;
         }
