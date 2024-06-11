@@ -1,7 +1,8 @@
 <script setup>
-import { computed, getCurrentInstance, ref } from 'vue'
+import { computed, getCurrentInstance, nextTick, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import ContentPanel from '@/components/ContentPanel.vue'
+import SearchAdd from '@/views/contact/SearchAdd.vue'
 
 const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
@@ -17,6 +18,7 @@ const isShow = ref(false)
 const isClickSearch = ref(false)
 const contactId = ref(null)
 const searchResult = ref({})
+const searchAddRef = ref()
 const search = async () => {
   // SG73689195198
   if (contactId.value == null) {
@@ -41,9 +43,14 @@ const search = async () => {
   isShow.value = false
   searchResult.value = result.data
 }
-
-const applyContact = () => {}
+/**
+ * 添加联系人
+ */
+const applyContact = () => {
+  searchAddRef.value.show(searchResult.value)
+}
 const sendMessage = () => {}
+const resetForm = () => {}
 </script>
 
 <template>
@@ -90,6 +97,7 @@ const sendMessage = () => {}
     </div>
     <div v-if="isClickSearch && isShow" class="no-data">没有搜索到任何结果</div>
   </ContentPanel>
+  <SearchAdd ref="searchAddRef" @reload="resetForm"></SearchAdd>
 </template>
 
 <style scoped lang="scss">

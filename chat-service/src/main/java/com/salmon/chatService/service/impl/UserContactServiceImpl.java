@@ -163,6 +163,9 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         } else {
             contactTypeEnum = UserContactTypeEnum.USER;
         }
+        ThrowUtils.throwIf(Objects.nonNull(request.getContactType()
+                ) && contactTypeEnum.getType() != request.getContactType()
+                , ErrorCode.PARAMS_ERROR);
         TokenUserVo tokenUserVo = UserHolder.getUser();
         Integer joinType = null;
         Integer contactId = null;
@@ -213,7 +216,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
                 "对方已把你拉黑，无法添加"
         );
         // 如果已经是好友，不做处理
-        if (userContact.getStatus().equals(UserContactStatusEnum.FRIEND.getValue())) {
+        if (Objects.nonNull(userContact) && userContact.getStatus().equals(UserContactStatusEnum.FRIEND.getValue())) {
             return ApplyResultVO.builder().joinType(joinType).build();
         }
         // 如果无需审核，直接加入
