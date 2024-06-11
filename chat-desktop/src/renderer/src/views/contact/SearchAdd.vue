@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { ref, getCurrentInstance, nextTick } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 
 const userStore = useUserStore()
@@ -53,7 +53,6 @@ const submitApply = async () => {
   if (!result || !result.isSuccess) {
     return
   }
-  console.log(result)
   if (result.data.joinType === 0) {
     proxy.$message.success('添加成功')
   } else {
