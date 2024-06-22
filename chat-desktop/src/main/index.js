@@ -14,6 +14,7 @@ const register_height = 570
 const forget_password_height = 470
 
 let iconPath = join(__dirname, '../../resources/icon.png')
+let minIconPath = join(__dirname, '../../resources/icon24x24.png')
 let willQuitApp = false
 
 function createWindow() {
@@ -114,10 +115,10 @@ function createWindow() {
           }
         }
       ]
-  const tray = new Tray(iconPath)
+  const tray = new Tray(minIconPath)
   const menu = Menu.buildFromTemplate(contextMenu)
   Menu.setApplicationMenu(menu)
-  tray.setTitle('SalmonChat')
+  // tray.setTitle('SalmonChat')
   tray.setToolTip('SalmonChat')
   tray.setContextMenu(menu)
   tray.on('click', () => {
