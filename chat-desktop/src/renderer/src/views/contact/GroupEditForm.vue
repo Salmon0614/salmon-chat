@@ -44,7 +44,21 @@ const submit = () => {
 /**
  * 保存封面
  */
-const saveCover = () => {}
+const saveCover = () => {
+  // todo 保存封面
+}
+
+const show = (data) => {
+  formDataRef.value.resetFields()
+  formData.value = Object.assign({}, data)
+  console.log(data)
+  // todo 群头像处理
+  formData.value.avaterFile = data.groupId
+}
+
+defineExpose({
+  show
+})
 </script>
 
 <template>
@@ -61,7 +75,7 @@ const saveCover = () => {}
     <el-form-item label="群封面" prop="groupCover">
       <AvatarUpload
         ref="avatarUploadRef"
-        v-model="formData.aaa"
+        v-model="formData.groupCover"
         @cover-file="saveCover"
       ></AvatarUpload>
     </el-form-item>
@@ -86,7 +100,7 @@ const saveCover = () => {}
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submit">
-        {{ formData.groupId ? '修改群聊' : '创建群聊' }}
+        {{ formData.id ? '修改群聊' : '创建群聊' }}
       </el-button>
     </el-form-item>
   </el-form>

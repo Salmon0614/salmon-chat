@@ -174,7 +174,20 @@ watch(
         rightTitle.value = null
         // 删除完后，跳到空白区
         router.push('/contact/blank')
-        contactStateStore.setContactReload(null)
+        break
+      // 解散群聊
+      case 4:
+        loadMyGroup()
+        rightTitle.value = null
+        // 删除完后，跳到空白区
+        router.push('/contact/blank')
+        break
+      // 退出群聊
+      case 5:
+        loadContact(1)
+        rightTitle.value = null
+        // 删除完后，跳到空白区
+        router.push('/contact/blank')
         break
     }
   },

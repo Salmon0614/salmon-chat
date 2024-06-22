@@ -49,7 +49,7 @@ const api = {
   },
   // 后台管理相关
   admin: {
-    loadAdminAccount: '/admin/loadUser', //后台获取用户列表
+    loadAdminAccount: '/admin/queryUserPage', //后台获取用户列表
     updateUserStatus: '/admin/updateUserStatus', //后台更新用户状态
     forceOffLine: '/admin/forceOffLine', //强制下线
     loadGroup: '/admin/loadGroup', //群组列表

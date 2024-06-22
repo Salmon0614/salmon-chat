@@ -49,6 +49,7 @@ const delContact = async () => {
   proxy.$confirm({
     message: '您确定要删除该联系人吗？',
     okfun: async () => {
+      contactStateStore.setContactReload(null)
       let result = await proxy.$request({
         url: proxy.$api.contact.delContact,
         params: {
