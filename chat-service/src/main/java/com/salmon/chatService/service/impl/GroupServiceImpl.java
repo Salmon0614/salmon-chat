@@ -86,8 +86,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
             Group oldGroup = this.getById(group.getId());
             // 操作的用户不是群主，直接拒绝
             ThrowUtils.throwIf(!oldGroup.getGroupOwnerId().equals(group.getGroupOwnerId()), ErrorCode.PARAMS_ERROR);
-            LambdaUpdateWrapper<Group> updateWrapper = new LambdaUpdateWrapper<>(group);
-            ThrowUtils.throwIf(!this.update(updateWrapper), ErrorCode.OPERATION_ERROR, "保存失败");
+            ThrowUtils.throwIf(!this.updateById(group), ErrorCode.OPERATION_ERROR, "保存失败");
             // todo 更新相关表冗余信息
 
             // todo 修改群昵称发送ws消息

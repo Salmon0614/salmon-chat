@@ -52,7 +52,8 @@ public class UserContactApplyController extends BaseController {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         UserContactApply userContactApply = new UserContactApply();
         BeanUtils.copyProperties(request, userContactApply);
-        UpdateWrapper<UserContactApply> updateWrapper = new UpdateWrapper<>(userContactApply);
+        UpdateWrapper<UserContactApply> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setEntity(userContactApply);
         ThrowUtils.throwIf(!userContactApplyService.update(updateWrapper), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(userContactApply.getId());
     }

@@ -52,7 +52,8 @@ public class UserBeautyController extends BaseController {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         UserBeauty userBeauty = new UserBeauty();
         BeanUtils.copyProperties(request, userBeauty);
-        UpdateWrapper<UserBeauty> updateWrapper = new UpdateWrapper<>(userBeauty);
+        UpdateWrapper<UserBeauty> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setEntity(userBeauty);
         ThrowUtils.throwIf(!userBeautyService.update(updateWrapper), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(userBeauty.getId());
     }

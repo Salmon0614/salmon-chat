@@ -49,13 +49,32 @@ public class GroupController extends BaseController {
     @Resource
     private GroupService groupService;
 
+    @Operation(summary = "退出群聊")
+    @PostMapping("/leaveGroup")
+    @CheckAuth
+    public BaseResponse<?> leaveGroup(@RequestBody IdRequest request) {
+        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+        TokenUserVo tokenUser = UserHolder.getUser();
+        // todo 退出群聊
+        return ResultUtils.success();
+    }
+
+    @Operation(summary = "解散群聊")
+    @PostMapping("/dissolutionGroup")
+    @CheckAuth
+    public BaseResponse<?> dissolutionGroup(@RequestBody IdRequest request) {
+        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+        TokenUserVo tokenUser = UserHolder.getUser();
+        // todo 解散群聊
+        return ResultUtils.success();
+    }
+
     @Operation(summary = "用户创建或修改群组")
     @PostMapping("/saveOrUpdateGroup")
     @CheckAuth
     public BaseResponse<Object> saveOrUpdateGroup(@RequestBody @Valid GroupSaveRequest request) {
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
         TokenUserVo tokenUser = UserHolder.getUser();
-        ThrowUtils.throwIf(tokenUser == null, ErrorCode.NOT_LOGIN_ERROR);
         Group group = new Group();
         BeanUtils.copyProperties(request, group);
         group.setGroupOwnerId(tokenUser.getId());
@@ -118,7 +137,8 @@ public class GroupController extends BaseController {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         Group group = new Group();
         BeanUtils.copyProperties(request, group);
-        UpdateWrapper<Group> updateWrapper = new UpdateWrapper<>(group);
+        UpdateWrapper<Group> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setEntity(group);
         ThrowUtils.throwIf(!groupService.update(updateWrapper), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(group.getId());
     }
