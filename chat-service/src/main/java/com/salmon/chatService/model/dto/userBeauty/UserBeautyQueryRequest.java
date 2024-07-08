@@ -39,13 +39,4 @@ public class UserBeautyQueryRequest extends PageRequest implements Serializable 
     @Schema(description = "状态 0-未使用 1-已使用")
     private Integer status;
 
-    @Schema(description = "版本号")
-    private Integer version;
-
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
-
-    @Schema(description = "修改时间")
-    private LocalDateTime updateTime;
-
 }

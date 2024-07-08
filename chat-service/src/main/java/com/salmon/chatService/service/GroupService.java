@@ -1,6 +1,8 @@
 package com.salmon.chatService.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.salmon.chatService.common.IdRequest;
+import com.salmon.chatService.model.dto.group.GroupQueryRequest;
 import com.salmon.chatService.model.po.Group;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.group.GroupChatVO;
@@ -46,4 +48,20 @@ public interface GroupService extends IService<Group> {
      * @return GroupChatVO
      */
     GroupChatVO getGroupInfo4Chat(IdRequest request);
+
+    /**
+     * 后台分页查询群聊
+     *
+     * @param request 查询请求
+     * @return 分页对象
+     */
+    Page<GroupVO> queryGroupVOPage(GroupQueryRequest request);
+
+    /**
+     * 解散群聊
+     *
+     * @param groupOwnerId 群主id
+     * @param groupId      群id
+     */
+    void dissolutionGroup(Integer groupOwnerId, Integer groupId);
 }

@@ -78,7 +78,4 @@ public class UserQueryRequest extends PageRequest implements Serializable {
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-
-    @Schema(description = "修改时间")
-    private LocalDateTime updateTime;
 }

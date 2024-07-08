@@ -42,6 +42,9 @@ public class GroupVO implements Serializable {
     @Schema(description = "群主账号")
     private String groupOwnerAccount;
 
+    @Schema(description = "群主昵称")
+    private String groupOwnerNickname;
+
     @Schema(description = "群通知")
     private String groupNotice;
 

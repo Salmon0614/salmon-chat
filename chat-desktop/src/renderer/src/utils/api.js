@@ -49,18 +49,18 @@ const api = {
   },
   // 后台管理相关
   admin: {
-    loadAdminAccount: '/admin/queryUserPage', //后台获取用户列表
+    queryUserPage: '/admin/queryUserPage', //后台获取用户列表
     updateUserStatus: '/admin/updateUserStatus', //后台更新用户状态
     forceOffLine: '/admin/forceOffLine', //强制下线
-    loadGroup: '/admin/loadGroup', //群组列表
+    queryGroupPage: '/admin/queryGroupPage', //群组列表
     adminDissolutionGroup: '/admin/dissolutionGroup', //解散群组
     saveSysSetting: '/admin/saveSysSetting', //保存系统设置
     getSysSetting4Admin: '/admin/getSysSetting', //获取系统设置
     loadUpdateDataList: '/admin/loadUpdateList', //获取更新列表
-    delUpdate: '/admin/delUpdate', //删除更新
-    saveUpdate: '/admin/saveUpdate', //保存更新
-    postUpdate: '/admin/postUpdate', //发布更新
-    loadBeautyAccount: '/admin/queryBeautyAccountPage', //靓号列表
+    delAppUpdate: '/admin/delAppUpdate', //删除更新
+    saveAppUpdate: '/admin/saveAppUpdate', //保存更新
+    postAppUpdate: '/admin/postAppUpdate', //发布更新
+    queryBeautyAccountPage: '/admin/queryBeautyAccountPage', //靓号列表
     saveBeautAccount: '/admin/saveBeautyAccount', //保存靓号
     updateBeautyAccount: '/admin/updateBeautyAccount', //更新靓号
     delBeautAccount: '/admin/delBeautyAccount' //删除靓号

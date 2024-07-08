@@ -2,15 +2,20 @@ package com.salmon.chatService.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.common.ErrorCode;
 import com.salmon.chatService.common.IdRequest;
 import com.salmon.chatService.constant.Settings;
+import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
+import com.salmon.chatService.mapper.GroupMapper;
+import com.salmon.chatService.mapper.GroupVOMapper;
+import com.salmon.chatService.model.dto.group.GroupQueryRequest;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.enums.group.GroupStatusEnum;
 import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
 import com.salmon.chatService.model.po.Group;
-import com.salmon.chatService.mapper.GroupMapper;
 import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.model.vo.app.SystemConfigVo;
 import com.salmon.chatService.model.vo.contact.UserContactVO;
@@ -18,7 +23,6 @@ import com.salmon.chatService.model.vo.group.GroupChatVO;
 import com.salmon.chatService.model.vo.group.GroupVO;
 import com.salmon.chatService.service.AppService;
 import com.salmon.chatService.service.GroupService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.service.UserContactService;
 import com.salmon.chatService.utils.UserHolder;
 import com.salmon.chatService.utils.Utils;
@@ -47,6 +51,8 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
     private AppService appService;
     @Resource
     private UserContactService userContactService;
+    @Resource
+    private GroupVOMapper groupVOMapper;
 
     /**
      * 用户创建或修改群组
@@ -161,5 +167,58 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
         groupChatVO.setGroupVO(groupVO);
         groupChatVO.setUserContactVOS(userContactVOS);
         return groupChatVO;
+    }
+
+    /**
+     * 后台分页查询群聊
+     *
+     * @param request 查询请求
+     * @return 分页对象
+     */
+    @Override
+    public Page<GroupVO> queryGroupVOPage(GroupQueryRequest request) {
+        long current = request.getCurrent();
+        long size = request.getPageSize();
+        LambdaQueryWrapper<Group> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(request.getGroupName())) {
+            queryWrapper.eq(Group::getGroupName, request.getGroupName());
+        }
+        if (StringUtils.hasText(request.getGroupOwnerAccount())) {
+            queryWrapper.eq(Group::getGroupOwnerAccount, request.getGroupOwnerAccount());
+        }
+        if (StringUtils.hasText(request.getGroupNumber())) {
+            queryWrapper.eq(Group::getGroupNumber, request.getGroupNumber());
+        }
+        queryWrapper.orderByDesc(Group::getCreateTime);
+        return groupVOMapper.page(new Page<>(current, size), queryWrapper);
+    }
+
+    /**
+     * 解散群聊
+     *
+     * @param groupOwnerId 群主id
+     * @param groupId      群id
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void dissolutionGroup(Integer groupOwnerId, Integer groupId) {
+        Group group = this.getById(groupId);
+        if (Objects.isNull(group) || !group.getGroupOwnerId().equals(groupOwnerId)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        // 解散群聊
+        group.setStatus(GroupStatusEnum.DISSOLUTION.getValue());
+        ThrowUtils.throwIf(!this.updateById(group), ErrorCode.OPERATION_ERROR, "解散失败");
+        // 更新联系人信息
+        LambdaUpdateWrapper<UserContact> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(UserContact::getContactId, groupId);
+        updateWrapper.eq(UserContact::getContactType, UserContactTypeEnum.GROUP.getType());
+        updateWrapper.set(UserContact::getStatus, UserContactStatusEnum.DEL.getValue());
+        ThrowUtils.throwIf(!userContactService.update(updateWrapper), ErrorCode.OPERATION_ERROR, "解散失败");
+
+        // todo 移除相关群员的联系人缓存
+
+
+        // todo 发消息 1.更新会话消息 2.记录群消息 3.发送解散通知消息
     }
 }

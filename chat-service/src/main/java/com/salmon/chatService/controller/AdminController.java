@@ -1,8 +1,6 @@
 package com.salmon.chatService.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.salmon.chatService.annotation.CheckAuth;
 import com.salmon.chatService.common.BaseResponse;
@@ -12,13 +10,17 @@ import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.admin.UpdateUserStatusRequest;
+import com.salmon.chatService.model.dto.group.GroupQueryRequest;
 import com.salmon.chatService.model.dto.user.UserQueryRequest;
 import com.salmon.chatService.model.dto.userBeauty.UserBeautyAddRequest;
 import com.salmon.chatService.model.dto.userBeauty.UserBeautyQueryRequest;
 import com.salmon.chatService.model.dto.userBeauty.UserBeautyUpdateRequest;
 import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
+import com.salmon.chatService.model.po.Group;
 import com.salmon.chatService.model.po.User;
 import com.salmon.chatService.model.po.UserBeauty;
+import com.salmon.chatService.model.vo.group.GroupVO;
+import com.salmon.chatService.service.GroupService;
 import com.salmon.chatService.service.UserBeautyService;
 import com.salmon.chatService.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * <p>
@@ -50,6 +53,7 @@ public class AdminController {
 
     private final UserService userService;
     private final UserBeautyService userBeautyService;
+    private final GroupService groupService;
 
     @Operation(summary = "分页查询用户")
     @PostMapping("/queryUserPage")
@@ -153,6 +157,24 @@ public class AdminController {
         UserBeauty userBeauty = userBeautyService.getById(request.getId());
         ThrowUtils.throwIf(userBeauty.getStatus() == AccountBeautyStatusEnum.USED.getValue(), ErrorCode.OPERATION_ERROR, "该靓号已被使用，禁止删除！");
         ThrowUtils.throwIf(!userBeautyService.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success();
+    }
+
+    @Operation(summary = "分页查询群聊")
+    @PostMapping("/queryGroupPage")
+    @CheckAuth(needAdmin = true)
+    public BaseResponse<Page<GroupVO>> queryGroupPage(@RequestBody GroupQueryRequest request) {
+        Page<GroupVO> page = groupService.queryGroupVOPage(request);
+        return ResultUtils.success(page);
+    }
+
+    @Operation(summary = "解散群聊")
+    @PostMapping("/dissolutionGroup")
+    @CheckAuth(needAdmin = true)
+    public BaseResponse<Page<GroupVO>> dissolutionGroup(@RequestBody @Valid IdRequest request) {
+        Group group = groupService.getById(request.getId());
+        ThrowUtils.throwIf(Objects.isNull(group), ErrorCode.OPERATION_ERROR);
+        groupService.dissolutionGroup(group.getGroupOwnerId(), group.getId());
         return ResultUtils.success();
     }
 }
