@@ -52,8 +52,7 @@ public class GroupController extends BaseController {
     @Operation(summary = "退出群聊")
     @PostMapping("/leaveGroup")
     @CheckAuth
-    public BaseResponse<?> leaveGroup(@RequestBody IdRequest request) {
-        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+    public BaseResponse<?> leaveGroup(@RequestBody @Valid IdRequest request) {
         TokenUserVo tokenUser = UserHolder.getUser();
         // todo 退出群聊
         return ResultUtils.success();
@@ -62,7 +61,7 @@ public class GroupController extends BaseController {
     @Operation(summary = "解散群聊")
     @PostMapping("/dissolutionGroup")
     @CheckAuth
-    public BaseResponse<?> dissolutionGroup(@RequestBody IdRequest request) {
+    public BaseResponse<?> dissolutionGroup(@RequestBody @Valid IdRequest request) {
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
         TokenUserVo tokenUser = UserHolder.getUser();
         // todo 解散群聊
@@ -153,7 +152,7 @@ public class GroupController extends BaseController {
 
     @Operation(summary = "根据ID查询群组")
     @PostMapping("/getById")
-    public BaseResponse<GroupVO> getGroupById(@RequestBody IdRequest request) {
+    public BaseResponse<GroupVO> getGroupById(@RequestBody @Valid IdRequest request) {
         Group group = groupService.getById(request.getId());
         GroupVO groupVO = new GroupVO();
         BeanUtils.copyProperties(group, groupVO);

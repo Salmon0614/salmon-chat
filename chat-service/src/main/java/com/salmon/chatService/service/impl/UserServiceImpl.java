@@ -1,6 +1,7 @@
 package com.salmon.chatService.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.common.ErrorCode;
 import com.salmon.chatService.common.StatusEnum;
 import com.salmon.chatService.common.UserRoleEnum;
@@ -10,20 +11,20 @@ import com.salmon.chatService.constant.Settings;
 import com.salmon.chatService.constant.UserConstant;
 import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
+import com.salmon.chatService.mapper.UserMapper;
 import com.salmon.chatService.model.dto.account.EmailLoginRequest;
 import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
+import com.salmon.chatService.model.dto.admin.UpdateUserStatusRequest;
 import com.salmon.chatService.model.dto.user.UpdatePassword;
 import com.salmon.chatService.model.dto.user.UserSaveRequest;
 import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
 import com.salmon.chatService.model.enums.user.UserJoinTypeEnum;
 import com.salmon.chatService.model.po.User;
-import com.salmon.chatService.mapper.UserMapper;
 import com.salmon.chatService.model.po.UserBeauty;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.user.UserVO;
 import com.salmon.chatService.service.UserBeautyService;
 import com.salmon.chatService.service.UserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.utils.RedisUtils;
 import com.salmon.chatService.utils.UserHolder;
 import com.salmon.chatService.utils.Utils;
@@ -168,6 +169,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(encryptPassword);
         ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
         // todo 强制退出，重新登录
+    }
+
+    @Override
+    public void updateUserStatus(UpdateUserStatusRequest request) {
+        StatusEnum statusEnum = StatusEnum.getEnumByValue(request.getStatus());
+        ThrowUtils.throwIf(Objects.isNull(statusEnum), ErrorCode.PARAMS_ERROR);
+        User user = this.getById(request.getUserId());
+        user.setStatus(request.getStatus());
+        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
+    }
+
+    @Override
+    public void forceOffLine(Integer userId) {
+        // todo 强制下线
     }
 
 

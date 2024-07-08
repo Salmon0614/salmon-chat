@@ -60,9 +60,10 @@ const api = {
     delUpdate: '/admin/delUpdate', //删除更新
     saveUpdate: '/admin/saveUpdate', //保存更新
     postUpdate: '/admin/postUpdate', //发布更新
-    loadBeautyAccount: '/admin/loadBeautyAccountList', //靓号列表
-    saveBeautAccount: '/admin/saveBeautAccount', //保存靓号
-    delBeautAccount: '/admin/delBeautAccount' //删除靓号
+    loadBeautyAccount: '/admin/queryBeautyAccountPage', //靓号列表
+    saveBeautAccount: '/admin/saveBeautyAccount', //保存靓号
+    updateBeautyAccount: '/admin/updateBeautyAccount', //更新靓号
+    delBeautAccount: '/admin/delBeautyAccount' //删除靓号
   },
   // app 相关
   app: {

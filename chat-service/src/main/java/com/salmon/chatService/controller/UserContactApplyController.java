@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.salmon.chatService.common.BaseController;
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -68,7 +69,7 @@ public class UserContactApplyController extends BaseController {
 
     @Operation(summary = "根据ID查询联系人申请")
     @PostMapping("/getById")
-    public BaseResponse<UserContactApplyVO> getUserContactApplyById(@RequestBody IdRequest request) {
+    public BaseResponse<UserContactApplyVO> getUserContactApplyById(@RequestBody @Valid IdRequest request) {
         UserContactApply userContactApply = userContactApplyService.getById(request.getId());
         UserContactApplyVO userContactApplyVO = new UserContactApplyVO();
         BeanUtils.copyProperties(userContactApply, userContactApplyVO);

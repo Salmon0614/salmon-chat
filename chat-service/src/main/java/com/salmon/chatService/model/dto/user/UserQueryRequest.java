@@ -67,9 +67,6 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     @Schema(description = "状态 0-禁用 1-启用")
     private Integer status;
 
-    @Schema(description = "版本号")
-    private Integer version;
-
     @Schema(description = "加入好友类型 0-直接加入 1-需要验证")
     private Integer joinType;
 
@@ -84,8 +81,4 @@ public class UserQueryRequest extends PageRequest implements Serializable {
 
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
-
-    @Schema(description = "是否删除 0-未删除 1-已删除")
-    private Boolean isDelete;
-
 }

@@ -43,7 +43,7 @@ public class UserBeauty implements Serializable {
     @TableField("mobile")
     private String mobile;
 
-    @Schema(description = "账号")
+    @Schema(description = "靓号")
     @TableField("account")
     private String account;
 
