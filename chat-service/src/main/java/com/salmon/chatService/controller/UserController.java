@@ -78,10 +78,9 @@ public class UserController extends BaseController {
     @PostMapping("/update")
     public BaseResponse<Object> updateUser(@RequestBody UserUpdateRequest request) {
         ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
-        User user = new User();
+        User user = userService.getById(request.getId());
         BeanUtils.copyProperties(request, user);
-        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>(user);
-        ThrowUtils.throwIf(!userService.update(updateWrapper), ErrorCode.OPERATION_ERROR);
+        ThrowUtils.throwIf(!userService.updateById(user), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(user.getId());
     }
 
