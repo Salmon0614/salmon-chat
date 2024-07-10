@@ -3,10 +3,7 @@ package com.salmon.chatService.netty;
 import com.salmon.chatService.netty.handler.HeartBeatHandler;
 import com.salmon.chatService.netty.handler.WebSocketHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -18,9 +15,11 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,12 +28,17 @@ import java.util.concurrent.TimeUnit;
  * @author Salmon
  * @since 2024-07-11
  */
+// 用于标记一个 ChannelHandler 可以在多个 ChannelPipeline 中共享。
+// 这个注解表明该处理器是线程安全的，因此可以在多个通道（Channel）中重复使用，而不会出现线程安全问题
+@ChannelHandler.Sharable
 @Component
 @Slf4j
 public class NettyWebsocketServer {
 
     @Value("${ws.port}")
-    private Integer port;
+    private Integer wsPort;
+    @Resource
+    private WebSocketHandler webSocketHandler;
 
     // 创建BossGroup和WorkerGroup
     // 说明
@@ -71,16 +75,17 @@ public class NettyWebsocketServer {
                                 pipeline.addLast(new IdleStateHandler(6, 0, 0, TimeUnit.SECONDS));
                                 pipeline.addLast(new HeartBeatHandler());
                                 // 4. 将Http协议升级为ws协议，对websocket支持
-                                pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-                                pipeline.addLast(new WebSocketHandler());
+                                pipeline.addLast(new WebSocketServerProtocolHandler("/ws", null, true, 64 * 1024, true, true, 10000L));
+                                pipeline.addLast(webSocketHandler);
                             }
                         });
-                ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
-                log.info("netty启动成功");
+                ChannelFuture channelFuture = serverBootstrap.bind(wsPort).sync();
+                log.info("netty服务启动成功，端口：{}", wsPort);
                 channelFuture.channel().closeFuture().sync();
             } catch (Exception e) {
                 log.error("启动netty失败", e);
             } finally {
+                log.info("netty线程组关闭");
                 bossGroup.shutdownGracefully();
                 workGroup.shutdownGracefully();
             }

@@ -1,10 +1,21 @@
 package com.salmon.chatService.netty.handler;
 
+import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.service.UserService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * websocket处理器
@@ -13,7 +24,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2024-07-11
  */
 @Slf4j
+@Component
 public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+
+    @Resource
+    private UserService userService;
 
     /**
      * 通道就绪后调用，一般用来做初始化
@@ -58,7 +73,38 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        // 你可以在这里处理特殊事件，例如IdleStateEvent（心跳检测）
+        // 如果是握手完成
+        if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+            WebSocketServerProtocolHandler.HandshakeComplete complete = (WebSocketServerProtocolHandler.HandshakeComplete) evt;
+            String uri = complete.requestUri();
+            log.debug("uri: {}", uri);
+            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
+            Map<String, List<String>> parameters = queryStringDecoder.parameters();
+            List<String> tokenList = parameters.get("token");
+            // 没有token，或者token不合法，拒绝连接
+            if (CollectionUtils.isEmpty(tokenList)) {
+                ctx.channel().close();
+                return;
+            }
+            String token = tokenList.get(0);
+            boolean validToken = isValidToken(token);
+            if (!validToken) {
+                ctx.channel().close();
+                return;
+            }
+            log.info("token: {}", token);
+        }
+    }
+
+    /**
+     * 验证token是否合法
+     *
+     * @param token token
+     */
+    private boolean isValidToken(String token) {
+        // 验证 token 的逻辑
+        TokenUserVo userToken = userService.getUserToken(token);
+        return Objects.nonNull(userToken);
     }
 
     /**
