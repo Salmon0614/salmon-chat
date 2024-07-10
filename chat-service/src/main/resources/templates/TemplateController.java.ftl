@@ -4,7 +4,6 @@
 package ${package.Controller};
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ${packageName}.common.*;
 import ${packageName}.exception.ThrowUtils;
@@ -53,7 +52,6 @@ public class ${table.controllerName} {
     @Operation(summary = "添加${table.comment!}")
     @PostMapping("/add")
     public BaseResponse<Object> add${entity}(@RequestBody @Valid ${entity}AddRequest request) {
-        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
         ${entity} ${entityObj} = new ${entity}();
         BeanUtils.copyProperties(request, ${entityObj});
         ThrowUtils.throwIf(!${entityObj}Service.save(${entityObj}), ErrorCode.OPERATION_ERROR);
@@ -63,18 +61,16 @@ public class ${table.controllerName} {
     @Operation(summary = "修改${table.comment!}")
     @PostMapping("/update")
     public BaseResponse<Object> update${entity}(@RequestBody @Valid ${entity}UpdateRequest request) {
-        ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
-        ${entity} ${entityObj} = new ${entity}();
+        ${entity} ${entityObj} = ${entityObj}Service.getById(request.getId());
+        ThrowUtils.throwIf(${entityObj} == null, ErrorCode.NOT_FOUND_ERROR);
         BeanUtils.copyProperties(request, ${entityObj});
-        UpdateWrapper<${entity}> updateWrapper = new UpdateWrapper<>(${entityObj});
-        ThrowUtils.throwIf(!${entityObj}Service.update(updateWrapper), ErrorCode.OPERATION_ERROR);
+        ThrowUtils.throwIf(!${entityObj}Service.updateById(${entityObj}), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(${entityObj}.getId());
     }
 
     @Operation(summary = "删除${table.comment!}")
     @PostMapping("/delete")
     public BaseResponse<Object> delete${entity}(@RequestBody @Valid DeleteRequest request) {
-        ThrowUtils.throwIf(request == null || request.getId() <= 0, ErrorCode.PARAMS_ERROR);
         ThrowUtils.throwIf(!${entityObj}Service.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(); 
     }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 </#if>
 import java.io.Serial;
 import java.io.Serializable;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 <#assign a = 0>
@@ -60,6 +61,9 @@ public class ${entity}UpdateRequest implements Serializable {
     @NotBlank(message = "${field.comment}不能为空")
     <#else>
     @NotNull(message = "${field.comment}不能为空")
+    </#if>
+    <#if field.keyFlag>
+    @Min(value = 1)
     </#if>
     private ${field.propertyType} ${field.propertyName};
 
