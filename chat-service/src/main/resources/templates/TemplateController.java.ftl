@@ -51,7 +51,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "添加${table.comment!}")
     @PostMapping("/add")
-    public BaseResponse<Object> add${entity}(@RequestBody @Valid ${entity}AddRequest request) {
+    public BaseResponse<?> add${entity}(@RequestBody @Valid ${entity}AddRequest request) {
         ${entity} ${entityObj} = new ${entity}();
         BeanUtils.copyProperties(request, ${entityObj});
         ThrowUtils.throwIf(!${entityObj}Service.save(${entityObj}), ErrorCode.OPERATION_ERROR);
@@ -60,7 +60,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "修改${table.comment!}")
     @PostMapping("/update")
-    public BaseResponse<Object> update${entity}(@RequestBody @Valid ${entity}UpdateRequest request) {
+    public BaseResponse<?> update${entity}(@RequestBody @Valid ${entity}UpdateRequest request) {
         ${entity} ${entityObj} = ${entityObj}Service.getById(request.getId());
         ThrowUtils.throwIf(${entityObj} == null, ErrorCode.NOT_FOUND_ERROR);
         BeanUtils.copyProperties(request, ${entityObj});
@@ -70,7 +70,7 @@ public class ${table.controllerName} {
 
     @Operation(summary = "删除${table.comment!}")
     @PostMapping("/delete")
-    public BaseResponse<Object> delete${entity}(@RequestBody @Valid DeleteRequest request) {
+    public BaseResponse<?> delete${entity}(@RequestBody @Valid DeleteRequest request) {
         ThrowUtils.throwIf(!${entityObj}Service.removeById(request.getId()), ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(); 
     }
