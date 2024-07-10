@@ -49,25 +49,36 @@ const api = {
   },
   // 后台管理相关
   admin: {
-    queryUserPage: '/admin/queryUserPage', //后台获取用户列表
-    updateUserStatus: '/admin/updateUserStatus', //后台更新用户状态
-    forceOffLine: '/admin/forceOffLine', //强制下线
-    queryGroupPage: '/admin/queryGroupPage', //群组列表
-    adminDissolutionGroup: '/admin/dissolutionGroup', //解散群组
-    getSysSetting: '/admin/getSystemConfig', // 获取系统设置
-    saveSysSetting: '/admin/saveSysSetting', //保存系统设置
-    loadUpdateDataList: '/admin/loadUpdateList', //获取更新列表
-    delAppUpdate: '/admin/delAppUpdate', //删除更新
-    saveAppUpdate: '/admin/saveAppUpdate', //保存更新
-    postAppUpdate: '/admin/postAppUpdate', //发布更新
-    queryBeautyAccountPage: '/admin/queryBeautyAccountPage', //靓号列表
-    saveBeautAccount: '/admin/saveBeautyAccount', //保存靓号
-    updateBeautyAccount: '/admin/updateBeautyAccount', //更新靓号
-    delBeautAccount: '/admin/delBeautyAccount' //删除靓号
+    user: {
+      queryUserPage: '/admin/queryUserPage', //后台获取用户列表
+      updateUserStatus: '/admin/updateUserStatus', //后台更新用户状态
+      forceOffLine: '/admin/forceOffLine' //强制下线
+    },
+    group: {
+      queryGroupPage: '/admin/queryGroupPage', //群组列表
+      adminDissolutionGroup: '/admin/dissolutionGroup' //解散群组
+    },
+    setting: {
+      getSysSetting: '/admin/getSystemConfig', // 获取系统设置
+      saveSysSetting: '/admin/saveSysSetting' //保存系统设置
+    },
+    app: {
+      loadUpdateDataList: '/admin/appUpdate/queryPage', //获取APP发布列表
+      delAppUpdate: '/admin/appUpdate/delete', //删除APP发布信息
+      addAppUpdate: '/admin/appUpdate/add', //添加APP发布信息
+      updateAppUpdate: '/admin/appUpdate/update', //更新APP发布信息
+      postAppUpdate: '/admin/appUpdate/post' //发布更新
+    },
+    userBeauty: {
+      queryBeautyAccountPage: '/admin/userBeauty/queryPage', //靓号列表
+      addBeautAccount: '/admin/userBeauty/add', //保存靓号
+      updateBeautyAccount: '/admin/userBeauty/update', //更新靓号
+      delBeautAccount: '/admin/userBeauty/delete' //删除靓号
+    }
   },
   // app 相关
   app: {
-    checkVersion: '/app/update/checkVersion', //更新检测
+    checkVersion: '/app/update/checkVersion' //更新检测
   }
 }
 
