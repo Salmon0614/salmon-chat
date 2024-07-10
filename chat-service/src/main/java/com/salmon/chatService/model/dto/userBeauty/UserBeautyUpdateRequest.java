@@ -3,6 +3,7 @@ package com.salmon.chatService.model.dto.userBeauty;
 import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
@@ -26,6 +27,7 @@ public class UserBeautyUpdateRequest implements Serializable {
 
     @Schema(description = "ID")
     @NotNull(message = "ID不能为空")
+    @Min(value = 1)
     private Integer id;
 
     @Schema(description = "邮箱")
