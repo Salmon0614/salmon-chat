@@ -9,6 +9,7 @@ import com.salmon.chatService.common.IdRequest;
 import com.salmon.chatService.common.ResultUtils;
 import com.salmon.chatService.exception.BusinessException;
 import com.salmon.chatService.exception.ThrowUtils;
+import com.salmon.chatService.model.dto.admin.SystemConfigRequest;
 import com.salmon.chatService.model.dto.admin.UpdateUserStatusRequest;
 import com.salmon.chatService.model.dto.group.GroupQueryRequest;
 import com.salmon.chatService.model.dto.user.UserQueryRequest;
@@ -19,7 +20,9 @@ import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
 import com.salmon.chatService.model.po.Group;
 import com.salmon.chatService.model.po.User;
 import com.salmon.chatService.model.po.UserBeauty;
+import com.salmon.chatService.model.vo.app.SystemConfigVo;
 import com.salmon.chatService.model.vo.group.GroupVO;
+import com.salmon.chatService.service.AppService;
 import com.salmon.chatService.service.GroupService;
 import com.salmon.chatService.service.UserBeautyService;
 import com.salmon.chatService.service.UserService;
@@ -54,7 +57,7 @@ public class AdminController {
     private final UserService userService;
     private final UserBeautyService userBeautyService;
     private final GroupService groupService;
-
+    private final AppService appService;
     @Operation(summary = "分页查询用户")
     @PostMapping("/queryUserPage")
     @CheckAuth(needAdmin = true)
@@ -177,4 +180,23 @@ public class AdminController {
         groupService.dissolutionGroup(group.getGroupOwnerId(), group.getId());
         return ResultUtils.success();
     }
+
+    @Operation(summary = "获取系统设置")
+    @PostMapping("/getSysSetting")
+    @CheckAuth(needAdmin = true)
+    public BaseResponse<SystemConfigVo> getSysSetting() {
+        SystemConfigVo systemConfig = appService.getSystemConfig();
+        return ResultUtils.success(systemConfig);
+    }
+
+    @Operation(summary = "保存系统设置")
+    @PostMapping("/saveSysSetting")
+    @CheckAuth(needAdmin = true)
+    public BaseResponse<SystemConfigVo> saveSysSetting(@RequestBody SystemConfigRequest request) {
+        // todo 上传机器人的头像、封面
+        appService.saveOrUpdateSystemConfig(request);
+        return ResultUtils.success();
+    }
+
+
 }

@@ -54,8 +54,8 @@ const api = {
     forceOffLine: '/admin/forceOffLine', //强制下线
     queryGroupPage: '/admin/queryGroupPage', //群组列表
     adminDissolutionGroup: '/admin/dissolutionGroup', //解散群组
+    getSysSetting: '/admin/getSystemConfig', // 获取系统设置
     saveSysSetting: '/admin/saveSysSetting', //保存系统设置
-    getSysSetting4Admin: '/admin/getSysSetting', //获取系统设置
     loadUpdateDataList: '/admin/loadUpdateList', //获取更新列表
     delAppUpdate: '/admin/delAppUpdate', //删除更新
     saveAppUpdate: '/admin/saveAppUpdate', //保存更新
@@ -68,7 +68,6 @@ const api = {
   // app 相关
   app: {
     checkVersion: '/app/update/checkVersion', //更新检测
-    getSysSetting: '/app/getSystemConfig' // 获取系统设置
   }
 }
 

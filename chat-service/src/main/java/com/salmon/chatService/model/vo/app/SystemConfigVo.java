@@ -33,11 +33,12 @@ public class SystemConfigVo implements Serializable {
     private Integer waxVideoSize = 5;
     // 文件大小
     private Integer maxFileSize = 5;
+    // 机器人头像
+    private String robotAvatar = "";
     // 机器人账号
     private String robotUAccount = Settings.ROBOT_ACCOUNT;
     // 机器人昵称
     private String robotNickName = "SalmonChat";
     // 机器人欢迎语
     private String robotWelcome = "欢迎使用SalmonChat";
-
 }

@@ -33,20 +33,12 @@ public class AppController {
     @Resource
     private AppService appService;
 
-    @Operation(summary = "获取APP系统配置参数")
-    @PostMapping("/getSystemConfig")
+    @Operation(summary = "更新检测")
+    @PostMapping("/checkVersion")
     @CheckAuth(needAdmin = true)
-    public BaseResponse<SystemConfigVo> getSystemConfig() {
-        SystemConfigVo systemConfig = appService.getSystemConfig();
-        return ResultUtils.success(systemConfig);
-    }
+    public BaseResponse<SystemConfigVo> checkVersion() {
 
-    @Operation(summary = "保存APP系统配置参数")
-    @PostMapping("/saveSystemConfig")
-    @CheckAuth(needAdmin = true)
-    public BaseResponse<SystemConfigVo> saveSystemConfig(@RequestBody SystemConfigRequest systemConfigRequest) {
-        appService.saveOrUpdateSystemConfig(systemConfigRequest);
-        return ResultUtils.success(new SystemConfigVo());
+        return ResultUtils.success();
     }
 
 }
