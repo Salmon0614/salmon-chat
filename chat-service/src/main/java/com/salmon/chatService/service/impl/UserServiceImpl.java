@@ -1,5 +1,6 @@
 package com.salmon.chatService.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.common.ErrorCode;
@@ -14,6 +15,7 @@ import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.mapper.UserMapper;
 import com.salmon.chatService.model.dto.account.EmailLoginRequest;
 import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
+import com.salmon.chatService.model.dto.account.ForgetPasswordRequest;
 import com.salmon.chatService.model.dto.admin.UpdateUserStatusRequest;
 import com.salmon.chatService.model.dto.user.UpdatePassword;
 import com.salmon.chatService.model.dto.user.UserSaveRequest;
@@ -183,6 +185,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void forceOffLine(Integer userId) {
         // todo 强制下线
+    }
+
+    @Override
+    public void forgetPassword(ForgetPasswordRequest request) {
+        User user = this.getOne(new LambdaQueryWrapper<User>().eq(User::getEmail, request.getEmail()));
+        String encryptPassword = Utils.encryptPassword(request.getPassword(), user.getSalt());
+        user.setPassword(encryptPassword);
+        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
+        // todo 强制退出，重新登录
     }
 
 

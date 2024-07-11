@@ -2,6 +2,7 @@ package com.salmon.chatService.service;
 
 import com.salmon.chatService.model.dto.account.EmailLoginRequest;
 import com.salmon.chatService.model.dto.account.EmailRegisterRequest;
+import com.salmon.chatService.model.dto.account.ForgetPasswordRequest;
 import com.salmon.chatService.model.dto.admin.UpdateUserStatusRequest;
 import com.salmon.chatService.model.dto.user.UpdatePassword;
 import com.salmon.chatService.model.dto.user.UserSaveRequest;
@@ -84,4 +85,11 @@ public interface UserService extends IService<User> {
      * @param userId 用户ID
      */
     void forceOffLine(Integer userId);
+
+    /**
+     * 忘记密码
+     *
+     * @param request 忘记密码请求
+     */
+    void forgetPassword(ForgetPasswordRequest request);
 }
