@@ -156,9 +156,37 @@ const register = async () => {
   changeType(0)
 }
 /**
- * 修改密码
+ * 忘记密码
  */
-const updatePassword = async () => {}
+const forgetPassword = async () => {
+  const checkCodeKey = localStorage.getItem('checkCodeKey')
+  if (!checkCodeKey) {
+    proxy.$message.error('请刷新验证码')
+    return
+  }
+  let result = await proxy.$request({
+    url: proxy.$api.account.forgetPassword,
+    showLoading: true,
+    showError: false,
+    params: {
+      email: formData.value.email,
+      password: formData.value.password,
+      checkCode: formData.value.checkCode,
+      checkCodeKey: checkCodeKey
+    },
+    errorCallback: (response) => {
+      showLoading.value = false
+      changeCheckCode('sys')
+      errorMsg.value = response.message
+    }
+  })
+  if (!result || !result.isSuccess) {
+    return
+  }
+  proxy.$message.success('修改成功')
+  // 切换到登录页
+  changeType(0)
+}
 
 const errorMsg = ref(null)
 
@@ -185,7 +213,7 @@ const submit = async () => {
   } else if (viewType.value === 1) {
     await register()
   } else {
-    await updatePassword()
+    await forgetPassword()
   }
 }
 
@@ -198,7 +226,7 @@ const isDisabled = () => {
   ) {
     return true
   }
-  if (!formData.value.agree) {
+  if (viewType.value !== 2 && !formData.value.agree) {
     return true
   }
   if (
