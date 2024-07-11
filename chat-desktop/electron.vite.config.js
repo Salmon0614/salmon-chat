@@ -19,7 +19,7 @@ export default defineConfig({
     plugins: [vue()],
     server: {
       hmr: true,
-      port: 5000,
+      port: 5001,
       proxy: {
         '/api': {
           target: 'http://localhost:5050',
