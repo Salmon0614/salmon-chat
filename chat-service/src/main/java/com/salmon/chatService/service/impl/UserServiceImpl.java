@@ -25,6 +25,7 @@ import com.salmon.chatService.model.po.User;
 import com.salmon.chatService.model.po.UserBeauty;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.user.UserVO;
+import com.salmon.chatService.netty.NettyService;
 import com.salmon.chatService.service.UserBeautyService;
 import com.salmon.chatService.service.UserService;
 import com.salmon.chatService.utils.RedisUtils;
@@ -51,7 +52,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserBeautyService userBeautyService;
-
+    @Resource
+    private NettyService nettyService;
     @Resource
     private AppConfig appConfig;
 
@@ -108,15 +110,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.NOT_FOUND_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(!user.getPassword().equals(Utils.encryptPassword(password, user.getSalt())), ErrorCode.PARAMS_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(user.getStatus() == StatusEnum.DISABLED.getValue(), ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用！");
-        // todo 此账号已经在别处登录
+        // 限制单设备登录
+        Long userHeartBeat = nettyService.getUserHeartBeat(user.getId());
+        ThrowUtils.throwIf(Objects.isNull(userHeartBeat), "此账号已在别处登录，请退出后再登录");
+        // 更新登录状态
         user.setLastLoginTime(LocalDateTime.now());
         ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
-        // 存储 token
+        // 存储登录token
         TokenUserVo tokenUserVo = TokenUserVo.objToVo(user);
         String token = Utils.generateToken(user.getAccount());
         this.setUserToken(token, tokenUserVo);
-
         // todo 查询群、联系人信息等、ws心跳 p-8
+
+
         UserVO userVO = UserVO.objToVo(user);
         userVO.setToken(token);
         return userVO;

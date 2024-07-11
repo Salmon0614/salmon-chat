@@ -1,8 +1,11 @@
 package com.salmon.chatService.netty.handler;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,10 +27,12 @@ public class HeartBeatHandler extends ChannelDuplexHandler {
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent event) {
+            Channel channel = ctx.channel();
+            Attribute<Integer> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
+            Integer userId = attribute.get();
             switch (event.state()) {
                 case READER_IDLE:
-                    log.debug("心跳超时");
-                    ctx.writeAndFlush("ping");
+                    log.debug("用户{}心跳超时", userId);
                     ctx.close();
                     break;
 //                case WRITER_IDLE:

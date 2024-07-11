@@ -1,13 +1,18 @@
 package com.salmon.chatService.netty.handler;
 
 import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.netty.ChannelContextUtils;
+import com.salmon.chatService.netty.NettyService;
 import com.salmon.chatService.service.UserService;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,12 +28,19 @@ import java.util.Objects;
  * @author Salmon
  * @since 2024-07-11
  */
+// 用于标记一个 ChannelHandler 可以在多个 ChannelPipeline 中共享。
+// 这个注解表明该处理器是线程安全的，因此可以在多个通道（Channel）中重复使用，而不会出现线程安全问题
+@ChannelHandler.Sharable
 @Slf4j
 @Component
 public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     @Resource
     private UserService userService;
+    @Resource
+    private ChannelContextUtils channelContextUtils;
+    @Resource
+    private NettyService nettyService;
 
     /**
      * 通道就绪后调用，一般用来做初始化
@@ -61,8 +73,14 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
         Channel channel = ctx.channel();
-        log.debug("收到消息：{}", textWebSocketFrame.text());
         // 在这里处理收到的消息，例如广播给其他连接的客户端
+        Attribute<Integer> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
+        Integer userId = attribute.get();
+        log.debug("收到消息userId{}的消息{}", userId, textWebSocketFrame.text());
+        nettyService.saveUserHeartBeat(userId);
+
+        // 测试，发到群聊里
+        channelContextUtils.sendToGroup(10000, textWebSocketFrame.text());
     }
 
     /**
@@ -87,24 +105,15 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 return;
             }
             String token = tokenList.get(0);
-            boolean validToken = isValidToken(token);
-            if (!validToken) {
+            // 验证 token 的逻辑
+            TokenUserVo userToken = userService.getUserToken(token);
+            if (!Objects.nonNull(userToken)) {
                 ctx.channel().close();
                 return;
             }
             log.info("token: {}", token);
+            channelContextUtils.addContext(userToken.getId(), ctx.channel());
         }
-    }
-
-    /**
-     * 验证token是否合法
-     *
-     * @param token token
-     */
-    private boolean isValidToken(String token) {
-        // 验证 token 的逻辑
-        TokenUserVo userToken = userService.getUserToken(token);
-        return Objects.nonNull(userToken);
     }
 
     /**
