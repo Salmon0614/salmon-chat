@@ -78,7 +78,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
                         || !contactApply.getReceiveUserId().equals(tokenUserVo.getId()),
                 ErrorCode.PARAMS_ERROR
         );
-        ThrowUtils.throwIf(contactApply.getStatus().equals(ContactApplyStatusEnum.WAIT.getValue()), "该申请记录已处理");
+        ThrowUtils.throwIf(!contactApply.getStatus().equals(ContactApplyStatusEnum.WAIT.getValue()), "该申请记录已处理");
         contactApply.setStatus(request.getStatus());
         ThrowUtils.throwIf(!this.updateById(contactApply), "处理失败");
         switch (applyStatusEnum) {
