@@ -1,5 +1,6 @@
 package com.salmon.chatService.model.vo.contact;
 
+import com.salmon.chatService.model.enums.contact.ApplyOriginTypeEnum;
 import com.salmon.chatService.model.enums.contact.ContactApplyStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -49,6 +50,9 @@ public class ApplyRecordVO implements Serializable {
     @Schema(description = "来源类型 0-搜索账号 1-通过群聊添加 2-搜索邮箱 3-搜索手机号")
     private Integer originType;
 
+    @Schema(description = "来源类型")
+    private String originTypeDesc;
+
     @Schema(description = "联系人类型 0-好友 1-群聊")
     private Integer contactType;
 
@@ -60,6 +64,17 @@ public class ApplyRecordVO implements Serializable {
 
     @Schema(description = "地区")
     private String area;
+
+    public String getOriginTypeDesc() {
+        if (Objects.isNull(originType)) {
+            return "";
+        }
+        ApplyOriginTypeEnum enumByValue = ApplyOriginTypeEnum.getEnumByValue(originType);
+        if (Objects.isNull(enumByValue)) {
+            return "";
+        }
+        return enumByValue.getDesc();
+    }
 
     public String getStatusDesc() {
         ContactApplyStatusEnum applyStatusEnum = ContactApplyStatusEnum.getEnumByValue(this.status);

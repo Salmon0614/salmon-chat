@@ -34,6 +34,9 @@ public class ApplyRequest implements Serializable {
     @Schema(description = "申请方式 0-搜索方式 1-群里添加方式")
     private Integer applyType = ApplyTypeEnum.SEARCH.getValue();
 
+    @Schema(description = "来源类型 0-搜索账号 1-通过群聊添加 2-搜索邮箱 3-搜索手机号")
+    private Integer originType;
+
     @Schema(description = "群聊ID（申请方式为1时必传）")
     private Integer groupId;
 }

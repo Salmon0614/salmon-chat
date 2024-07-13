@@ -160,6 +160,8 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         if (Objects.nonNull(userContact)) {
             searchContactVO.setStatus(userContact.getStatus());
         }
+        // 记录当前搜索的来源
+        searchContactVO.setOriginType(applyOriginTypeEnum.getValue());
         return searchContactVO;
     }
 
@@ -173,7 +175,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     @Transactional(rollbackFor = Exception.class)
     public ApplyResultVO applyAdd(ApplyRequest request) {
         String account = request.getContactAccount();
-        ApplyOriginTypeEnum applyOriginTypeEnum = ApplyOriginTypeEnum.validType(account);
+        ApplyOriginTypeEnum applyOriginTypeEnum = ApplyOriginTypeEnum.getEnumByValue(request.getOriginType());
         UserContactTypeEnum contactTypeEnum = UserContactTypeEnum.getByPrefix(account);
         if (applyOriginTypeEnum == ApplyOriginTypeEnum.ACCOUNT) {
             ThrowUtils.throwIf(Objects.isNull(contactTypeEnum), ErrorCode.PARAMS_ERROR);
@@ -191,17 +193,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         switch (contactTypeEnum) {
             case USER -> {
                 LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-                switch (applyOriginTypeEnum) {
-                    case ACCOUNT -> {
-                        queryWrapper.eq(User::getAccount, account);
-                    }
-                    case EMAIL -> {
-                        queryWrapper.eq(User::getEmail, account);
-                    }
-                    case MOBILE -> {
-                        queryWrapper.eq(User::getMobile, account);
-                    }
-                }
+                queryWrapper.eq(User::getAccount, account);
                 User user = userService.getOne(queryWrapper);
                 ThrowUtils.throwIf(Objects.isNull(user), "该用户不存在");
                 joinType = user.getJoinType();

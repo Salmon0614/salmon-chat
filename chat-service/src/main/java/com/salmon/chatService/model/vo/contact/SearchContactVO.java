@@ -35,6 +35,9 @@ public class SearchContactVO implements Serializable {
     @Schema(description = "联系人类型描述")
     private String contactTypeDesc;
 
+    @Schema(description = "来源类型 0-搜索账号 1-通过群聊添加 2-搜索邮箱 3-搜索手机号")
+    private Integer originType;
+
     @Schema(description = "昵称/群名称")
     private String name;
 

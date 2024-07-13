@@ -41,10 +41,12 @@ defineExpose({
 })
 
 const submitApply = async () => {
+  console.log(formData.value.originType)
   const postData = {
     contactAccount: formData.value.account,
     applyInfo: formData.value.applyInfo,
-    contactType: formData.value.contactType
+    contactType: formData.value.contactType,
+    originType: formData.value.originType
   }
   let result = await proxy.$request({
     url: proxy.$api.contact.applyAdd,
