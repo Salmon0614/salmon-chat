@@ -66,7 +66,25 @@ const router = createRouter({
         {
           path: '/setting',
           name: '设置',
-          component: () => import('@/views/setting/Setting.vue')
+          redirect: '/setting/userInfo',
+          component: () => import('@/views/setting/Setting.vue'),
+          children: [
+            {
+              path: '/setting/userInfo',
+              name: '账号设置',
+              component: () => import('@/views/setting/UserInfo.vue')
+            },
+            {
+              path: '/setting/fileManage',
+              name: '文件管理',
+              component: () => import('@/views/setting/FileManage.vue')
+            },
+            {
+              path: '/setting/about',
+              name: '关于SalmonChat',
+              component: () => import('@/views/setting/About.vue')
+            }
+          ]
         }
       ]
     }
