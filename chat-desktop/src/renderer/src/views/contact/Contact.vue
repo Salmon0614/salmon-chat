@@ -1,15 +1,15 @@
 <script setup>
 import Layout from '@/components/Layout.vue'
-import {ref, reactive, getCurrentInstance, nextTick, watch} from 'vue'
-import {useRouter, useRoute} from 'vue-router'
+import { ref, reactive, getCurrentInstance, nextTick, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import WinOp from '@/components/WinOp.vue'
 import Avatar from '../../components/Avatar.vue'
-import {useContactStateStore} from '@/stores/contactStateStore'
+import { useContactStateStore } from '@/stores/contactStateStore'
 
 const contactStateStore = useContactStateStore()
 const router = useRouter()
 const route = useRoute()
-const {proxy} = getCurrentInstance()
+const { proxy } = getCurrentInstance()
 const isMac = window.electron.process.platform === 'darwin'
 
 const searchKey = ref(null)
@@ -77,8 +77,7 @@ let partList = ref([
 ])
 
 const rightTitle = ref(null)
-const search = () => {
-}
+const search = () => {}
 const partJump = (part) => {
   if (part.showTitle) {
     rightTitle.value = part.name
@@ -192,7 +191,7 @@ watch(
         break
     }
   },
-  {immediate: true, deep: true}
+  { immediate: true, deep: true }
 )
 </script>
 
@@ -252,7 +251,7 @@ watch(
       </div>
     </template>
     <template #right-content>
-      <div class="title-panel drag">{{ route.name }}</div>
+      <div class="title-panel drag">{{ rightTitle }}</div>
       <router-view v-slot="{ Component }">
         <component :is="Component" ref="componentRef"></component>
       </router-view>
