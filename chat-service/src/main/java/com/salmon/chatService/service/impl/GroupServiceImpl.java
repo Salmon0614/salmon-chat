@@ -155,8 +155,8 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
      */
     @Override
     public GroupChatVO getGroupInfo4Chat(IdRequest request) {
-        Long groupId = request.getId();
-        Group group = this.getGroupDetail(groupId.intValue());
+        Integer groupId = request.getId().intValue();
+        Group group = this.getGroupDetail(groupId);
         GroupVO groupVO = GroupVO.objToVo(group);
         List<UserContactVO> userContactVOS = userContactService.selectContactUserInfo(groupId, UserContactTypeEnum.GROUP.getType(), UserContactStatusEnum.FRIEND.getValue());
         if (CollectionUtils.isEmpty(userContactVOS)) {

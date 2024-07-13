@@ -35,6 +35,8 @@ public class SystemConfigVo implements Serializable {
     private Integer maxFileSize = 5;
     // 机器人头像
     private String robotAvatar = "";
+    // 机器人ID
+    private Integer robotUid = Settings.ROBOT_ID;
     // 机器人账号
     private String robotUAccount = Settings.ROBOT_ACCOUNT;
     // 机器人昵称

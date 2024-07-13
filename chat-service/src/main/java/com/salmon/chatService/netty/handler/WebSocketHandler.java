@@ -61,7 +61,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.debug("有连接断开...");
-        // 你可以在这里添加清理代码，例如注销用户，通知其他用户等
+        channelContextUtils.removeContext(ctx.channel());
     }
 
     /**
@@ -74,13 +74,10 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
         Channel channel = ctx.channel();
         // 在这里处理收到的消息，例如广播给其他连接的客户端
-        Attribute<Integer> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
-        Integer userId = attribute.get();
-        log.debug("收到消息userId{}的消息{}", userId, textWebSocketFrame.text());
-        nettyService.saveUserHeartBeat(userId);
-
-        // 测试，发到群聊里
-        channelContextUtils.sendToGroup(10000, textWebSocketFrame.text());
+        Attribute<String> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
+        String account = attribute.get();
+        log.debug("收到消息user-{}的消息{}", account, textWebSocketFrame.text());
+        nettyService.saveUserHeartBeat(account);
     }
 
     /**
@@ -112,7 +109,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 return;
             }
             log.info("token: {}", token);
-            channelContextUtils.addContext(userToken.getId(), ctx.channel());
+            channelContextUtils.addContext(userToken.getAccount(), ctx.channel());
         }
     }
 

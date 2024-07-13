@@ -21,23 +21,30 @@ import com.salmon.chatService.model.dto.user.UpdatePassword;
 import com.salmon.chatService.model.dto.user.UserSaveRequest;
 import com.salmon.chatService.model.enums.user.AccountBeautyStatusEnum;
 import com.salmon.chatService.model.enums.user.UserJoinTypeEnum;
+import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
 import com.salmon.chatService.model.po.User;
 import com.salmon.chatService.model.po.UserBeauty;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
+import com.salmon.chatService.model.vo.contact.UserContactVO;
 import com.salmon.chatService.model.vo.user.UserVO;
 import com.salmon.chatService.netty.NettyService;
 import com.salmon.chatService.service.UserBeautyService;
+import com.salmon.chatService.service.UserContactService;
 import com.salmon.chatService.service.UserService;
 import com.salmon.chatService.utils.RedisUtils;
 import com.salmon.chatService.utils.UserHolder;
 import com.salmon.chatService.utils.Utils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -53,10 +60,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private UserBeautyService userBeautyService;
     @Resource
+    @Lazy
+    private UserContactService userContactService;
+    @Resource
     private NettyService nettyService;
     @Resource
     private AppConfig appConfig;
 
+
+    @Override
+    public User getOneByEmail(String email) {
+        return this.getOne(new QueryWrapper<User>().eq("email", email));
+    }
+
+    @Override
+    public User getOneByAccount(String account) {
+        return this.getOne(new QueryWrapper<User>().eq("account", account));
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -99,28 +119,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userBeauty.setUserId(user.getId());
             ThrowUtils.throwIf(!userBeautyService.updateById(userBeauty), "注册失败");
         }
-        // todo 创建机器人好友
+        // 创建机器人好友
+        userContactService.addRobotContact(user.getId(), user.getAccount());
     }
 
     @Override
     public UserVO login(EmailLoginRequest emailLoginRequest) {
         String email = emailLoginRequest.getEmail();
         String password = emailLoginRequest.getPassword();
-        User user = this.getOne(new QueryWrapper<User>().eq("email", email));
+
+        // 验证信息是否合法
+        User user = this.getOneByEmail(email);
         ThrowUtils.throwIf(Objects.isNull(user), ErrorCode.NOT_FOUND_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(!user.getPassword().equals(Utils.encryptPassword(password, user.getSalt())), ErrorCode.PARAMS_ERROR, "账号或密码不正确！");
         ThrowUtils.throwIf(user.getStatus() == StatusEnum.DISABLED.getValue(), ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用！");
+
         // 限制单设备登录
-        Long userHeartBeat = nettyService.getUserHeartBeat(user.getId());
-        ThrowUtils.throwIf(Objects.isNull(userHeartBeat), "此账号已在别处登录，请退出后再登录");
-        // 更新登录状态
-        user.setLastLoginTime(LocalDateTime.now());
-        ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
+        Long userHeartBeat = nettyService.getUserHeartBeat(user.getAccount());
+        ThrowUtils.throwIf(Objects.nonNull(userHeartBeat), "此账号已在别处登录，请退出后再登录");
+
         // 存储登录token
         TokenUserVo tokenUserVo = TokenUserVo.objToVo(user);
         String token = Utils.generateToken(user.getAccount());
         this.setUserToken(token, tokenUserVo);
+
         // todo 查询群、联系人信息等、ws心跳 p-8
+        // 查询联系人
+        List<UserContactVO> userContactVOS = userContactService.selectUserContact(user.getId(), UserContactStatusEnum.FRIEND.getValue());
+        List<String> accountList = userContactVOS.stream().map(UserContactVO::getContactAccount).toList();
+        cleanContact(user.getAccount());
+        if (!CollectionUtils.isEmpty(accountList)) {
+            addContactBatch(user.getAccount(), accountList);
+        }
 
 
         UserVO userVO = UserVO.objToVo(user);
@@ -200,6 +230,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(encryptPassword);
         ThrowUtils.throwIf(!this.updateById(user), ErrorCode.OPERATION_ERROR);
         // todo 强制退出，重新登录
+    }
+
+    @Override
+    public void addContactBatch(String account, List<String> contactIdList) {
+        RedisUtils.lSet1(RedisPrefixConstant.USER_CONTACT + account, contactIdList, Settings.SESSION_EXPIRE_TIME);
+    }
+
+    @Override
+    public void cleanContact(String account) {
+        RedisUtils.del(RedisPrefixConstant.USER_CONTACT + account);
+    }
+
+    @Override
+    public List<String> getContactList(String account) {
+        return RedisUtils.lGet(RedisPrefixConstant.USER_CONTACT + account, 0, -1);
     }
 
 

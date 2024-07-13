@@ -1,5 +1,6 @@
 package com.salmon.chatService.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.common.ErrorCode;
@@ -13,15 +14,22 @@ import com.salmon.chatService.model.po.UserContact;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.contact.ApplyRecordVO;
+import com.salmon.chatService.model.vo.userContactApply.UserContactApplyVO;
 import com.salmon.chatService.service.UserContactApplyService;
 import com.salmon.chatService.service.UserContactService;
 import com.salmon.chatService.utils.UserHolder;
+import com.salmon.chatService.utils.Utils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -95,5 +103,30 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
                 ThrowUtils.throwIf(!userContactService.save(userContact), "处理失败");
             }
         }
+    }
+
+    @Override
+    public List<UserContactApplyVO> selectNewApplyListInOffline(Integer userId, Long lastOffTime) {
+        List<UserContactApply> userContactApplyList = this.list(getQueryWrapper(userId, lastOffTime));
+        if (CollectionUtils.isEmpty(userContactApplyList)) {
+            return new ArrayList<>();
+        }
+        return userContactApplyList.stream().map(UserContactApplyVO::objToVo).collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer selectNewApplyCountInOffline(Integer userId, Long lastOffTime) {
+        return (int) this.count(getQueryWrapper(userId, lastOffTime));
+    }
+
+    private LambdaQueryWrapper<UserContactApply> getQueryWrapper(Integer userId, Long lastOffTime) {
+        LambdaQueryWrapper<UserContactApply> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserContactApply::getReceiveUserId, userId)
+                .eq(UserContactApply::getStatus, ContactApplyStatusEnum.WAIT.getValue());
+        if (Objects.nonNull(lastOffTime)) {
+            LocalDateTime offTime = Utils.convertTimestampToLocalDateTime(lastOffTime);
+            queryWrapper.ge(UserContactApply::getLastApplyTime, offTime);
+        }
+        return queryWrapper;
     }
 }

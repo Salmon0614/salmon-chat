@@ -2,9 +2,12 @@ package com.salmon.chatService.service.impl;
 
 import com.salmon.chatService.model.po.ChatSessionUser;
 import com.salmon.chatService.mapper.ChatSessionUserMapper;
+import com.salmon.chatService.model.vo.chatSessionUser.ChatSessionUserVO;
 import com.salmon.chatService.service.ChatSessionUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatSessionUserServiceImpl extends ServiceImpl<ChatSessionUserMapper, ChatSessionUser> implements ChatSessionUserService {
 
+    @Override
+    public List<ChatSessionUserVO> selectSessionUserList(String account) {
+        return this.baseMapper.selectSessionUserList(account);
+    }
 }

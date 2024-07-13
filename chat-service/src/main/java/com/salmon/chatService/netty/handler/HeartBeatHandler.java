@@ -3,6 +3,7 @@ package com.salmon.chatService.netty.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -28,14 +29,15 @@ public class HeartBeatHandler extends ChannelDuplexHandler {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent event) {
             Channel channel = ctx.channel();
-            Attribute<Integer> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
-            Integer userId = attribute.get();
-            switch (event.state()) {
-                case READER_IDLE:
-                    log.debug("用户{}心跳超时", userId);
-                    ctx.close();
-                    break;
-//                case WRITER_IDLE:
+            Attribute<String> attribute = channel.attr(AttributeKey.valueOf(channel.id().toString()));
+            String account = attribute.get();
+            if (event.state() == IdleState.READER_IDLE) {
+                log.debug("用户{}心跳超时", account);
+                ctx.close();
+            } else if (event.state() == IdleState.READER_IDLE) {
+                ctx.writeAndFlush("heart");
+            }
+            //                case WRITER_IDLE:
 //                    log.debug("写超时");
 //                    // 处理写超时，例如发送心跳包
 //                    ctx.writeAndFlush("ping");
@@ -47,7 +49,7 @@ public class HeartBeatHandler extends ChannelDuplexHandler {
 //                    break;
 //                default:
 //                    break;
-            }
         }
+
     }
 }

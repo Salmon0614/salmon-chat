@@ -691,6 +691,44 @@ public class RedisUtils {
      * @param value 值
      * @return
      */
+    public static Boolean lSet1(String key, List<String> value) {
+        try {
+            stringRedisTemplate.opsForList().rightPushAll(key, value);
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 将list放入缓存
+     *
+     * @param key   键
+     * @param value 值
+     * @param time  时间(秒)
+     * @return
+     */
+    public static Boolean lSet1(String key, List<String> value, long time) {
+        try {
+            stringRedisTemplate.opsForList().rightPushAll(key, value);
+            if (time > 0) {
+                expire(key, time);
+            }
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 将list放入缓存
+     *
+     * @param key   键
+     * @param value 值
+     * @return
+     */
     public static Boolean lSet(String key, List<Object> value) {
         try {
             List<String> list = new ArrayList<>();

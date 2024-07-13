@@ -6,6 +6,9 @@ import com.salmon.chatService.model.dto.contact.DealWithApplyRequest;
 import com.salmon.chatService.model.po.UserContactApply;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.contact.ApplyRecordVO;
+import com.salmon.chatService.model.vo.userContactApply.UserContactApplyVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -31,4 +34,20 @@ public interface UserContactApplyService extends IService<UserContactApply> {
      * @param request 申请请求
      */
     void dealWithApply(DealWithApplyRequest request);
+
+    /**
+     * 查询离线期间的好友申请记录
+     *
+     * @param userId      用户ID
+     * @param lastOffTime 最后的离线时间
+     */
+    List<UserContactApplyVO> selectNewApplyListInOffline(Integer userId, Long lastOffTime);
+
+    /**
+     * 查询离线期间的好友申请记录数量
+     *
+     * @param userId      用户ID
+     * @param lastOffTime 最后的离线时间
+     */
+    Integer selectNewApplyCountInOffline(Integer userId, Long lastOffTime);
 }

@@ -28,7 +28,7 @@ public class ChatMessageQueryRequest extends PageRequest implements Serializable
     private String sessionId;
 
     @Schema(description = "消息类型")
-    private Boolean messageType;
+    private Integer messageType;
 
     @Schema(description = "消息内容")
     private String messageContent;
@@ -40,13 +40,13 @@ public class ChatMessageQueryRequest extends PageRequest implements Serializable
     private String sendUserNickname;
 
     @Schema(description = "发送时间")
-    private LocalDateTime sendTime;
+    private Long sendTime;
 
     @Schema(description = "接收联系人账号")
     private String contactAccount;
 
     @Schema(description = "联系人类型 0-用户 1-群聊")
-    private Boolean contactType;
+    private Integer contactType;
 
     @Schema(description = "文件大小")
     private Long fileSize;
@@ -55,10 +55,10 @@ public class ChatMessageQueryRequest extends PageRequest implements Serializable
     private String fileName;
 
     @Schema(description = "文件类型")
-    private Byte fileType;
+    private Integer fileType;
 
     @Schema(description = "状态 0-正在发送 1-已发送")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "版本号")
     private Integer version;

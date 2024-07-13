@@ -62,7 +62,7 @@ public class UserContactVO implements Serializable {
 //    private LocalDateTime lastLoginTime;
 //
 //    @Schema(description = "最后离线时间")
-//    private LocalDateTime lastOffTime;
+//    private Long lastOffTime;
 
     public Boolean getRobot() {
         return Settings.ROBOT_ACCOUNT.equals(this.contactAccount);

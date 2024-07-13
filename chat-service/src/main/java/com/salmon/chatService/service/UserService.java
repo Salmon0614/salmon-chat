@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.user.UserVO;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户 服务类
@@ -20,6 +22,22 @@ import com.salmon.chatService.model.vo.user.UserVO;
  * @since 2024-06-04
  */
 public interface UserService extends IService<User> {
+
+    /**
+     * 通过邮箱查找用户
+     *
+     * @param email 邮箱
+     * @return 用户信息
+     */
+    User getOneByEmail(String email);
+
+    /**
+     * 通过账号查找用户
+     *
+     * @param account 账号
+     * @return 用户信息
+     */
+    User getOneByAccount(String account);
 
     /**
      * 根据邮箱注册
@@ -92,4 +110,26 @@ public interface UserService extends IService<User> {
      * @param request 忘记密码请求
      */
     void forgetPassword(ForgetPasswordRequest request);
+
+    /**
+     * 批量添加联系人缓存
+     *
+     * @param account       用户账号
+     * @param contactIdList 联系人账号
+     */
+    void addContactBatch(String account, List<String> contactIdList);
+
+    /**
+     * 清空联系人缓存
+     *
+     * @param account 用户账号
+     */
+    void cleanContact(String account);
+
+    /**
+     * 获取联系人缓存
+     *
+     * @param account 用户账号
+     */
+    List<String> getContactList(String account);
 }

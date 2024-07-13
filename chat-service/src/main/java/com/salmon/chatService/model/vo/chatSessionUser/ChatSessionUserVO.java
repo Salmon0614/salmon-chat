@@ -1,12 +1,14 @@
 package com.salmon.chatService.model.vo.chatSessionUser;
 
-import lombok.Data;
+import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.po.ChatSessionUser;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
+
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * <p>
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @Schema(name = "ChatSessionUserVO", description = "聊天会话用户视图")
 public class ChatSessionUserVO implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -37,15 +40,21 @@ public class ChatSessionUserVO implements Serializable {
     @Schema(description = "联系人名称")
     private String contactName;
 
-    @Schema(description = "版本号")
-    private Integer version;
+    @Schema(description = "联系人类型 0-用户 1-群聊")
+    private Integer contactType;
 
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
+    @Schema(description = "最后收到的消息")
+    private String lastMessage;
 
-    @Schema(description = "修改时间")
-    private LocalDateTime updateTime;
+    @Schema(description = "最近接收消息时间（毫秒）")
+    private Long lastReceiveTime;
 
+    @Schema(description = "群聊人数")
+    private Integer memberCount;
+
+    public Integer getContactType() {
+        return Objects.requireNonNull(UserContactTypeEnum.getByPrefix(contactAccount)).getType();
+    }
 
     /**
      * 封装类转对象

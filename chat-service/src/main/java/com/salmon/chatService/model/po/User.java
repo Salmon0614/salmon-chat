@@ -126,9 +126,9 @@ public class User implements Serializable {
     @TableField("last_login_time")
     private LocalDateTime lastLoginTime;
 
-    @Schema(description = "离线时间")
+    @Schema(description = "离线时间（毫秒）")
     @TableField("last_off_time")
-    private LocalDateTime lastOffTime;
+    private Long lastOffTime;
 
     @Schema(description = "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)

@@ -24,7 +24,9 @@ public interface RedisPrefixConstant {
     String USER_TOKEN = APP + "user_token:";
 
     //---------------------socket心跳---------------------------
-    String WS_USER_HEART_BEAT = APP + "ws_user_heart_beat:";
+    String WS_USER_HEART_BEAT = APP + "ws:user:heart_beat:";
     Long HEART_BEAT_EXPIRE_TIME = 6L;
 
+    //--------------------用户联系人缓存----------------------------
+    String USER_CONTACT = APP + "ws:user:contact:";
 }

@@ -31,7 +31,7 @@ public class ChatMessageAddRequest implements Serializable {
 
     @Schema(description = "消息类型")
     @NotNull(message = "消息类型不能为空")
-    private Boolean messageType;
+    private Integer messageType;
 
     @Schema(description = "消息内容")
     @NotBlank(message = "消息内容不能为空")
@@ -47,7 +47,7 @@ public class ChatMessageAddRequest implements Serializable {
 
     @Schema(description = "发送时间")
     @NotNull(message = "发送时间不能为空")
-    private LocalDateTime sendTime;
+    private Long sendTime;
 
     @Schema(description = "接收联系人账号")
     @NotBlank(message = "接收联系人账号不能为空")
@@ -55,7 +55,7 @@ public class ChatMessageAddRequest implements Serializable {
 
     @Schema(description = "联系人类型 0-用户 1-群聊")
     @NotNull(message = "联系人类型 0-用户 1-群聊不能为空")
-    private Boolean contactType;
+    private Integer contactType;
 
     @Schema(description = "文件大小")
     @NotNull(message = "文件大小不能为空")
@@ -67,11 +67,11 @@ public class ChatMessageAddRequest implements Serializable {
 
     @Schema(description = "文件类型")
     @NotNull(message = "文件类型不能为空")
-    private Byte fileType;
+    private Integer fileType;
 
     @Schema(description = "状态 0-正在发送 1-已发送")
     @NotNull(message = "状态 0-正在发送 1-已发送不能为空")
-    private Boolean status;
+    private Integer status;
 
     @Schema(description = "版本号")
     @NotNull(message = "版本号不能为空")

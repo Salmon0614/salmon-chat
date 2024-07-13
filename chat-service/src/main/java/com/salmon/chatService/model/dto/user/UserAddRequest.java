@@ -74,7 +74,7 @@ public class UserAddRequest implements Serializable {
     private LocalDateTime lastLoginTime;
 
     @Schema(description = "离线时间")
-    private LocalDateTime lastOffTime;
+    private Long lastOffTime;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;

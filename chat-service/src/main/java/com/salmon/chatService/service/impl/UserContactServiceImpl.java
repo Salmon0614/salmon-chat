@@ -9,17 +9,16 @@ import com.salmon.chatService.constant.CommonConstant;
 import com.salmon.chatService.exception.ThrowUtils;
 import com.salmon.chatService.model.dto.contact.ApplyRequest;
 import com.salmon.chatService.model.dto.contact.SearchRequest;
+import com.salmon.chatService.model.enums.chat.MessageStatusEnum;
+import com.salmon.chatService.model.enums.chat.MessageTypeEnum;
 import com.salmon.chatService.model.enums.contact.ApplyOriginTypeEnum;
 import com.salmon.chatService.model.enums.contact.ApplyTypeEnum;
 import com.salmon.chatService.model.enums.contact.ContactApplyStatusEnum;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import com.salmon.chatService.model.enums.group.GroupStatusEnum;
 import com.salmon.chatService.model.enums.userContact.UserContactStatusEnum;
-import com.salmon.chatService.model.po.Group;
-import com.salmon.chatService.model.po.User;
-import com.salmon.chatService.model.po.UserContact;
+import com.salmon.chatService.model.po.*;
 import com.salmon.chatService.mapper.UserContactMapper;
-import com.salmon.chatService.model.po.UserContactApply;
 import com.salmon.chatService.model.vo.account.TokenUserVo;
 import com.salmon.chatService.model.vo.app.SystemConfigVo;
 import com.salmon.chatService.model.vo.contact.ApplyResultVO;
@@ -29,6 +28,7 @@ import com.salmon.chatService.model.vo.contact.UserContactVO;
 import com.salmon.chatService.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.salmon.chatService.utils.UserHolder;
+import com.salmon.chatService.utils.Utils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +61,23 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     private UserContactApplyService userContactApplyService;
     @Resource
     private AppService appService;
+    @Resource
+    private ChatSessionService chatSessionService;
+    @Resource
+    private ChatSessionUserService chatSessionUserService;
+    @Resource
+    private ChatMessageService chatMessageService;
+
+    /**
+     * 获取所有联系人（包括群）
+     *
+     * @param userId 用户ID
+     * @param status 状态
+     */
+    @Override
+    public List<UserContactVO> selectUserContact(Integer userId, Integer status) {
+        return this.baseMapper.selectUserContact(userId, status);
+    }
 
     /**
      * 查询联系人信息
@@ -70,7 +87,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
      * @param status      关系状态
      */
     @Override
-    public List<UserContactVO> selectContactUserInfo(Long contactId, Integer contactType, Integer status) {
+    public List<UserContactVO> selectContactUserInfo(Integer contactId, Integer contactType, Integer status) {
         return this.baseMapper.selectContactUserInfo(contactId, contactType, status);
     }
 
@@ -437,5 +454,54 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         // todo 从我的好友缓存列表删除好友
 
         // todo 从好友的缓存列表删除我
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addRobotContact(Integer userId, String account) {
+        long currentTimestampInMillis = Utils.getCurrentTimestampInMillis();
+        SystemConfigVo systemConfig = appService.getSystemConfig();
+        Integer contactId = systemConfig.getRobotUid();
+        String contactAccount = systemConfig.getRobotUAccount();
+        String contactNickName = systemConfig.getRobotNickName();
+        String sendMsg = Utils.cleanHtmlTag(systemConfig.getRobotWelcome());
+
+        // 增加机器人好友
+        UserContact userContact = new UserContact();
+        userContact.setUserId(userId);
+        userContact.setContactId(contactId);
+        userContact.setContactType(UserContactTypeEnum.USER.getType());
+        userContact.setStatus(UserContactStatusEnum.FRIEND.getValue());
+        ThrowUtils.throwIf(!this.save(userContact), "操作失败");
+
+        // 增加会话信息
+        String sessionId = Utils.generateChatSessionId(new String[]{account, contactAccount});
+        ChatSession chatSession = new ChatSession();
+        chatSession.setSessionId(sessionId);
+        chatSession.setLastMessage(sendMsg);
+        chatSession.setLastReceiveTime(currentTimestampInMillis);
+        ThrowUtils.throwIf(!chatSessionService.save(chatSession), "操作失败");
+
+        // 增加会话人信息
+        ChatSessionUser chatSessionUser = new ChatSessionUser();
+        chatSessionUser.setSessionId(sessionId);
+        chatSessionUser.setUserAccount(account);
+        chatSessionUser.setContactAccount(contactAccount);
+        chatSessionUser.setContactName(contactNickName);
+        ThrowUtils.throwIf(!chatSessionUserService.save(chatSessionUser), "操作失败");
+
+        // 增加聊天消息
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setSessionId(sessionId);
+        chatMessage.setMessageType(MessageTypeEnum.CHAT.getType());
+        // 机器人发送的消息
+        chatMessage.setSendUserAccount(contactAccount);
+        chatMessage.setSendUserNickname(contactNickName);
+        chatMessage.setMessageContent(sendMsg);
+        chatMessage.setSendTime(currentTimestampInMillis);
+        chatMessage.setContactAccount(account);
+        chatMessage.setContactType(UserContactTypeEnum.USER.getType());
+        chatMessage.setStatus(MessageStatusEnum.SENT.getValue());
+        ThrowUtils.throwIf(!chatMessageService.save(chatMessage), "操作失败");
     }
 }

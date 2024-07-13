@@ -23,13 +23,21 @@ import java.util.List;
 public interface UserContactService extends IService<UserContact> {
 
     /**
+     * 获取所有联系人（包括群）
+     *
+     * @param userId 用户ID
+     * @param status 状态
+     */
+    List<UserContactVO> selectUserContact(Integer userId, Integer status);
+
+    /**
      * 查询联系人信息
      *
      * @param contactId   联系人ID
      * @param contactType 联系人类型
      * @param status      关系状态
      */
-    List<UserContactVO> selectContactUserInfo(Long contactId, Integer contactType, Integer status);
+    List<UserContactVO> selectContactUserInfo(Integer contactId, Integer contactType, Integer status);
 
     /**
      * 搜索联系人
@@ -98,4 +106,12 @@ public interface UserContactService extends IService<UserContact> {
      * @param contactStatusEnum 状态枚举
      */
     void removeUserContact(int contactId, UserContactStatusEnum contactStatusEnum);
+
+    /**
+     * 添加机器人好友
+     *
+     * @param userId  用户ID
+     * @param account 用户账号
+     */
+    void addRobotContact(Integer userId, String account);
 }
