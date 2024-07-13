@@ -1,11 +1,20 @@
 package com.salmon.chatService.utils;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import com.salmon.chatService.constant.Settings;
 import com.salmon.chatService.model.enums.contact.UserContactTypeEnum;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+
 
 /**
  * 业务工具
@@ -63,7 +72,17 @@ public class Utils {
      * @param salt     盐
      */
     public static String encryptPassword(String password, String salt) {
-        return DigestUtils.md5DigestAsHex((salt + password).getBytes());
+        return encodeMd5(salt + password);
+    }
+
+    /**
+     * md5摘要编码
+     *
+     * @param content 内容
+     * @return md5串
+     */
+    public static String encodeMd5(String content) {
+        return DigestUtils.md5DigestAsHex(content.getBytes());
     }
 
     /**
@@ -95,5 +114,55 @@ public class Utils {
     public static boolean isEmail(String email) {
         String emailPattern = "^([a-zA-Z]|[0-9])(\\w|\\-)+@[a-zA-Z0-9]+\\.([a-zA-Z]{2,4})$";
         return email.matches(emailPattern);
+    }
+
+    /**
+     * 清理并替换HTML标签，防止sql注入
+     *
+     * @param content 待处理字符串
+     * @return 转义
+     */
+    public static String cleanHtmlTag(String content) {
+        if (!StringUtils.hasText(content)) {
+            return null;
+        }
+        content = content.replace("<", "&lt;");
+        content = content.replace("\r\n", "<br>");
+        content = content.replace("\n", "<br>");
+        return content;
+    }
+
+
+    /**
+     * 生成sessionId
+     *
+     * @param accounts 账号集合
+     * @return sessionId
+     */
+    public static String generateChatSessionId(String[] accounts) {
+        Arrays.sort(accounts);
+        return encodeMd5(StrUtil.join(",", Arrays.asList(accounts)));
+    }
+
+    /**
+     * 获取时间戳（毫秒级）
+     *
+     * @return 时间戳
+     */
+    public static long getCurrentTimestampInMillis() {
+        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime zdt = now.atZone(ZoneId.of(Settings.ZONE_ID));
+        return zdt.toInstant().toEpochMilli();
+    }
+
+    /**
+     * 基于时间戳转为localDateTime
+     *
+     * @param timestamp 时间戳
+     * @return localDateTime
+     */
+    public static LocalDateTime convertTimestampToLocalDateTime(long timestamp) {
+        Instant instant = Instant.ofEpochMilli(timestamp);
+        return LocalDateTime.ofInstant(instant, ZoneId.of(Settings.ZONE_ID));
     }
 }
