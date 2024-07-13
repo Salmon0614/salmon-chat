@@ -81,8 +81,8 @@ defineExpose({
     </el-form-item>
     <el-form-item label="加入权限" prop="joinType">
       <el-radio-group v-model="formData.joinType">
-        <el-radio :label="1">管理员审核同意后加入</el-radio>
-        <el-radio :label="0">直接加入</el-radio>
+        <el-radio :value="1">管理员审核同意后加入</el-radio>
+        <el-radio :value="0">直接加入</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="公告" prop="groupNotice">
