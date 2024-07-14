@@ -197,15 +197,15 @@ const submit = async () => {
   // 使用自定义校验
   cleanVerify()
   if (!proxy.$verify.validateEmail(formData.value.email)) {
-    errorMsg.value = '请输入正确的邮箱'
+    errorMsg.value = proxy.$verify.regErrMsg.emailError
     return
   }
   if (viewType.value === 1 && !proxy.$verify.validatePassword(formData.value.password)) {
-    errorMsg.value = '密码至少8个字符，包含大小写字母和数字'
+    errorMsg.value = proxy.$verify.regErrMsg.passwordError
     return
   }
   if (viewType.value !== 0 && formData.value.password !== formData.value.rePassword) {
-    errorMsg.value = '两次输入密码不一致'
+    errorMsg.value = proxy.$verify.regErrMsg.rePasswordError
     return
   }
   if (viewType.value === 0) {

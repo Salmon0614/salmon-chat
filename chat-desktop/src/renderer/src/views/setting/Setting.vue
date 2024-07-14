@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick, onMounted } from 'vue'
-import Layout from '@/components/Layout.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const { proxy } = getCurrentInstance()

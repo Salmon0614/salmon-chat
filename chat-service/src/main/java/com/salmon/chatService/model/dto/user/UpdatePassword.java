@@ -22,7 +22,7 @@ public class UpdatePassword implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "请输入新密码")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "密码至少8个字符，包含大小写字母和数字")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*()_+\\-\\[\\]{};':\"\\\\|,.<>/?`~]{8,18}$", message = "密码必须包含大小写字母、数字，可以包含特殊字符（8-18位）")
     @Schema(description = "密码")
     private String password;
 }
