@@ -9,7 +9,8 @@ const regs = {
 
 const verify = (rule, value, reg, callback) => {
   if (value) {
-    if (reg.text(value)) {
+    console.log(reg)
+    if (reg.test(value)) {
       callback()
     } else {
       callback(new Error(rule.message))

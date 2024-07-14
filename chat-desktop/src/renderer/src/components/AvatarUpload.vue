@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, getCurrentInstance, nextTick, computed } from 'vue'
 
 const { proxy } = getCurrentInstance()
 
@@ -10,7 +10,11 @@ const props = defineProps({
     default: null
   }
 })
-const preview = ref(false)
+
+const preview = computed(() => {
+  return props.modelValue instanceof File
+})
+
 const localFile = ref(null)
 
 /**
