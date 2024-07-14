@@ -41,6 +41,15 @@ public class UserVO implements Serializable {
     @Schema(description = "手机号")
     private String mobile;
 
+    @Schema(description = "性别 0-女 1-男")
+    private Integer gender;
+
+    @Schema(description = "地区")
+    private String area;
+
+    @Schema(description = "地区编号")
+    private String areaCode;
+
     @Schema(description = "邮箱")
     private String email;
 
@@ -59,11 +68,14 @@ public class UserVO implements Serializable {
     @Schema(description = "是否是管理员")
     private Boolean isAdmin;
 
-    public Boolean getAdmin() {
-        if(Objects.isNull(this.role)) {
+    @Schema(description = "加入好友类型 0-直接加入 1-需要验证")
+    private Integer joinType;
+
+    public Boolean getIsAdmin() {
+        if(Objects.isNull(role)) {
             return false;
         }
-        return this.role == UserRoleEnum.ADMIN.getValue();
+        return role == UserRoleEnum.ADMIN.getValue();
     }
 
     /**
