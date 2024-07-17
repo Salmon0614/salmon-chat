@@ -227,7 +227,6 @@ function createWindow() {
       }
     }
   })
-
   onSetLocalStore()
   onGetLocalStore()
 }

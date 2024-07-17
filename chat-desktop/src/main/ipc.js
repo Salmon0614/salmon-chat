@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 import store from './store'
+import { initWs } from './wsClient'
 
 /**
  * 监听登录、注册、忘记密码窗口变化
@@ -20,9 +21,10 @@ const onLogin = (callback) => {
   ipcMain.on('openChatMain', (event, config) => {
     store.initUserId(config.userId)
     store.setUserData('token', config.token)
-    // todo 增加用户配置，本地存储的时候（本地数据库）
     callback(event, config)
-    // todo 初始化ws连接
+    // 初始化ws连接
+    initWs(config, event.sender)
+    // todo 增加用户配置，本地存储的时候（本地数据库）
   })
 }
 
@@ -67,6 +69,7 @@ const winOperate = (callback) => {
 const onSetLocalStore = () => {
   ipcMain.on('setLocalStore', (event, { key, value }) => {
     store.setData(key, value)
+    console.log(store.getData(key))
   })
 }
 

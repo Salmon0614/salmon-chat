@@ -71,7 +71,7 @@ public class NettyWebsocketServer {
                                 // readerIdleTime 读超时，当连接在指定时间内没有读操作时，会触发 IdleStateEvent.READER_IDLE 事件
                                 // writerIdleTime 写超时，连接在指定时间内没有写操作时，会触发 IdleStateEvent.WRITER_IDLE 事件
                                 // allIdleTime, 所有类型超时时间，即当连接在指定时间内没有读或写操作时，会触发 IdleStateEvent.ALL_IDLE 事件
-                                pipeline.addLast(new IdleStateHandler(60, 0, 0, TimeUnit.SECONDS));
+                                pipeline.addLast(new IdleStateHandler(6, 0, 0, TimeUnit.SECONDS));
                                 pipeline.addLast(new HeartBeatHandler());
                                 // 4. 将Http协议升级为ws协议，对websocket支持
                                 pipeline.addLast(new WebSocketServerProtocolHandler("/ws", null, true, 64 * 1024, true, true, 10000L));
