@@ -83,16 +83,19 @@ public interface UserContactMapper extends BaseMapper<UserContact> {
     List<UserContactVO> selectContactUserInfoList(@Param("userId") Integer userId, @Param("contactType") Integer contactType, @Param("status") String status);
 
 
-    @Select("select uc.id AS id, " +
-            "  uc.user_id AS userId, " +
-            "  uc.contact_id AS contactId, " +
-            "  g.group_number as contactAccount, " +
-            "  u.account as contactAccount " +
-            "from tb_user_contact uc\n" +
-            "         left join tb_user u on u.id = uc.contact_id and uc.contact_type = 0" +
-            "         left join tb_group g on g.id = uc.contact_id and uc.contact_type = 1 " +
-            "where uc.user_id = #{userId}" +
-            "  and uc.status = #{status}" +
-            "  and u.is_delete = 0")
+    @Select("""
+            select uc.id         AS id,
+                   uc.user_id    AS userId,
+                   uc.contact_id AS contactId,
+                   case
+                       when uc.contact_type = 1 then g.group_number
+                       else u.account
+                       end       as contactAccount
+            from tb_user_contact uc
+                     left join tb_user u on u.id = uc.contact_id and uc.contact_type = 0
+                     left join tb_group g on g.id = uc.contact_id and uc.contact_type = 1
+            where uc.user_id = #{userId}
+              and uc.status = #{status}
+              and u.is_delete = 0""")
     List<UserContactVO> selectUserContact(@Param("userId") Integer userId, @Param("status") Integer status);
 }
