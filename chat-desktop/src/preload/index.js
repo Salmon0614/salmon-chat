@@ -28,6 +28,20 @@ if (process.contextIsolated) {
         ipcRenderer.send('winOperate', { action, data })
       }
     })
+    // 数据操作
+    contextBridge.exposeInMainWorld('localStore', {
+      set: ({ key, value }) => {
+        ipcRenderer.send('setLocalStore', { key, value })
+      },
+      get: (key) => {
+        ipcRenderer.send('getLocalStore', key)
+      },
+      getCallback: (callback) => {
+        ipcRenderer.on('getLocalStoreCallback', (event, data) => {
+          callback(data)
+        })
+      }
+    })
   } catch (error) {
     console.error(error)
   }

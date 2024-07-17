@@ -3,7 +3,15 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import icon from '../../resources/icon.png?asset'
 
-import { resizeWindow, onLoginOrRegisterOrForget, onLogin, onLogout, winOperate } from './ipc'
+import {
+  resizeWindow,
+  onLoginOrRegisterOrForget,
+  onLogin,
+  onLogout,
+  winOperate,
+  onSetLocalStore,
+  onGetLocalStore
+} from './ipc'
 
 const NODE_ENV = process.env.NODE_ENV
 const isMac = process.platform === 'darwin'
@@ -219,6 +227,9 @@ function createWindow() {
       }
     }
   })
+
+  onSetLocalStore()
+  onGetLocalStore()
 }
 
 // This method will be called when Electron has finished

@@ -61,4 +61,31 @@ const winOperate = (callback) => {
   })
 }
 
-export { onLoginOrRegisterOrForget, onLogin, onLogout, resizeWindow, winOperate }
+/**
+ * 监听数据存储
+ */
+const onSetLocalStore = () => {
+  ipcMain.on('setLocalStore', (event, { key, value }) => {
+    store.setData(key, value)
+  })
+}
+
+/**
+ * 监听获取数据
+ */
+const onGetLocalStore = () => {
+  ipcMain.on('getLocalStore', (event, key) => {
+    console.log('收到渲染进程的获取事件', key)
+    event.sender.send('getLocalStoreCallback', '这是主进程返回的内容：' + store.getData(key))
+  })
+}
+
+export {
+  onLoginOrRegisterOrForget,
+  onLogin,
+  onLogout,
+  resizeWindow,
+  winOperate,
+  onSetLocalStore,
+  onGetLocalStore
+}

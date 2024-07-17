@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, getCurrentInstance, nextTick, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
 import WinOp from '../components/WinOp.vue'
@@ -14,6 +14,20 @@ const formData = ref({
   password: 'Cxw07716'
 })
 const formDataRef = ref()
+
+onMounted(() => {
+  init()
+})
+
+/**
+ * 初始化
+ */
+const init = () => {
+  window.localStore.set({ key: 'devDomain', value: proxy.$api.domain.dev })
+  window.localStore.set({ key: 'prodDomain', value: proxy.$api.domain.prod })
+  window.localStore.set({ key: 'devWsDomain', value: proxy.$api.domain.wsDev })
+  window.localStore.set({ key: 'prodWsDomain', value: proxy.$api.domain.wsProd })
+}
 
 // 0-登录页 1-注册页 2-忘记密码
 const viewType = ref(0)
@@ -121,6 +135,8 @@ const login = async () => {
     screenWidth: screenWidth,
     screenHeight: screenHeight
   })
+  window.localStore.set({ key: 'devWsDomain', value: proxy.$api.domain.wsDev })
+  window.localStore.get('devWsDomain')
 }
 /**
  * 注册
