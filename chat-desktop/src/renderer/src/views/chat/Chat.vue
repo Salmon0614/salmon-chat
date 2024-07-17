@@ -1,5 +1,12 @@
 <script setup>
+import { ref, reactive, getCurrentInstance, nextTick, watch } from 'vue'
+
+const { proxy } = getCurrentInstance()
 import Layout from '../../components/Layout.vue'
+
+const searchKey = ref()
+
+const search = () => {}
 </script>
 
 <template>
